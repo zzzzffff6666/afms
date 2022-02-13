@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjtu.afms.mapper.PoolPlanMapper">
+  <resultMap id="BaseResultMap" type="com.bjtu.afms.model.PoolPlan">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="plan_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="pool_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="cycle" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="start_pre" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="end_pre" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="start_act" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="end_act" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="finish" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="add_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="add_user" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="mod_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="mod_user" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </constructor>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, plan_id, pool_id, cycle, start_pre, end_pre, start_act, end_act, finish, add_time, 
+    add_user, mod_time, mod_user
+  </sql>
+  <select id="selectByExample" parameterType="com.bjtu.afms.model.PoolPlanExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from pool_plan
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from pool_plan
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from pool_plan
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.bjtu.afms.model.PoolPlanExample">
+    delete from pool_plan
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bjtu.afms.model.PoolPlan">
+    insert into pool_plan (id, plan_id, pool_id, 
+      cycle, start_pre, end_pre, 
+      start_act, end_act, finish, 
+      add_time, add_user, mod_time, 
+      mod_user)
+    values (#{id,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{poolId,jdbcType=INTEGER}, 
+      #{cycle,jdbcType=INTEGER}, #{startPre,jdbcType=TIMESTAMP}, #{endPre,jdbcType=TIMESTAMP}, 
+      #{startAct,jdbcType=TIMESTAMP}, #{endAct,jdbcType=TIMESTAMP}, #{finish,jdbcType=INTEGER}, 
+      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, 
+      #{modUser,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bjtu.afms.model.PoolPlan">
+    insert into pool_plan
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="planId != null">
+        plan_id,
+      </if>
+      <if test="poolId != null">
+        pool_id,
+      </if>
+      <if test="cycle != null">
+        cycle,
+      </if>
+      <if test="startPre != null">
+        start_pre,
+      </if>
+      <if test="endPre != null">
+        end_pre,
+      </if>
+      <if test="startAct != null">
+        start_act,
+      </if>
+      <if test="endAct != null">
+        end_act,
+      </if>
+      <if test="finish != null">
+        finish,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+      <if test="addUser != null">
+        add_user,
+      </if>
+      <if test="modTime != null">
+        mod_time,
+      </if>
+      <if test="modUser != null">
+        mod_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="planId != null">
+        #{planId,jdbcType=INTEGER},
+      </if>
+      <if test="poolId != null">
+        #{poolId,jdbcType=INTEGER},
+      </if>
+      <if test="cycle != null">
+        #{cycle,jdbcType=INTEGER},
+      </if>
+      <if test="startPre != null">
+        #{startPre,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endPre != null">
+        #{endPre,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startAct != null">
+        #{startAct,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endAct != null">
+        #{endAct,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finish != null">
+        #{finish,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addUser != null">
+        #{addUser,jdbcType=INTEGER},
+      </if>
+      <if test="modTime != null">
+        #{modTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modUser != null">
+        #{modUser,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.bjtu.afms.model.PoolPlanExample" resultType="java.lang.Long">
+    select count(*) from pool_plan
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update pool_plan
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.planId != null">
+        plan_id = #{record.planId,jdbcType=INTEGER},
+      </if>
+      <if test="record.poolId != null">
+        pool_id = #{record.poolId,jdbcType=INTEGER},
+      </if>
+      <if test="record.cycle != null">
+        cycle = #{record.cycle,jdbcType=INTEGER},
+      </if>
+      <if test="record.startPre != null">
+        start_pre = #{record.startPre,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endPre != null">
+        end_pre = #{record.endPre,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.startAct != null">
+        start_act = #{record.startAct,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endAct != null">
+        end_act = #{record.endAct,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.finish != null">
+        finish = #{record.finish,jdbcType=INTEGER},
+      </if>
+      <if test="record.addTime != null">
+        add_time = #{record.addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.addUser != null">
+        add_user = #{record.addUser,jdbcType=INTEGER},
+      </if>
+      <if test="record.modTime != null">
+        mod_time = #{record.modTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.modUser != null">
+        mod_user = #{record.modUser,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update pool_plan
+    set id = #{record.id,jdbcType=INTEGER},
+      plan_id = #{record.planId,jdbcType=INTEGER},
+      pool_id = #{record.poolId,jdbcType=INTEGER},
+      cycle = #{record.cycle,jdbcType=INTEGER},
+      start_pre = #{record.startPre,jdbcType=TIMESTAMP},
+      end_pre = #{record.endPre,jdbcType=TIMESTAMP},
+      start_act = #{record.startAct,jdbcType=TIMESTAMP},
+      end_act = #{record.endAct,jdbcType=TIMESTAMP},
+      finish = #{record.finish,jdbcType=INTEGER},
+      add_time = #{record.addTime,jdbcType=TIMESTAMP},
+      add_user = #{record.addUser,jdbcType=INTEGER},
+      mod_time = #{record.modTime,jdbcType=TIMESTAMP},
+      mod_user = #{record.modUser,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bjtu.afms.model.PoolPlan">
+    update pool_plan
+    <set>
+      <if test="planId != null">
+        plan_id = #{planId,jdbcType=INTEGER},
+      </if>
+      <if test="poolId != null">
+        pool_id = #{poolId,jdbcType=INTEGER},
+      </if>
+      <if test="cycle != null">
+        cycle = #{cycle,jdbcType=INTEGER},
+      </if>
+      <if test="startPre != null">
+        start_pre = #{startPre,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endPre != null">
+        end_pre = #{endPre,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startAct != null">
+        start_act = #{startAct,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endAct != null">
+        end_act = #{endAct,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finish != null">
+        finish = #{finish,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addUser != null">
+        add_user = #{addUser,jdbcType=INTEGER},
+      </if>
+      <if test="modTime != null">
+        mod_time = #{modTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modUser != null">
+        mod_user = #{modUser,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bjtu.afms.model.PoolPlan">
+    update pool_plan
+    set plan_id = #{planId,jdbcType=INTEGER},
+      pool_id = #{poolId,jdbcType=INTEGER},
+      cycle = #{cycle,jdbcType=INTEGER},
+      start_pre = #{startPre,jdbcType=TIMESTAMP},
+      end_pre = #{endPre,jdbcType=TIMESTAMP},
+      start_act = #{startAct,jdbcType=TIMESTAMP},
+      end_act = #{endAct,jdbcType=TIMESTAMP},
+      finish = #{finish,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=TIMESTAMP},
+      add_user = #{addUser,jdbcType=INTEGER},
+      mod_time = #{modTime,jdbcType=TIMESTAMP},
+      mod_user = #{modUser,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
