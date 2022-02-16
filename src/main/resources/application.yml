@@ -4,3 +4,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: farmer
     username: farm-system
+
+afms:
+  token-expire-time: 1200000
