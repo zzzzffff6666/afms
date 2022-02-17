@@ -8,6 +8,8 @@
     <Properties>
         <property name="console-format" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %highlight{%-5level} %class{36} %L %M - %msg%xEx%n"/>
         <property name="file-format" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level %class{36} %L %M - %msg%xEx%n"/>
+        <!--windows路径：C:/Users/zhang/Desktop-->
+        <!--linux路径：/opt-->
         <property name="base-path" value="C:/Users/zhang/Desktop"/>
     </Properties>
 
@@ -20,8 +22,8 @@
         </console>
         <!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，
         则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
-        <RollingFile name="RollingFileInfo" fileName="${sys:user.home}/logs/afms/info.log"
-                     filePattern="${sys:user.home}/logs/afms/info-%d{yyyy-MM-dd}-%i.log">
+        <RollingFile name="RollingFileInfo" fileName="${base-path}/logs/afms/info.log"
+                     filePattern="${base-path}/logs/afms/info-%d{yyyy-MM-dd}-%i.log">
             <Filters>
                 <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
                 <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
@@ -35,8 +37,8 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <RollingFile name="RollingFileWarn" fileName="${sys:user.home}/logs/afms/warn.log"
-                     filePattern="${sys:user.home}/logs/afms/warn-%d{yyyy-MM-dd}-%i.log">
+        <RollingFile name="RollingFileWarn" fileName="${base-path}/logs/afms/warn.log"
+                     filePattern="${base-path}/logs/afms/warn-%d{yyyy-MM-dd}-%i.log">
             <Filters>
                 <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
@@ -50,8 +52,8 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <RollingFile name="RollingFileError" fileName="${sys:user.home}/logs/afms/error.log"
-                     filePattern="${sys:user.home}/logs/afms/error-%d{yyyy-MM-dd}-%i.log">
+        <RollingFile name="RollingFileError" fileName="${base-path}/logs/afms/error.log"
+                     filePattern="${base-path}/logs/afms/error-%d{yyyy-MM-dd}-%i.log">
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${file-format}"/>
             <Policies>

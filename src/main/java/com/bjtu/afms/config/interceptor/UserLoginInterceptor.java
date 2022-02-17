@@ -1,6 +1,6 @@
-package com.bjtu.afms.interceptor;
+package com.bjtu.afms.config.interceptor;
 
-import com.bjtu.afms.config.LoginContext;
+import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.qo.UserQO;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -8,11 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/**
- * @author: zhang
- * @date: 2022/2/15 19:49
- * @description:
- */
 public class UserLoginInterceptor implements HandlerInterceptor {
 
     @Override

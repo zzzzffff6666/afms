@@ -345,63 +345,73 @@ public class LogExample {
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeIsNull() {
-            addCriterion("operation_type is null");
+        public Criteria andOperationIsNull() {
+            addCriterion("operation is null");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeIsNotNull() {
-            addCriterion("operation_type is not null");
+        public Criteria andOperationIsNotNull() {
+            addCriterion("operation is not null");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeEqualTo(Integer value) {
-            addCriterion("operation_type =", value, "operationType");
+        public Criteria andOperationEqualTo(String value) {
+            addCriterion("operation =", value, "operation");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeNotEqualTo(Integer value) {
-            addCriterion("operation_type <>", value, "operationType");
+        public Criteria andOperationNotEqualTo(String value) {
+            addCriterion("operation <>", value, "operation");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeGreaterThan(Integer value) {
-            addCriterion("operation_type >", value, "operationType");
+        public Criteria andOperationGreaterThan(String value) {
+            addCriterion("operation >", value, "operation");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeGreaterThanOrEqualTo(Integer value) {
-            addCriterion("operation_type >=", value, "operationType");
+        public Criteria andOperationGreaterThanOrEqualTo(String value) {
+            addCriterion("operation >=", value, "operation");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeLessThan(Integer value) {
-            addCriterion("operation_type <", value, "operationType");
+        public Criteria andOperationLessThan(String value) {
+            addCriterion("operation <", value, "operation");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeLessThanOrEqualTo(Integer value) {
-            addCriterion("operation_type <=", value, "operationType");
+        public Criteria andOperationLessThanOrEqualTo(String value) {
+            addCriterion("operation <=", value, "operation");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeIn(List<Integer> values) {
-            addCriterion("operation_type in", values, "operationType");
+        public Criteria andOperationLike(String value) {
+            addCriterion("operation like", value, "operation");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeNotIn(List<Integer> values) {
-            addCriterion("operation_type not in", values, "operationType");
+        public Criteria andOperationNotLike(String value) {
+            addCriterion("operation not like", value, "operation");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeBetween(Integer value1, Integer value2) {
-            addCriterion("operation_type between", value1, value2, "operationType");
+        public Criteria andOperationIn(List<String> values) {
+            addCriterion("operation in", values, "operation");
             return (Criteria) this;
         }
 
-        public Criteria andOperationTypeNotBetween(Integer value1, Integer value2) {
-            addCriterion("operation_type not between", value1, value2, "operationType");
+        public Criteria andOperationNotIn(List<String> values) {
+            addCriterion("operation not in", values, "operation");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationBetween(String value1, String value2) {
+            addCriterion("operation between", value1, value2, "operation");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationNotBetween(String value1, String value2) {
+            addCriterion("operation not between", value1, value2, "operation");
             return (Criteria) this;
         }
 
@@ -545,63 +555,63 @@ public class LogExample {
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeIsNull() {
-            addCriterion("log_time is null");
+        public Criteria andAddTimeIsNull() {
+            addCriterion("add_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeIsNotNull() {
-            addCriterion("log_time is not null");
+        public Criteria andAddTimeIsNotNull() {
+            addCriterion("add_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeEqualTo(Date value) {
-            addCriterion("log_time =", value, "logTime");
+        public Criteria andAddTimeEqualTo(Date value) {
+            addCriterion("add_time =", value, "addTime");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeNotEqualTo(Date value) {
-            addCriterion("log_time <>", value, "logTime");
+        public Criteria andAddTimeNotEqualTo(Date value) {
+            addCriterion("add_time <>", value, "addTime");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeGreaterThan(Date value) {
-            addCriterion("log_time >", value, "logTime");
+        public Criteria andAddTimeGreaterThan(Date value) {
+            addCriterion("add_time >", value, "addTime");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("log_time >=", value, "logTime");
+        public Criteria andAddTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("add_time >=", value, "addTime");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeLessThan(Date value) {
-            addCriterion("log_time <", value, "logTime");
+        public Criteria andAddTimeLessThan(Date value) {
+            addCriterion("add_time <", value, "addTime");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeLessThanOrEqualTo(Date value) {
-            addCriterion("log_time <=", value, "logTime");
+        public Criteria andAddTimeLessThanOrEqualTo(Date value) {
+            addCriterion("add_time <=", value, "addTime");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeIn(List<Date> values) {
-            addCriterion("log_time in", values, "logTime");
+        public Criteria andAddTimeIn(List<Date> values) {
+            addCriterion("add_time in", values, "addTime");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeNotIn(List<Date> values) {
-            addCriterion("log_time not in", values, "logTime");
+        public Criteria andAddTimeNotIn(List<Date> values) {
+            addCriterion("add_time not in", values, "addTime");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeBetween(Date value1, Date value2) {
-            addCriterion("log_time between", value1, value2, "logTime");
+        public Criteria andAddTimeBetween(Date value1, Date value2) {
+            addCriterion("add_time between", value1, value2, "addTime");
             return (Criteria) this;
         }
 
-        public Criteria andLogTimeNotBetween(Date value1, Date value2) {
-            addCriterion("log_time not between", value1, value2, "logTime");
+        public Criteria andAddTimeNotBetween(Date value1, Date value2) {
+            addCriterion("add_time not between", value1, value2, "addTime");
             return (Criteria) this;
         }
     }

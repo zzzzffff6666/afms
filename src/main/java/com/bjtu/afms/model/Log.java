@@ -12,25 +12,25 @@ public class Log implements Serializable {
 
     private Integer userId;
 
-    private Integer operationType;
+    private String operation;
 
     private String oldValue;
 
     private String newValue;
 
-    private Date logTime;
+    private Date addTime;
 
     private static final long serialVersionUID = 1L;
 
-    public Log(Integer id, Integer type, Integer relateId, Integer userId, Integer operationType, String oldValue, String newValue, Date logTime) {
+    public Log(Integer id, Integer type, Integer relateId, Integer userId, String operation, String oldValue, String newValue, Date addTime) {
         this.id = id;
         this.type = type;
         this.relateId = relateId;
         this.userId = userId;
-        this.operationType = operationType;
+        this.operation = operation;
         this.oldValue = oldValue;
         this.newValue = newValue;
-        this.logTime = logTime;
+        this.addTime = addTime;
     }
 
     public Log() {
@@ -69,12 +69,12 @@ public class Log implements Serializable {
         this.userId = userId;
     }
 
-    public Integer getOperationType() {
-        return operationType;
+    public String getOperation() {
+        return operation;
     }
 
-    public void setOperationType(Integer operationType) {
-        this.operationType = operationType;
+    public void setOperation(String operation) {
+        this.operation = operation == null ? null : operation.trim();
     }
 
     public String getOldValue() {
@@ -93,11 +93,11 @@ public class Log implements Serializable {
         this.newValue = newValue == null ? null : newValue.trim();
     }
 
-    public Date getLogTime() {
-        return logTime;
+    public Date getAddTime() {
+        return addTime;
     }
 
-    public void setLogTime(Date logTime) {
-        this.logTime = logTime;
+    public void setAddTime(Date addTime) {
+        this.addTime = addTime;
     }
 }

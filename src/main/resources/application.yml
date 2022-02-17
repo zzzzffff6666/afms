@@ -5,5 +5,7 @@ spring:
     password: farmer
     username: farm-system
 
-afms:
-  token-expire-time: 1200000
+mybatis:
+  check-config-location: true
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.bjtu.afms.model

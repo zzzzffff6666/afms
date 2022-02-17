@@ -150,23 +150,23 @@
 <!--               selectByExampleQueryId="false" />-->
         <!-- <table tableName="course_info" domainObjectName="CourseInfo" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" />
         <table tableName="course_user_info" domainObjectName="CourseUserInfo" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" /> -->
-        <table tableName="alert" domainObjectName="Alert"/>
-        <table tableName="client" domainObjectName="Client"/>
-        <table tableName="comment" domainObjectName="Comment"/>
-        <table tableName="daily_task" domainObjectName="DailyTask"/>
-        <table tableName="fund" domainObjectName="Fund"/>
-        <table tableName="item" domainObjectName="Item"/>
-        <table tableName="job" domainObjectName="Job"/>
+<!--        <table tableName="alert" domainObjectName="Alert"/>-->
+<!--        <table tableName="client" domainObjectName="Client"/>-->
+<!--        <table tableName="comment" domainObjectName="Comment"/>-->
+<!--        <table tableName="daily_task" domainObjectName="DailyTask"/>-->
+<!--        <table tableName="fund" domainObjectName="Fund"/>-->
+<!--        <table tableName="item" domainObjectName="Item"/>-->
+<!--        <table tableName="job" domainObjectName="Job"/>-->
         <table tableName="log" domainObjectName="Log"/>
-        <table tableName="permission" domainObjectName="Permission"/>
-        <table tableName="plan" domainObjectName="Plan"/>
-        <table tableName="pool" domainObjectName="Pool"/>
-        <table tableName="pool_cycle" domainObjectName="PoolCycle"/>
-        <table tableName="pool_plan" domainObjectName="PoolPlan"/>
-        <table tableName="pool_task" domainObjectName="PoolTask"/>
-        <table tableName="store" domainObjectName="Store"/>
-        <table tableName="task" domainObjectName="Task"/>
-        <table tableName="user" domainObjectName="User"/>
-        <table tableName="verify" domainObjectName="Verify"/>
+<!--        <table tableName="permission" domainObjectName="Permission"/>-->
+<!--        <table tableName="plan" domainObjectName="Plan"/>-->
+<!--        <table tableName="pool" domainObjectName="Pool"/>-->
+<!--        <table tableName="pool_cycle" domainObjectName="PoolCycle"/>-->
+<!--        <table tableName="pool_plan" domainObjectName="PoolPlan"/>-->
+<!--        <table tableName="pool_task" domainObjectName="PoolTask"/>-->
+<!--        <table tableName="store" domainObjectName="Store"/>-->
+<!--        <table tableName="task" domainObjectName="Task"/>-->
+<!--        <table tableName="user" domainObjectName="User"/>-->
+<!--        <table tableName="verify" domainObjectName="Verify"/>-->
     </context>
 </generatorConfiguration>

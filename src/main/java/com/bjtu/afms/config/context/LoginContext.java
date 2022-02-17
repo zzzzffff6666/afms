@@ -1,13 +1,8 @@
-package com.bjtu.afms.config;
+package com.bjtu.afms.config.context;
 
 import com.bjtu.afms.qo.UserQO;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @author: zhang
- * @date: 2022/2/15 19:34
- * @description:
- */
 @Slf4j
 public class LoginContext {
     private static ThreadLocal<UserQO> userInfo = new ThreadLocal<>();
@@ -22,6 +17,9 @@ public class LoginContext {
     }
 
     public static Integer getUserId() {
+        if (userInfo.get() == null) {
+            return 0;
+        }
         return userInfo.get().getId();
     }
 
