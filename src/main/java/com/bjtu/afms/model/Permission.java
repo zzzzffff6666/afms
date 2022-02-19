@@ -10,16 +10,19 @@ public class Permission implements Serializable {
 
     private Integer type;
 
+    private Integer relateId;
+
     private Date addTime;
 
     private Integer addUser;
 
     private static final long serialVersionUID = 1L;
 
-    public Permission(Integer id, Integer userId, Integer type, Date addTime, Integer addUser) {
+    public Permission(Integer id, Integer userId, Integer type, Integer relateId, Date addTime, Integer addUser) {
         this.id = id;
         this.userId = userId;
         this.type = type;
+        this.relateId = relateId;
         this.addTime = addTime;
         this.addUser = addUser;
     }
@@ -50,6 +53,14 @@ public class Permission implements Serializable {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Integer getRelateId() {
+        return relateId;
+    }
+
+    public void setRelateId(Integer relateId) {
+        this.relateId = relateId;
     }
 
     public Date getAddTime() {

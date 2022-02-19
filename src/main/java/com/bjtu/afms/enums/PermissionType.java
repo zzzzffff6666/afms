@@ -6,13 +6,15 @@ import java.util.List;
 
 public enum PermissionType {
     NORMAL(1, "normal", "普通员工"),
-    CLIENT_CONTACT(2, "client_contact", "客户联络人"),
-    TASK_PRINCIPAL(3, "task_principal", "任务负责人"),
-    POOL_MANAGER(4, "pool_manager", "养殖池管理员"),
-    STORE_MANAGER(5, "store_manager", "仓库管理员"),
-    FUND_REVIEWER(6, "fund_reviewer", "收支审查人"),
-    SPECIALIST(7, "specialist", "技术专员"),
-    ADMIN(8, "admin", "系统管理员"),
+    OWNER(2, "owner", "资源拥有者"),
+    CLIENT_CONTACT(3, "client_contact", "客户联络人"),
+    TASK_PRINCIPAL(4, "task_principal", "任务负责人"),
+    POOL_MANAGER(5, "pool_manager", "养殖池管理员"),
+    STORE_MANAGER(6, "store_manager", "仓库管理员"),
+    FUND_REVIEWER(7, "fund_reviewer", "收支审查人"),
+    SPECIALIST(8, "specialist", "技术专员"),
+    STUFF_MANAGER(9, "stuff_manager", "员工管理"),
+    ADMIN(10, "admin", "系统管理员"),
     ;
 
     private final int id;

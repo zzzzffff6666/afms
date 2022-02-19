@@ -1,16 +1,15 @@
 package com.bjtu.afms.enums;
 
-public enum UserStatus {
-    VISIT(1, "visit", "游客"),
-    WORK(2, "work", "在职"),
-    RESIGN(3, "resign", "离职")
+public enum FundType {
+    EXPENSE(1, "expense", "支出"),
+    INCOME(2, "income", "收入")
     ;
 
     private final int id;
     private final String name;
     private final String comment;
 
-    UserStatus(int id, String name, String comment) {
+    FundType(int id, String name, String comment) {
         this.id = id;
         this.name = name;
         this.comment = comment;
