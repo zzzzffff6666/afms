@@ -6,8 +6,8 @@
 <!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
 <configuration status="warn" monitorInterval="30">
     <Properties>
-        <property name="console-format" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %highlight{%-5level} %class{36} %L %M - %msg%xEx%n"/>
-        <property name="file-format" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level %class{36} %L %M - %msg%xEx%n"/>
+        <property name="console-format" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %highlight{%-5level} %class{1} %L %M - %msg%xEx%n"/>
+        <property name="file-format" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level %class{1} %L %M - %msg%xEx%n"/>
         <!--windows路径：C:/Users/zhang/Desktop-->
         <!--linux路径：/opt-->
         <property name="base-path" value="C:/Users/zhang/Desktop"/>

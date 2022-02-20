@@ -1,6 +1,8 @@
 package com.bjtu.afms.config.interceptor;
 
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.exception.BizException;
+import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.qo.UserQO;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -18,8 +20,7 @@ public class UserLoginInterceptor implements HandlerInterceptor {
             LoginContext.setUser(user);
             return true;
         } else {
-            response.sendRedirect("/login");
-            return false;
+            throw new BizException(APIError.NOT_LOGIN);
         }
     }
 }
