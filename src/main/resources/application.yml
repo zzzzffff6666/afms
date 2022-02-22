@@ -9,3 +9,8 @@ mybatis:
   check-config-location: true
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.bjtu.afms.model
+
+afms:
+  verify-code-length: 6
+  password-salt-length: 20
+  password-hash-times: 3

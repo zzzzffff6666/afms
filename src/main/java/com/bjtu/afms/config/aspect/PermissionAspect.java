@@ -1,7 +1,7 @@
-package com.bjtu.afms.aspect;
+package com.bjtu.afms.config.aspect;
 
 import com.alibaba.fastjson.JSONObject;
-import com.bjtu.afms.annotation.PermissionCheck;
+import com.bjtu.afms.config.annotation.PermissionCheck;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.PermissionType;
 import com.bjtu.afms.service.PermissionService;
@@ -24,7 +24,7 @@ public class PermissionAspect {
     @Resource
     private PermissionService permissionService;
 
-    @Pointcut("@annotation(com.bjtu.afms.annotation.PermissionCheck)")
+    @Pointcut("@annotation(com.bjtu.afms.config.annotation.PermissionCheck)")
     public void pointcut() {}
 
     @Around("pointcut() && @annotation(permissionCheck)")
@@ -51,7 +51,7 @@ public class PermissionAspect {
                 return result;
             }
         }
-        result |= permissionService.hasPermission(LoginContext.getUserId(),
+        result = permissionService.hasPermission(LoginContext.getUserId(),
                 Arrays.stream(permissionCheck.permission()).map(PermissionType::getId).collect(Collectors.toList()));
         return result;
     }

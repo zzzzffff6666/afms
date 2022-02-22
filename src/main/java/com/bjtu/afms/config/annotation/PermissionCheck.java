@@ -1,4 +1,4 @@
-package com.bjtu.afms.annotation;
+package com.bjtu.afms.config.annotation;
 
 import com.bjtu.afms.enums.PermissionType;
 

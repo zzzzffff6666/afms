@@ -1,4 +1,4 @@
-package com.bjtu.afms.aspect;
+package com.bjtu.afms.config.aspect;
 
 import com.bjtu.afms.config.context.LoginContext;
 import lombok.extern.slf4j.Slf4j;
