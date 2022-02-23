@@ -7,7 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AlertService {
@@ -32,6 +34,10 @@ public class AlertService {
     }
 
     public List<Alert> selectAlertList(Alert alert, String orderByClause) {
+        return selectAlertList(alert, null, orderByClause);
+    }
+
+    public List<Alert> selectAlertList(Alert alert, Map<String, Date> timeParam, String orderByClause) {
         AlertExample example = new AlertExample();
         if (StringUtils.isNotBlank(orderByClause)) {
             example.setOrderByClause(orderByClause);
@@ -43,7 +49,7 @@ public class AlertService {
         if (alert.getType() != null) {
             criteria.andTypeEqualTo(alert.getType());
         }
-        if (alert.getName() != null) {
+        if (StringUtils.isNotBlank(alert.getName())) {
             criteria.andNameLike("%" + alert.getName() + "%");
         }
         if (alert.getLevel() != null) {
@@ -52,11 +58,13 @@ public class AlertService {
         if (alert.getStatus() != null) {
             criteria.andStatusEqualTo(alert.getStatus());
         }
-        if (alert.getStartTime() != null) {
-            criteria.andStartTimeGreaterThan(alert.getStartTime());
-        }
-        if (alert.getEndTime() != null) {
-            criteria.andEndTimeLessThan(alert.getEndTime());
+        if (timeParam != null) {
+            Date start = timeParam.get("start");
+            Date end = timeParam.get("end");
+            if (end == null) {
+                end = new Date();
+            }
+            criteria.andStartTimeBetween(start, end);
         }
         return alertMapper.selectByExample(example);
     }

@@ -36,7 +36,7 @@ public class ClientService {
         if (StringUtils.isNotBlank(orderByClause)) {
             example.setOrderByClause(orderByClause);
         }
-        if (content != null) {
+        if (StringUtils.isNotBlank(content)) {
             example.createCriteria().andNameLike("%" + content + "%");
             example.or().andPhoneLike(content + "%");
             example.or().andNameEpLike("%" + content + "%");
@@ -50,13 +50,13 @@ public class ClientService {
             example.setOrderByClause(orderByClause);
         }
         ClientExample.Criteria criteria = example.createCriteria();
-        if (client.getName() != null) {
+        if (StringUtils.isNotBlank(client.getName())) {
             criteria.andNameLike("%" + client.getName() + "%");
         }
-        if (client.getPhone() != null) {
+        if (StringUtils.isNotBlank(client.getPhone())) {
             criteria.andPhoneLike(client.getPhone() + "%");
         }
-        if (client.getNameEp() != null) {
+        if (StringUtils.isNotBlank(client.getNameEp())) {
             criteria.andNameEpLike("%" + client.getNameEp() + "%");
         }
         return clientMapper.selectByExample(example);

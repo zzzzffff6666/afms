@@ -36,7 +36,6 @@ public class CommentService {
         if (StringUtils.isNoneBlank(orderByClause)) {
             example.setOrderByClause(orderByClause);
         }
-
         CommentExample.Criteria criteria = example.createCriteria();
         if (comment.getUserId() != null) {
             criteria.andUserIdEqualTo(comment.getUserId());
