@@ -10,7 +10,16 @@ mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.bjtu.afms.model
 
+pagehelper:
+  # 分页插件会自动检测当前的数据库链接，自动选择合适的分页方式（可以不设置）
+  helper-dialect: mysql
+  page-size-zero: false
+  reasonable: true
+  # 用于控制默认不带 count 查询的方法中，是否执行 count 查询，这里设置为true后，total会为-1
+  default-count: false
+
 afms:
-  verify-code-length: 6
-  password-salt-length: 20
-  password-hash-times: 3
+  code-length: 6
+  salt-length: 20
+  hash-times: 3
+  page-size: 20
