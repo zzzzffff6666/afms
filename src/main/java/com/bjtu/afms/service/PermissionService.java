@@ -1,6 +1,6 @@
 package com.bjtu.afms.service;
 
-import com.bjtu.afms.enums.PermissionType;
+import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.mapper.PermissionMapper;
 import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.model.PermissionExample;
@@ -23,11 +23,11 @@ public class PermissionService {
         return count > 0;
     }
 
-    public boolean isOwner(int userId, int relateId) {
+    public boolean isOwner(int userId, String resource) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andUserIdEqualTo(userId)
-                .andTypeEqualTo(PermissionType.OWNER.getId())
-                .andRelateIdEqualTo(relateId);
+                .andTypeEqualTo(AuthType.OWNER.getId())
+                .andResourceEqualTo(resource);
         long count = permissionMapper.countByExample(example);
         return count > 0;
     }
@@ -39,10 +39,6 @@ public class PermissionService {
     public int deletePermission(int permissionId) {
         return permissionMapper.deleteByPrimaryKey(permissionId);
     }
-
-//    public int updatePermission(Permission permission) {
-//        return permissionMapper.updateByPrimaryKeySelective(permission);
-//    }
 
     public Permission selectPermission(int permissionId) {
         return permissionMapper.selectByPrimaryKey(permissionId);
@@ -60,8 +56,8 @@ public class PermissionService {
         if (permission.getType() != null) {
             criteria.andTypeEqualTo(permission.getType());
         }
-        if (permission.getRelateId() != null) {
-            criteria.andRelateIdEqualTo(permission.getRelateId());
+        if (permission.getResource() != null) {
+            criteria.andResourceEqualTo(permission.getResource());
         }
         return permissionMapper.selectByExample(example);
     }

@@ -3,7 +3,7 @@ package com.bjtu.afms.config.interceptor;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
-import com.bjtu.afms.qo.UserQO;
+import com.bjtu.afms.web.qo.UserQO;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;

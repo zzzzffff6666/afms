@@ -1,9 +1,9 @@
 package com.bjtu.afms.config.aspect;
 
 import com.alibaba.fastjson.JSONObject;
-import com.bjtu.afms.config.annotation.PermissionCheck;
+import com.bjtu.afms.config.annotation.AuthCheck;
 import com.bjtu.afms.config.context.LoginContext;
-import com.bjtu.afms.enums.PermissionType;
+import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -24,14 +24,14 @@ public class PermissionAspect {
     @Resource
     private PermissionService permissionService;
 
-    @Pointcut("@annotation(com.bjtu.afms.config.annotation.PermissionCheck)")
+    @Pointcut("@annotation(com.bjtu.afms.config.annotation.AuthCheck)")
     public void pointcut() {}
 
-    @Around("pointcut() && @annotation(permissionCheck)")
-    public Object beforeExecute(ProceedingJoinPoint pjp, PermissionCheck permissionCheck) throws Throwable {
+    @Around("pointcut() && @annotation(authCheck)")
+    public Object beforeExecute(ProceedingJoinPoint pjp, AuthCheck authCheck) throws Throwable {
         Object result = null;
         Object[] objs = pjp.getArgs();
-        if (hasPermission(objs[0], permissionCheck)) {
+        if (hasPermission(objs[0], authCheck)) {
             try {
                 result = pjp.proceed();
             } catch (Throwable t) {
@@ -42,17 +42,18 @@ public class PermissionAspect {
         return result;
     }
 
-    public boolean hasPermission(Object object, PermissionCheck permissionCheck) {
-        boolean result = false;
-        if (permissionCheck.owner()) {
+    public boolean hasPermission(Object object, AuthCheck authCheck) {
+        boolean result;
+        if (authCheck.owner()) {
             Integer relateId = ((JSONObject) object).getInteger("id");
-            result = permissionService.isOwner(LoginContext.getUserId(), relateId);
-            if (permissionCheck.permission().length == 0 || result) {
+            result = permissionService.isOwner(LoginContext.getUserId(),
+                    authCheck.data().getName() + "_" + relateId);
+            if (authCheck.auth().length == 0 || result) {
                 return result;
             }
         }
         result = permissionService.hasPermission(LoginContext.getUserId(),
-                Arrays.stream(permissionCheck.permission()).map(PermissionType::getId).collect(Collectors.toList()));
+                Arrays.stream(authCheck.auth()).map(AuthType::getId).collect(Collectors.toList()));
         return result;
     }
 }

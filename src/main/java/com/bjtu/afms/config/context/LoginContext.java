@@ -1,6 +1,6 @@
 package com.bjtu.afms.config.context;
 
-import com.bjtu.afms.qo.UserQO;
+import com.bjtu.afms.web.qo.UserQO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

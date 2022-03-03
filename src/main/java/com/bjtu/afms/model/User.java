@@ -1,11 +1,13 @@
 package com.bjtu.afms.model;
 
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Date;
 
 public class User implements Serializable {
     private Integer id;
 
+    @Pattern(regexp = "^1[3-9]\\d{9}$")
     private String phone;
 
     private String password;

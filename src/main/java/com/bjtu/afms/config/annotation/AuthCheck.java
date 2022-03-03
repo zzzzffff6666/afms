@@ -1,16 +1,18 @@
 package com.bjtu.afms.config.annotation;
 
-import com.bjtu.afms.enums.PermissionType;
+import com.bjtu.afms.enums.AuthType;
+import com.bjtu.afms.enums.DataType;
 
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Documented
-public @interface PermissionCheck {
+public @interface AuthCheck {
 
-    PermissionType[] permission();
+    AuthType[] auth();
 
     boolean owner() default false;
 
+    DataType data() default DataType.USER;
 }

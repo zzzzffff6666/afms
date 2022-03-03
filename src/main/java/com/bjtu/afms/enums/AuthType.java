@@ -4,7 +4,7 @@ import com.bjtu.afms.utils.ListUtil;
 
 import java.util.List;
 
-public enum PermissionType {
+public enum AuthType {
     NORMAL(1, "normal", "普通员工"),
     OWNER(2, "owner", "资源拥有者"),
     CLIENT_CONTACT(3, "client_contact", "客户联络人"),
@@ -21,7 +21,7 @@ public enum PermissionType {
     private final String name;
     private final String comment;
 
-    PermissionType(int id, String name, String comment) {
+    AuthType(int id, String name, String comment) {
         this.id = id;
         this.name = name;
         this.comment = comment;
@@ -39,7 +39,7 @@ public enum PermissionType {
         return comment;
     }
 
-    public static List<PermissionType> getAllPermissionType() {
+    public static List<AuthType> getAllPermissionType() {
         return ListUtil.newArrayList(NORMAL, CLIENT_CONTACT, TASK_PRINCIPAL,
                 POOL_MANAGER, STORE_MANAGER, FUND_REVIEWER, SPECIALIST, ADMIN);
     }

@@ -19,7 +19,4 @@ pagehelper:
   default-count: false
 
 afms:
-  code-length: 6
-  salt-length: 20
-  hash-times: 3
   page-size: 20
