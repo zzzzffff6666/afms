@@ -1,6 +1,7 @@
 package com.bjtu.afms;
 
 import com.bjtu.afms.mapper.LogMapper;
+import com.bjtu.afms.mapper.PermissionMapper;
 import com.bjtu.afms.model.Log;
 import com.bjtu.afms.model.Permission;
 import org.junit.jupiter.api.Test;

@@ -18,5 +18,15 @@ pagehelper:
   # 用于控制默认不带 count 查询的方法中，是否执行 count 查询，这里设置为true后，total会为-1
   default-count: false
 
+sms:
+  access-key-id: xxx
+  access-key-secret: xxx
+  domain: dysmsapi.aliyuncs.com
+  sign-name: 养殖管理系统
+  template-code:
+    verify: SMS_
+    alert: SMS_
+    remind: SMS_
+
 afms:
   page-size: 20
