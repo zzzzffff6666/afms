@@ -12,6 +12,8 @@ public class Log implements Serializable {
 
     private Integer userId;
 
+    private Integer operationId;
+
     private String operation;
 
     private String oldValue;
@@ -22,11 +24,12 @@ public class Log implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Log(Integer id, Integer type, Integer relateId, Integer userId, String operation, String oldValue, String newValue, Date addTime) {
+    public Log(Integer id, Integer type, Integer relateId, Integer userId, Integer operationId, String operation, String oldValue, String newValue, Date addTime) {
         this.id = id;
         this.type = type;
         this.relateId = relateId;
         this.userId = userId;
+        this.operationId = operationId;
         this.operation = operation;
         this.oldValue = oldValue;
         this.newValue = newValue;
@@ -67,6 +70,14 @@ public class Log implements Serializable {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public Integer getOperationId() {
+        return operationId;
+    }
+
+    public void setOperationId(Integer operationId) {
+        this.operationId = operationId;
     }
 
     public String getOperation() {

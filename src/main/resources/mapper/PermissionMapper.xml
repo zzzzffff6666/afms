@@ -5,8 +5,9 @@
     <constructor>
       <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="auth" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="resource" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="relate_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="add_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="add_user" javaType="java.lang.Integer" jdbcType="INTEGER" />
     </constructor>
@@ -70,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, type, resource, add_time, add_user
+    id, user_id, auth, type, relate_id, add_time, add_user
   </sql>
   <select id="selectByExample" parameterType="com.bjtu.afms.model.PermissionExample" resultMap="BaseResultMap">
     select
@@ -103,12 +104,12 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bjtu.afms.model.Permission">
-    insert into permission (id, user_id, type, 
-      resource, add_time, add_user
-      )
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
-      #{resource,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}
-      )
+    insert into permission (id, user_id, auth, 
+      type, relate_id, add_time, 
+      add_user)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{auth,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{relateId,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Permission">
     insert into permission
@@ -119,11 +120,14 @@
       <if test="userId != null">
         user_id,
       </if>
+      <if test="auth != null">
+        auth,
+      </if>
       <if test="type != null">
         type,
       </if>
-      <if test="resource != null">
-        resource,
+      <if test="relateId != null">
+        relate_id,
       </if>
       <if test="addTime != null">
         add_time,
@@ -139,11 +143,14 @@
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
       </if>
+      <if test="auth != null">
+        #{auth,jdbcType=INTEGER},
+      </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
       </if>
-      <if test="resource != null">
-        #{resource,jdbcType=VARCHAR},
+      <if test="relateId != null">
+        #{relateId,jdbcType=INTEGER},
       </if>
       <if test="addTime != null">
         #{addTime,jdbcType=TIMESTAMP},
@@ -168,11 +175,14 @@
       <if test="record.userId != null">
         user_id = #{record.userId,jdbcType=INTEGER},
       </if>
+      <if test="record.auth != null">
+        auth = #{record.auth,jdbcType=INTEGER},
+      </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
       </if>
-      <if test="record.resource != null">
-        resource = #{record.resource,jdbcType=VARCHAR},
+      <if test="record.relateId != null">
+        relate_id = #{record.relateId,jdbcType=INTEGER},
       </if>
       <if test="record.addTime != null">
         add_time = #{record.addTime,jdbcType=TIMESTAMP},
@@ -189,8 +199,9 @@
     update permission
     set id = #{record.id,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=INTEGER},
+      auth = #{record.auth,jdbcType=INTEGER},
       type = #{record.type,jdbcType=INTEGER},
-      resource = #{record.resource,jdbcType=VARCHAR},
+      relate_id = #{record.relateId,jdbcType=INTEGER},
       add_time = #{record.addTime,jdbcType=TIMESTAMP},
       add_user = #{record.addUser,jdbcType=INTEGER}
     <if test="_parameter != null">
@@ -203,11 +214,14 @@
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
       </if>
+      <if test="auth != null">
+        auth = #{auth,jdbcType=INTEGER},
+      </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
       </if>
-      <if test="resource != null">
-        resource = #{resource,jdbcType=VARCHAR},
+      <if test="relateId != null">
+        relate_id = #{relateId,jdbcType=INTEGER},
       </if>
       <if test="addTime != null">
         add_time = #{addTime,jdbcType=TIMESTAMP},
@@ -221,8 +235,9 @@
   <update id="updateByPrimaryKey" parameterType="com.bjtu.afms.model.Permission">
     update permission
     set user_id = #{userId,jdbcType=INTEGER},
+      auth = #{auth,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
-      resource = #{resource,jdbcType=VARCHAR},
+      relate_id = #{relateId,jdbcType=INTEGER},
       add_time = #{addTime,jdbcType=TIMESTAMP},
       add_user = #{addUser,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}

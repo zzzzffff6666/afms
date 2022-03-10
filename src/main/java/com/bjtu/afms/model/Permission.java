@@ -8,9 +8,11 @@ public class Permission implements Serializable {
 
     private Integer userId;
 
+    private Integer auth;
+
     private Integer type;
 
-    private String resource;
+    private Integer relateId;
 
     private Date addTime;
 
@@ -18,11 +20,12 @@ public class Permission implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Permission(Integer id, Integer userId, Integer type, String resource, Date addTime, Integer addUser) {
+    public Permission(Integer id, Integer userId, Integer auth, Integer type, Integer relateId, Date addTime, Integer addUser) {
         this.id = id;
         this.userId = userId;
+        this.auth = auth;
         this.type = type;
-        this.resource = resource;
+        this.relateId = relateId;
         this.addTime = addTime;
         this.addUser = addUser;
     }
@@ -47,6 +50,14 @@ public class Permission implements Serializable {
         this.userId = userId;
     }
 
+    public Integer getAuth() {
+        return auth;
+    }
+
+    public void setAuth(Integer auth) {
+        this.auth = auth;
+    }
+
     public Integer getType() {
         return type;
     }
@@ -55,12 +66,12 @@ public class Permission implements Serializable {
         this.type = type;
     }
 
-    public String getResource() {
-        return resource;
+    public Integer getRelateId() {
+        return relateId;
     }
 
-    public void setResource(String resource) {
-        this.resource = resource == null ? null : resource.trim();
+    public void setRelateId(Integer relateId) {
+        this.relateId = relateId;
     }
 
     public Date getAddTime() {

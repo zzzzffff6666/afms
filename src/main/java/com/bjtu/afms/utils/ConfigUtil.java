@@ -1,4 +1,4 @@
-package com.bjtu.afms.config;
+package com.bjtu.afms.utils;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +10,12 @@ public class ConfigUtil {
 
     @Value("${afms.page-size}")
     private int pageSize;
+
+    @Value("${afms.qr-code.width}")
+    private int qrCodeWidth;
+
+    @Value("${afms.qr-code.height}")
+    private int qrCodeHeight;
 
     @Value("${sms.access-key-id}")
     private String accessKeyId;

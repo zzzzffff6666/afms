@@ -51,4 +51,47 @@ public enum DataType {
         return ListUtil.newArrayList(USER, PERMISSION, CLIENT, STORE, ITEM, POOL, POOL_CYCLE, TASK,
                 PLAN, POOL_PLAN, POOL_TASK, DAILY_TASK, JOB, ALERT, COMMENT, FUND, VERIFY, LOG);
     }
+
+    public static DataType getType(int type) {
+        switch (type) {
+            case 1:
+                return USER;
+            case 2:
+                return PERMISSION;
+            case 3:
+                return CLIENT;
+            case 4:
+                return STORE;
+            case 5:
+                return ITEM;
+            case 6:
+                return POOL;
+            case 7:
+                return POOL_CYCLE;
+            case 8:
+                return TASK;
+            case 9:
+                return PLAN;
+            case 10:
+                return POOL_PLAN;
+            case 11:
+                return POOL_TASK;
+            case 12:
+                return DAILY_TASK;
+            case 13:
+                return JOB;
+            case 14:
+                return ALERT;
+            case 15:
+                return COMMENT;
+            case 16:
+                return FUND;
+            case 17:
+                return VERIFY;
+            case 18:
+                return LOG;
+            default:
+                return null;
+        }
+    }
 }

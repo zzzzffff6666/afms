@@ -345,6 +345,66 @@ public class LogExample {
             return (Criteria) this;
         }
 
+        public Criteria andOperationIdIsNull() {
+            addCriterion("operation_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdIsNotNull() {
+            addCriterion("operation_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdEqualTo(Integer value) {
+            addCriterion("operation_id =", value, "operationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdNotEqualTo(Integer value) {
+            addCriterion("operation_id <>", value, "operationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdGreaterThan(Integer value) {
+            addCriterion("operation_id >", value, "operationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("operation_id >=", value, "operationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdLessThan(Integer value) {
+            addCriterion("operation_id <", value, "operationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdLessThanOrEqualTo(Integer value) {
+            addCriterion("operation_id <=", value, "operationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdIn(List<Integer> values) {
+            addCriterion("operation_id in", values, "operationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdNotIn(List<Integer> values) {
+            addCriterion("operation_id not in", values, "operationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdBetween(Integer value1, Integer value2) {
+            addCriterion("operation_id between", value1, value2, "operationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperationIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("operation_id not between", value1, value2, "operationId");
+            return (Criteria) this;
+        }
+
         public Criteria andOperationIsNull() {
             addCriterion("operation is null");
             return (Criteria) this;

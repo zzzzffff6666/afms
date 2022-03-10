@@ -21,14 +21,6 @@ public class LogService {
         return logMapper.insertSelective(log);
     }
 
-//    public int deleteLog(int logId) {
-//        return logMapper.deleteByPrimaryKey(logId);
-//    }
-//
-//    public int updateLog(Log log) {
-//        return logMapper.updateByPrimaryKeySelective(log);
-//    }
-
     public Log selectLog(int logId) {
         return logMapper.selectByPrimaryKey(logId);
     }
@@ -52,8 +44,8 @@ public class LogService {
         if (log.getUserId() != null) {
             criteria.andUserIdEqualTo(log.getUserId());
         }
-        if (log.getOperation() != null) {
-            criteria.andOperationEqualTo(log.getOperation());
+        if (log.getOperationId() != null) {
+            criteria.andOperationIdEqualTo(log.getOperationId());
         }
         if (timeParam != null) {
             Date start = timeParam.get("start");

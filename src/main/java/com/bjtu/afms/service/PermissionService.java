@@ -23,11 +23,12 @@ public class PermissionService {
         return count > 0;
     }
 
-    public boolean isOwner(int userId, String resource) {
+    public boolean isOwner(int userId, int type, int relateId) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andUserIdEqualTo(userId)
-                .andTypeEqualTo(AuthType.OWNER.getId())
-                .andResourceEqualTo(resource);
+                .andAuthEqualTo(AuthType.OWNER.getId())
+                .andTypeEqualTo(type)
+                .andRelateIdEqualTo(relateId);
         long count = permissionMapper.countByExample(example);
         return count > 0;
     }
@@ -53,11 +54,14 @@ public class PermissionService {
         if (permission.getUserId() != null) {
             criteria.andUserIdEqualTo(permission.getUserId());
         }
+        if (permission.getAuth() != null) {
+            criteria.andAuthEqualTo(permission.getAuth());
+        }
         if (permission.getType() != null) {
             criteria.andTypeEqualTo(permission.getType());
         }
-        if (permission.getResource() != null) {
-            criteria.andResourceEqualTo(permission.getResource());
+        if (permission.getRelateId() != null) {
+            criteria.andRelateIdEqualTo(permission.getRelateId());
         }
         return permissionMapper.selectByExample(example);
     }

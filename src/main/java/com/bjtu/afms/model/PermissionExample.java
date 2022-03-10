@@ -225,6 +225,66 @@ public class PermissionExample {
             return (Criteria) this;
         }
 
+        public Criteria andAuthIsNull() {
+            addCriterion("auth is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthIsNotNull() {
+            addCriterion("auth is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthEqualTo(Integer value) {
+            addCriterion("auth =", value, "auth");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthNotEqualTo(Integer value) {
+            addCriterion("auth <>", value, "auth");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthGreaterThan(Integer value) {
+            addCriterion("auth >", value, "auth");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthGreaterThanOrEqualTo(Integer value) {
+            addCriterion("auth >=", value, "auth");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthLessThan(Integer value) {
+            addCriterion("auth <", value, "auth");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthLessThanOrEqualTo(Integer value) {
+            addCriterion("auth <=", value, "auth");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthIn(List<Integer> values) {
+            addCriterion("auth in", values, "auth");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthNotIn(List<Integer> values) {
+            addCriterion("auth not in", values, "auth");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthBetween(Integer value1, Integer value2) {
+            addCriterion("auth between", value1, value2, "auth");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuthNotBetween(Integer value1, Integer value2) {
+            addCriterion("auth not between", value1, value2, "auth");
+            return (Criteria) this;
+        }
+
         public Criteria andTypeIsNull() {
             addCriterion("type is null");
             return (Criteria) this;
@@ -285,73 +345,63 @@ public class PermissionExample {
             return (Criteria) this;
         }
 
-        public Criteria andResourceIsNull() {
-            addCriterion("resource is null");
+        public Criteria andRelateIdIsNull() {
+            addCriterion("relate_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andResourceIsNotNull() {
-            addCriterion("resource is not null");
+        public Criteria andRelateIdIsNotNull() {
+            addCriterion("relate_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andResourceEqualTo(String value) {
-            addCriterion("resource =", value, "resource");
+        public Criteria andRelateIdEqualTo(Integer value) {
+            addCriterion("relate_id =", value, "relateId");
             return (Criteria) this;
         }
 
-        public Criteria andResourceNotEqualTo(String value) {
-            addCriterion("resource <>", value, "resource");
+        public Criteria andRelateIdNotEqualTo(Integer value) {
+            addCriterion("relate_id <>", value, "relateId");
             return (Criteria) this;
         }
 
-        public Criteria andResourceGreaterThan(String value) {
-            addCriterion("resource >", value, "resource");
+        public Criteria andRelateIdGreaterThan(Integer value) {
+            addCriterion("relate_id >", value, "relateId");
             return (Criteria) this;
         }
 
-        public Criteria andResourceGreaterThanOrEqualTo(String value) {
-            addCriterion("resource >=", value, "resource");
+        public Criteria andRelateIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("relate_id >=", value, "relateId");
             return (Criteria) this;
         }
 
-        public Criteria andResourceLessThan(String value) {
-            addCriterion("resource <", value, "resource");
+        public Criteria andRelateIdLessThan(Integer value) {
+            addCriterion("relate_id <", value, "relateId");
             return (Criteria) this;
         }
 
-        public Criteria andResourceLessThanOrEqualTo(String value) {
-            addCriterion("resource <=", value, "resource");
+        public Criteria andRelateIdLessThanOrEqualTo(Integer value) {
+            addCriterion("relate_id <=", value, "relateId");
             return (Criteria) this;
         }
 
-        public Criteria andResourceLike(String value) {
-            addCriterion("resource like", value, "resource");
+        public Criteria andRelateIdIn(List<Integer> values) {
+            addCriterion("relate_id in", values, "relateId");
             return (Criteria) this;
         }
 
-        public Criteria andResourceNotLike(String value) {
-            addCriterion("resource not like", value, "resource");
+        public Criteria andRelateIdNotIn(List<Integer> values) {
+            addCriterion("relate_id not in", values, "relateId");
             return (Criteria) this;
         }
 
-        public Criteria andResourceIn(List<String> values) {
-            addCriterion("resource in", values, "resource");
+        public Criteria andRelateIdBetween(Integer value1, Integer value2) {
+            addCriterion("relate_id between", value1, value2, "relateId");
             return (Criteria) this;
         }
 
-        public Criteria andResourceNotIn(List<String> values) {
-            addCriterion("resource not in", values, "resource");
-            return (Criteria) this;
-        }
-
-        public Criteria andResourceBetween(String value1, String value2) {
-            addCriterion("resource between", value1, value2, "resource");
-            return (Criteria) this;
-        }
-
-        public Criteria andResourceNotBetween(String value1, String value2) {
-            addCriterion("resource not between", value1, value2, "resource");
+        public Criteria andRelateIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("relate_id not between", value1, value2, "relateId");
             return (Criteria) this;
         }
 
