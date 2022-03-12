@@ -15,13 +15,13 @@ public class Result {
     public static Result ok(Object data) {
         Result result = new Result();
         result.setCode(SUCCESS_CODE);
-        result.setMsg(APIMessage.SUCCESS);
+        result.setMsg(APIError.SUCCESS);
         result.setData(data);
         return result;
     }
 
     public static Result error() {
-        return error(APIMessage.FAILED);
+        return error(APIError.FAILED);
     }
 
     public static Result error(String msg) {

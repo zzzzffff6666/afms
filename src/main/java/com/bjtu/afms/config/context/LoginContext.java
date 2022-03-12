@@ -8,7 +8,7 @@ public class LoginContext {
     private static ThreadLocal<UserQO> userInfo = new ThreadLocal<>();
 
     public static void setUser(UserQO user) {
-        log.info("当前线程 --- [{}] --- 设置用户 {} ", Thread.currentThread().getName(), user);
+        log.debug("当前线程 --- [{}] --- 设置用户 {} ", Thread.currentThread().getName(), user);
         userInfo.set(user);
     }
 

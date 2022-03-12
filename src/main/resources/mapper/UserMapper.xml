@@ -75,17 +75,31 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, phone, password, salt, name, card_id, status, add_time, add_user, mod_time, mod_user
+    id, phone, name, card_id, status, add_time, add_user, mod_time, mod_user
   </sql>
-  <sql id="User_Column_List">
-    id, phone, name
+  <sql id="Login_Column_List">
+    id, phone, password, salt, name
   </sql>
+  <select id="selectForLogin" parameterType="com.bjtu.afms.model.UserExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Login_Column_List" />
+    from user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
   <select id="selectByExample" parameterType="com.bjtu.afms.model.UserExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
-    <include refid="User_Column_List" />
+    <include refid="Base_Column_List" />
     from user
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />

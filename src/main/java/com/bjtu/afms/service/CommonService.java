@@ -1,10 +1,9 @@
 package com.bjtu.afms.service;
 
 import com.alibaba.fastjson.JSON;
-import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.exception.BizException;
-import com.bjtu.afms.http.APIMessage;
+import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.mapper.*;
 import com.bjtu.afms.model.*;
 import org.springframework.stereotype.Service;
@@ -320,7 +319,7 @@ public class CommonService {
                 fund.setId(log.getRelateId());
                 return fundMapper.updateByPrimaryKeySelective(fund) >= 1;
             default:
-                throw new BizException(APIMessage.OPERATION_CANNOT_ROLLBACK);
+                throw new BizException(APIError.OPERATION_CANNOT_ROLLBACK);
         }
     }
 }

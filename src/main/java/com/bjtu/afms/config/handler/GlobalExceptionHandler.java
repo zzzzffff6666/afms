@@ -1,7 +1,7 @@
 package com.bjtu.afms.config.handler;
 
 import com.bjtu.afms.exception.BizException;
-import com.bjtu.afms.http.APIMessage;
+import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -23,13 +23,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public Result exceptionHandler(HttpServletRequest req, HttpRequestMethodNotSupportedException e) {
         log.error("请求方法不支持！原因是:", e);
-        return Result.error(APIMessage.REQUEST_METHOD_SUPPORT_ERROR);
+        return Result.error(APIError.REQUEST_METHOD_SUPPORT_ERROR);
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class, BindException.class, })
     public Result exceptionHandler(HttpServletRequest req, MissingRequestValueException e) {
         log.error("请求参数异常！原因是:", e);
-        return Result.error(APIMessage.PARAMETER_ERROR);
+        return Result.error(APIError.PARAMETER_ERROR);
     }
 
     /**
@@ -47,6 +47,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public Result exceptionHandler(HttpServletRequest req, Exception e) {
         log.error("未知异常！原因是:", e);
-        return Result.error(APIMessage.INTERNAL_SERVER_ERROR);
+        return Result.error(APIError.INTERNAL_SERVER_ERROR);
     }
 }

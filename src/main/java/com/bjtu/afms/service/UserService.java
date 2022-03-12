@@ -36,7 +36,7 @@ public class UserService {
     public User selectUserForLogin(String phone) {
         UserExample example = new UserExample();
         example.createCriteria().andPhoneEqualTo(phone).andStatusEqualTo(UserStatus.WORK.getId());
-        List<User> userList = userMapper.selectByExample(example);
+        List<User> userList = userMapper.selectForLogin(example);
         return CollectionUtils.isEmpty(userList) ? null : userList.get(0);
     }
 
@@ -56,5 +56,11 @@ public class UserService {
             criteria.andStatusEqualTo(user.getStatus());
         }
         return userMapper.selectByExample(example);
+    }
+
+    public boolean exist(String phone) {
+        UserExample example = new UserExample();
+        example.createCriteria().andPhoneEqualTo(phone);
+        return userMapper.countByExample(example) > 0;
     }
 }
