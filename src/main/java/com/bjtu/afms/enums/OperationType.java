@@ -1,5 +1,7 @@
 package com.bjtu.afms.enums;
 
+import java.util.Arrays;
+
 public enum OperationType {
     // 用户相关 1xx
     INSERT_USER(101, "insert:user", "用户登记"),
@@ -97,9 +99,10 @@ public enum OperationType {
     UPDATE_POOL_TASK_STATUS(1104, "update:pool_task:status", "修改养殖任务状态"),
     UPDATE_POOL_TASK_PRE_TIME(1105, "update:pool_task:pre_time", "修改养殖任务预期时间"),
     BATCH_INSERT_POOL_TASK(1106, "batch_insert:pool_task", "批量新建养殖任务"),
-    SELECT_POOL_TASK_LIST(1107, "select:pool_task:list", "查询养殖池任务列表"),
-    SELECT_POOL_TASK_INFO(1108, "select:pool_task:info", "查询养殖池任务信息"),
-    SELECT_MY_POOL_TASK_LIST(1109, "select:my_pool_task:list", "查询本人的养殖池任务"),
+    BATCH_DELETE_POOL_TASK(1107, "batch_delete:pool_task", "批量删除养殖任务"),
+    SELECT_POOL_TASK_LIST(1108, "select:pool_task:list", "查询养殖池任务列表"),
+    SELECT_POOL_TASK_INFO(1109, "select:pool_task:info", "查询养殖池任务信息"),
+    SELECT_MY_POOL_TASK_LIST(1110, "select:my_pool_task:list", "查询本人的养殖池任务"),
 
     // 日常任务相关 12xx
     INSERT_DAILY_TASK(1201, "insert:daily_task", "新建日常任务"),
@@ -108,9 +111,10 @@ public enum OperationType {
     UPDATE_DAILY_TASK_STATUS(1204, "update:daily_task:status", "修改日常任务状态"),
     UPDATE_DAILY_TASK_PRE_TIME(1205, "update:daily_task:pre_time", "修改日常任务预期时间"),
     BATCH_INSERT_DAILY_TASK(1206, "batch_insert:daily_task", "批量新建日常任务"),
-    SELECT_DAILY_TASK_LIST(1107, "select:pool_task:list", "查询日常任务列表"),
-    SELECT_DAILY_TASK_INFO(1108, "select:pool_task:info", "查询日常任务信息"),
-    SELECT_MY_DAILY_TASK_LIST(1109, "select:my_pool_task:list", "查询本人的日常任务列表"),
+    BATCH_DELETE_DAILY_TASK(1207, "batch_delete:daily_task", "批量删除日常任务"),
+    SELECT_DAILY_TASK_LIST(1208, "select:pool_task:list", "查询日常任务列表"),
+    SELECT_DAILY_TASK_INFO(1209, "select:pool_task:info", "查询日常任务信息"),
+    SELECT_MY_DAILY_TASK_LIST(1210, "select:my_pool_task:list", "查询本人的日常任务列表"),
 
     // 工作相关 13xx
     INSERT_JOB(1301, "insert:job", "新建工作"),
@@ -119,9 +123,10 @@ public enum OperationType {
     UPDATE_JOB_STATUS(1304, "update:job:status", "修改工作状态"),
     UPDATE_JOB_USER(1305, "update:job:status", "修改工作执行人"),
     BATCH_INSERT_JOB(1306, "batch_insert:job", "批量新建工作"),
-    SELECT_JOB_LIST(1307, "select:job:list", "查询工作列表"),
-    SELECT_JOB_INFO(1308, "select:job:info", "查询工作信息"),
-    SELECT_MY_JOB_LIST(1309, "select:my_job:list", "查询本人的工作列表"),
+    BATCH_DELETE_JOB(1307, "batch_delete:job", "批量删除工作"),
+    SELECT_JOB_LIST(1308, "select:job:list", "查询工作列表"),
+    SELECT_JOB_INFO(1309, "select:job:info", "查询工作信息"),
+    SELECT_MY_JOB_LIST(1310, "select:my_job:list", "查询本人的工作列表"),
 
     // 告警相关 14xx
     INSERT_ALERT(1401, "insert:alert", "新建告警"),
@@ -181,5 +186,12 @@ public enum OperationType {
 
     public String getComment() {
         return comment;
+    }
+
+    public static OperationType findOperationType(int id) {
+        return Arrays.stream(OperationType.values())
+                .filter(operationType -> operationType.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 }

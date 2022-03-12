@@ -4,6 +4,7 @@ import com.bjtu.afms.config.annotation.AuthCheck;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.VerifyStatus;
+import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIMessage;
 import com.bjtu.afms.http.Result;
 import com.bjtu.afms.model.Log;
@@ -63,16 +64,15 @@ public class PublicAPIController {
 
     @AuthCheck(auth = {AuthType.ADMIN}, owner = true, data = DataType.LOG)
     @PostMapping("/operation/rollback/{logId}")
-    public Result rollbackOperation(@PathVariable("logId") int logId) {
+    public Result rollbackOperation(@PathVariable("logId") int logId) throws BizException {
         Log log = logService.selectLog(logId);
         if (log == null) {
             return Result.error(APIMessage.NOT_FUND);
         }
-        Object resource = commonService.getResource(log.getType(), log.getRelateId());
-        if (resource == null) {
-            return Result.error(APIMessage.RESOURCE_INVALID);
+        if (commonService.rollbackOperation(log)) {
+            return Result.ok();
         }
-        return Result.ok();
+        return Result.error(APIMessage.OPERATION_ROLLBACK_FAILED);
     }
 
     @GetMapping("/QRCode/get")

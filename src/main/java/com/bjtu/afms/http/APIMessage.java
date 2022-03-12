@@ -11,4 +11,6 @@ public interface APIMessage {
     String SERVER_BUSY = "服务器正忙，请稍后再试!";
     String REQUEST_METHOD_SUPPORT_ERROR = "请求方法不支持!";
     String USER_NOT_REGISTER = "用户未注册，请联系管理员注册";
+    String OPERATION_CANNOT_ROLLBACK = "该操作不可回滚";
+    String OPERATION_ROLLBACK_FAILED = "操作回滚失败";
 }
