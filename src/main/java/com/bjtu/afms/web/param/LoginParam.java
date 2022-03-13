@@ -8,6 +8,5 @@ import javax.validation.constraints.Pattern;
 public class LoginParam {
     @Pattern(regexp = "^1[3-9]\\d{9}$")
     private String phone;
-
     private String credential;
 }

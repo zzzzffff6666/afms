@@ -9,9 +9,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ModifyPasswordParam {
     private String passwordNew;
-
     private String credential;
-
     @NotNull
     @Max(2)
     @Min(1)

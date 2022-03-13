@@ -59,4 +59,11 @@ public enum DataType {
                 .findFirst()
                 .orElse(null);
     }
+
+    public static DataType findDataType(String name) {
+        return Arrays.stream(DataType.values())
+                .filter(dataType -> dataType.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
 }

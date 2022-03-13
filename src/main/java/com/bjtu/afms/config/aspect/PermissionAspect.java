@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.bjtu.afms.config.annotation.AuthCheck;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.AuthType;
+import com.bjtu.afms.exception.BizException;
+import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -34,12 +36,14 @@ public class PermissionAspect {
         if (hasPermission(objs[0], authCheck)) {
             try {
                 result = pjp.proceed();
+                return result;
             } catch (Throwable t) {
                 log.error(t.getMessage());
                 throw t;
             }
+        } else {
+            throw new BizException(APIError.NO_PERMISSION);
         }
-        return result;
     }
 
     public boolean hasPermission(Object object, AuthCheck authCheck) {

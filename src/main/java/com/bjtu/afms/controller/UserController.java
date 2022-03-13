@@ -10,12 +10,11 @@ import com.bjtu.afms.model.User;
 import com.bjtu.afms.web.param.LoginParam;
 import com.bjtu.afms.web.param.ModifyPasswordParam;
 import com.bjtu.afms.web.param.ModifyPhoneParam;
-import com.bjtu.afms.web.param.UserQueryParam;
+import com.bjtu.afms.web.param.query.UserQueryParam;
 import com.bjtu.afms.web.qo.UserQO;
 import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.service.VerifyService;
 import com.bjtu.afms.utils.CommonUtil;
-import com.github.pagehelper.PageInfo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

@@ -28,5 +28,6 @@ public interface APIError {
     String OPERATION_CANNOT_ROLLBACK = "该操作不可回滚";
     String OPERATION_ROLLBACK_FAILED = "操作回滚失败";
 
-
+    String PERMISSION_ALREADY_EXIST = "用户已有该权限";
+    String NO_PERMISSION = "无权限";
 }

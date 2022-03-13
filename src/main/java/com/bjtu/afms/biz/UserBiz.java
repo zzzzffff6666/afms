@@ -4,7 +4,7 @@ import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.model.User;
 import com.bjtu.afms.web.param.ModifyPasswordParam;
 import com.bjtu.afms.web.param.ModifyPhoneParam;
-import com.bjtu.afms.web.param.UserQueryParam;
+import com.bjtu.afms.web.param.query.UserQueryParam;
 import com.github.pagehelper.PageInfo;
 
 import javax.servlet.http.HttpSession;

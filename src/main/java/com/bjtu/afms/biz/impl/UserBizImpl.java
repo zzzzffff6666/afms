@@ -4,7 +4,6 @@ import com.bjtu.afms.biz.UserBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
-import com.bjtu.afms.http.Result;
 import com.bjtu.afms.model.User;
 import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.service.VerifyService;
@@ -12,8 +11,7 @@ import com.bjtu.afms.utils.CommonUtil;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.web.param.ModifyPasswordParam;
 import com.bjtu.afms.web.param.ModifyPhoneParam;
-import com.bjtu.afms.web.param.UserQueryParam;
-import com.bjtu.afms.web.qo.UserQO;
+import com.bjtu.afms.web.param.query.UserQueryParam;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Component;
@@ -22,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 @Component
 public class UserBizImpl implements UserBiz {
