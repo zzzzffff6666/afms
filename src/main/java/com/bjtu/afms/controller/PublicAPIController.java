@@ -59,7 +59,7 @@ public class PublicAPIController {
             verifyService.insertOrUpdate(verify);
             return Result.ok();
         }
-        return Result.error(APIError.USER_NOT_REGISTER);
+        return Result.error(APIError.PHONE_ERROR);
     }
 
     @AuthCheck(auth = {AuthType.ADMIN}, owner = true, data = DataType.LOG)

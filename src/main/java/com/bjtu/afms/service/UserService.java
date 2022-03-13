@@ -4,6 +4,7 @@ import com.bjtu.afms.enums.UserStatus;
 import com.bjtu.afms.mapper.UserMapper;
 import com.bjtu.afms.model.User;
 import com.bjtu.afms.model.UserExample;
+import com.bjtu.afms.web.param.UserQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -29,6 +30,14 @@ public class UserService {
         return userMapper.updateByPrimaryKeySelective(user);
     }
 
+    public int updatePassword(int id, String password, String salt) {
+        User user = new User();
+        user.setId(id);
+        user.setSalt(salt);
+        user.setPassword(password);
+        return updateUser(user);
+    }
+
     public User selectUser(int userId) {
         return userMapper.selectByPrimaryKey(userId);
     }
@@ -40,20 +49,20 @@ public class UserService {
         return CollectionUtils.isEmpty(userList) ? null : userList.get(0);
     }
 
-    public List<User> selectUserList(User user, String orderByClause) {
+    public List<User> selectUserList(UserQueryParam param) {
         UserExample example = new UserExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         UserExample.Criteria criteria = example.createCriteria();
-        if (StringUtils.isNotBlank(user.getPhone())) {
-            criteria.andPhoneLike(user.getPhone() + "%");
+        if (StringUtils.isNotBlank(param.getPhone())) {
+            criteria.andPhoneLike(param.getPhone() + "%");
         }
-        if (StringUtils.isNotBlank(user.getName())) {
-            criteria.andNameLike("%" + user.getName() + "%");
+        if (StringUtils.isNotBlank(param.getName())) {
+            criteria.andNameLike("%" + param.getName() + "%");
         }
-        if (user.getStatus() != null) {
-            criteria.andStatusEqualTo(user.getStatus());
+        if (param.getStatus() != null) {
+            criteria.andStatusEqualTo(param.getStatus());
         }
         return userMapper.selectByExample(example);
     }

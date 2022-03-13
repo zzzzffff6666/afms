@@ -12,6 +12,7 @@ public class CommonUtil {
     private final static int codeLength = 6;
     private final static int saltLength = 20;
     private final static int hashTimes = 3;
+    private final static int passwordLength = 16;
 
     public static String generateVerifyCode() {
         return RandomStringUtils.random(codeLength, false, true);
@@ -19,6 +20,10 @@ public class CommonUtil {
 
     public static String generateSalt() {
         return RandomStringUtils.random(saltLength, true, true);
+    }
+
+    public static String generatePassword() {
+        return RandomStringUtils.random(passwordLength, true, true);
     }
 
     public static String encode(String origin, String salt) throws NoSuchAlgorithmException {

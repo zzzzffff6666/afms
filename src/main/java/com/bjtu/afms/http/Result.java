@@ -1,5 +1,8 @@
 package com.bjtu.afms.http;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Result {
     private static final int SUCCESS_CODE = 0;
     private static final int FAILED_CODE = 1;
@@ -10,6 +13,12 @@ public class Result {
 
     public static Result ok() {
         return ok(null);
+    }
+
+    public static Result ok(String key, Object value) {
+        Map<String, Object> data = new HashMap<>();
+        data.put(key, value);
+        return ok(data);
     }
 
     public static Result ok(Object data) {
