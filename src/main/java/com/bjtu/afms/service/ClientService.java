@@ -3,6 +3,7 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.ClientMapper;
 import com.bjtu.afms.model.Client;
 import com.bjtu.afms.model.ClientExample;
+import com.bjtu.afms.web.param.query.ClientQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -31,33 +32,16 @@ public class ClientService {
         return clientMapper.selectByPrimaryKey(clientId);
     }
 
-    public List<Client> selectClientByContent(String content, String orderByClause) {
+    public List<Client> selectClientByContent(ClientQueryParam param) {
         ClientExample example = new ClientExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
-        }
-        if (StringUtils.isNotBlank(content)) {
-            example.createCriteria().andNameLike("%" + content + "%");
-            example.or().andPhoneLike(content + "%");
-            example.or().andNameEpLike("%" + content + "%");
-        }
-        return clientMapper.selectByExample(example);
-    }
-
-    public List<Client> selectClientList(Client client, String orderByClause) {
-        ClientExample example = new ClientExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         ClientExample.Criteria criteria = example.createCriteria();
-        if (StringUtils.isNotBlank(client.getName())) {
-            criteria.andNameLike("%" + client.getName() + "%");
-        }
-        if (StringUtils.isNotBlank(client.getPhone())) {
-            criteria.andPhoneLike(client.getPhone() + "%");
-        }
-        if (StringUtils.isNotBlank(client.getNameEp())) {
-            criteria.andNameEpLike("%" + client.getNameEp() + "%");
+        if (StringUtils.isNotBlank(param.getContent())) {
+            criteria.andNameLike("%" + param.getContent() + "%");
+            example.or().andPhoneLike(param.getContent() + "%");
+            example.or().andNameEpLike("%" + param.getContent() + "%");
         }
         return clientMapper.selectByExample(example);
     }

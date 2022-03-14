@@ -1,11 +1,11 @@
-package com.bjtu.afms.web.qo;
+package com.bjtu.afms.config.context;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserQO {
+public class LoginUser {
     private Integer id;
     private String name;
     private String phone;

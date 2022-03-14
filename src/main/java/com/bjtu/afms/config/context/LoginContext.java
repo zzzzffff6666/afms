@@ -1,18 +1,17 @@
 package com.bjtu.afms.config.context;
 
-import com.bjtu.afms.web.qo.UserQO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class LoginContext {
-    private static ThreadLocal<UserQO> userInfo = new ThreadLocal<>();
+    private static ThreadLocal<LoginUser> userInfo = new ThreadLocal<>();
 
-    public static void setUser(UserQO user) {
+    public static void setUser(LoginUser user) {
         log.debug("当前线程 --- [{}] --- 设置用户 {} ", Thread.currentThread().getName(), user);
         userInfo.set(user);
     }
 
-    public static UserQO getUser() {
+    public static LoginUser getUser() {
         return userInfo.get();
     }
 

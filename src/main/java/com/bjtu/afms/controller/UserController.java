@@ -11,7 +11,7 @@ import com.bjtu.afms.web.param.LoginParam;
 import com.bjtu.afms.web.param.ModifyPasswordParam;
 import com.bjtu.afms.web.param.ModifyPhoneParam;
 import com.bjtu.afms.web.param.query.UserQueryParam;
-import com.bjtu.afms.web.qo.UserQO;
+import com.bjtu.afms.config.context.LoginUser;
 import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.service.VerifyService;
 import com.bjtu.afms.utils.CommonUtil;
@@ -41,7 +41,7 @@ public class UserController {
             return Result.error(APIError.LOGIN_ERROR);
         }
         if (CommonUtil.matches(param.getCredential(), record.getSalt(), record.getPassword())) {
-            UserQO user = new UserQO(record.getId(), record.getName(), record.getPhone());
+            LoginUser user = new LoginUser(record.getId(), record.getName(), record.getPhone());
             session.setAttribute("user", user);
             return Result.ok();
         } else {
@@ -57,7 +57,7 @@ public class UserController {
         }
         boolean suc = verifyService.matchVerify(param.getPhone(), param.getCredential());
         if (suc) {
-            UserQO user = new UserQO(record.getId(), record.getName(), record.getPhone());
+            LoginUser user = new LoginUser(record.getId(), record.getName(), record.getPhone());
             session.setAttribute("user", user);
             return Result.ok();
         } else {
@@ -79,9 +79,9 @@ public class UserController {
     @PostMapping("/my/phone/modify")
     public Result modifySelfPhone(@RequestBody @Validated ModifyPhoneParam param, HttpSession session) {
         if (userBiz.modifyPhone(param, session)) {
-            UserQO userQO = LoginContext.getUser();
-            userQO.setPhone(param.getPhoneNew());
-            session.setAttribute("user", userQO);
+            LoginUser loginUser = LoginContext.getUser();
+            loginUser.setPhone(param.getPhoneNew());
+            session.setAttribute("user", loginUser);
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

@@ -6,12 +6,14 @@ import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
+import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.model.User;
 import com.bjtu.afms.service.PermissionService;
 import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.web.param.query.PermissionQueryParam;
+import com.bjtu.afms.web.qo.UserPermission;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +38,7 @@ public class PermissionBizImpl implements PermissionBiz {
     private ConfigUtil configUtil;
 
     @Override
-    public PageInfo<User> getResourceOwnerList(String type, int relateId, Integer page) {
+    public Page<User> getResourceOwnerList(String type, int relateId, Integer page) {
         if (page == null) {
             page = 0;
         }
@@ -44,13 +47,14 @@ public class PermissionBizImpl implements PermissionBiz {
         param.setType(dataType.getId());
         param.setRelateId(relateId);
         param.setAuth(AuthType.OWNER.getId());
-        List<Permission> permissionList = permissionService.selectPermissionList(param);
-        List<Integer> userIdList = permissionList.stream().map(Permission::getUserId).collect(Collectors.toList());
+
+        PageHelper.startPage(page, configUtil.getPageSize());
+        PageInfo<Permission> pageInfo = new PageInfo<>(permissionService.selectPermissionList(param));
+        List<Integer> userIdList = pageInfo.getList().stream().map(Permission::getUserId).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(userIdList)) {
             return null;
         } else {
-            PageHelper.startPage(page, configUtil.getPageSize());
-            return new PageInfo<>(userService.selectUserListByIdList(userIdList));
+            return new Page<>(pageInfo, userService.selectUserListByIdList(userIdList));
         }
     }
 
@@ -63,14 +67,21 @@ public class PermissionBizImpl implements PermissionBiz {
         param.setRelateId(relateId);
         List<Permission> permissionList = permissionService.selectPermissionList(param);
         if (CollectionUtils.isEmpty(permissionList)) {
-            Permission permission = new Permission();
-            permission.setAuth(AuthType.OWNER.getId());
-            permission.setType(type);
-            permission.setRelateId(relateId);
-            permission.setUserId(userId);
-            return permissionService.insertPermission(permission) == 1;
-        } else {
             throw new BizException(APIError.NO_PERMISSION);
+        } else {
+            param.setUserId(userId);
+            permissionList = permissionService.selectPermissionList(param);
+            if (CollectionUtils.isEmpty(permissionList)) {
+                Permission permission = new Permission();
+                permission.setAuth(AuthType.OWNER.getId());
+                permission.setType(type);
+                permission.setRelateId(relateId);
+                permission.setUserId(userId);
+                return permissionService.insertPermission(permission) == 1;
+            } else {
+                throw new BizException(APIError.PERMISSION_ALREADY_EXIST);
+            }
+
         }
     }
 
@@ -101,26 +112,44 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
-    public PageInfo<Permission> getUserPermissionList(int userId, Integer page) {
+    public Page<Permission> getUserPermissionList(int userId, Integer page) {
         if (page == null) {
             page = 0;
         }
         PermissionQueryParam param = new PermissionQueryParam();
         param.setUserId(userId);
         PageHelper.startPage(page, configUtil.getPageSize());
-        return new PageInfo<>(permissionService.selectPermissionList(param));
+        PageInfo<Permission> pageInfo = new PageInfo<>(permissionService.selectPermissionList(param));
+        return new Page<>(pageInfo);
     }
 
     @Override
-    public PageInfo<User> getPermissionUserList(List<Integer> auths, Integer page) {
+    public Page<UserPermission> getPermissionUserList(List<Integer> auths, Integer page) {
         if (CollectionUtils.isEmpty(auths)) {
             return null;
         } else {
             auths.removeIf(auth -> auth == AuthType.OWNER.getId());
-            List<Integer> userIdList = permissionService.selectPermissionListByAuth(auths)
-                    .stream().map(Permission::getUserId).collect(Collectors.toList());
             PageHelper.startPage(page, configUtil.getPageSize());
-            return new PageInfo<>(userService.selectUserListByIdList(userIdList));
+            PageInfo<Permission> pageInfo = new PageInfo<>(permissionService.selectPermissionListByAuth(auths));
+            List<Integer> userIdList = pageInfo.getList()
+                    .stream()
+                    .map(Permission::getUserId)
+                    .distinct()
+                    .collect(Collectors.toList());
+            List<User> userList = userService.selectUserListByIdList(userIdList);
+            List<UserPermission> userPermissionList = new ArrayList<>();
+            for (Permission permission : pageInfo.getList()) {
+                UserPermission userPermission = new UserPermission();
+                userPermission.setPermission(permission);
+                for (User user : userList) {
+                    if (user.getId().equals(permission.getUserId())) {
+                        userPermission.setUser(user);
+                        break;
+                    }
+                }
+                userPermissionList.add(userPermission);
+            }
+            return new Page<>(pageInfo, userPermissionList);
         }
     }
 }

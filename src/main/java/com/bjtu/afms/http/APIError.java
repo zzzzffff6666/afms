@@ -2,7 +2,6 @@ package com.bjtu.afms.http;
 
 public interface APIError {
     String SUCCESS = "成功!";
-
     String FAILED = "失败!";
 
     String INTERNAL_SERVER_ERROR = "服务器内部错误!";
@@ -14,7 +13,6 @@ public interface APIError {
     String INSERT_ERROR = "新建资源失败";
     String DELETE_ERROR = "删除资源失败";
     String UPDATE_ERROR = "更新资源失败";
-    String SELECT_ERROR = "查找资源失败";
 
     String NOT_LOGIN = "未登录!";
     String USER_NOT_REGISTER = "用户未注册，请联系管理员注册";

@@ -4,6 +4,7 @@ import com.bjtu.afms.biz.UserBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
+import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.User;
 import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.service.VerifyService;
@@ -34,12 +35,13 @@ public class UserBizImpl implements UserBiz {
     private ConfigUtil configUtil;
 
     @Override
-    public PageInfo<User> getUserList(UserQueryParam param, Integer page) {
+    public Page<User> getUserList(UserQueryParam param, Integer page) {
         if (page == null) {
             page = 0;
         }
         PageHelper.startPage(page, configUtil.getPageSize());
-        return new PageInfo<>(userService.selectUserList(param));
+        PageInfo<User> pageInfo = new PageInfo<>(userService.selectUserList(param));
+        return new Page<>(pageInfo);
     }
 
     @Override
