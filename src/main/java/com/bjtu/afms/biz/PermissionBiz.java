@@ -18,4 +18,6 @@ public interface PermissionBiz {
     Page<Permission> getUserPermissionList(int userId, Integer page);
 
     Page<UserPermission> getPermissionUserList(List<Integer> auths, Integer page);
+
+    boolean initResourceOwner(int type, int relateId, int userId);
 }

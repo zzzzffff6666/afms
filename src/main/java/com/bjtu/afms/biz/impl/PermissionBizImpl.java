@@ -152,4 +152,28 @@ public class PermissionBizImpl implements PermissionBiz {
             return new Page<>(pageInfo, userPermissionList);
         }
     }
+
+    @Override
+    public boolean initResourceOwner(int type, int relateId, int userId) {
+        PermissionQueryParam param = new PermissionQueryParam();
+        param.setAuth(AuthType.OWNER.getId());
+        param.setUserId(userId);
+        param.setType(type);
+        param.setRelateId(relateId);
+        List<Permission> permissionList = permissionService.selectPermissionList(param);
+        if (CollectionUtils.isEmpty(permissionList)) {
+            Permission permission = new Permission();
+            permission.setAuth(AuthType.OWNER.getId());
+            permission.setType(type);
+            permission.setRelateId(relateId);
+            permission.setUserId(userId);
+            if (permissionService.insertPermission(permission) == 1) {
+                return true;
+            } else {
+                throw new BizException(APIError.INSERT_ERROR);
+            }
+        } else {
+            return true;
+        }
+    }
 }

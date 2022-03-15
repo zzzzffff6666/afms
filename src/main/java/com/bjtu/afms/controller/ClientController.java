@@ -3,6 +3,7 @@ package com.bjtu.afms.controller;
 import com.bjtu.afms.biz.ClientBiz;
 import com.bjtu.afms.config.annotation.AuthCheck;
 import com.bjtu.afms.enums.AuthType;
+import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Result;
 import com.bjtu.afms.model.Client;
@@ -21,37 +22,37 @@ public class ClientController {
     @Resource
     private ClientBiz clientBiz;
 
-    @AuthCheck(auth = AuthType.CLIENT_CONTACT)
+    @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
     @GetMapping("/admin/client/info/{clientId}")
     public Result getClientInfo(@PathVariable("clientId") int clientId) {
         return Result.ok(clientService.selectClient(clientId));
     }
 
-    @AuthCheck(auth = AuthType.CLIENT_CONTACT)
+    @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
     @GetMapping({"/admin/client/all", "/admin/client/all/{page}"})
     public Result getAllClient(@RequestParam ClientQueryParam param,
                                @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(clientBiz.getClientList(param, page));
     }
 
-    @AuthCheck(auth = AuthType.CLIENT_CONTACT)
+    @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
     @GetMapping({"/admin/client/list", "/admin/client/list/{page}"})
     public Result getClientListByContent(@RequestParam ClientQueryParam param,
                                          @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(clientBiz.getClientList(param, page));
     }
 
-    @AuthCheck(auth = AuthType.CLIENT_CONTACT)
+    @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
     @PostMapping("/admin/client/insert")
     public Result addClient(@RequestBody Client client) {
-        if (clientService.insertClient(client) == 1) {
+        if (clientBiz.insertClient(client)) {
             return Result.ok();
         } else {
             return Result.error(APIError.INSERT_ERROR);
         }
     }
 
-    @AuthCheck(auth = AuthType.CLIENT_CONTACT)
+    @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN}, owner = true, data = DataType.CLIENT)
     @PostMapping("/admin/client/info/modify")
     public Result modifyClientInfo(@RequestBody Client client) {
         client.setAddTime(null);
@@ -63,7 +64,7 @@ public class ClientController {
         }
     }
 
-    @AuthCheck(auth = AuthType.CLIENT_CONTACT)
+    @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
     @PostMapping("/admin/client/delete/{clientId}")
     public Result deleteClient(@PathVariable("clientId") int clientId) {
         if (clientService.deleteClient(clientId) == 1) {

@@ -3,6 +3,7 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.StoreMapper;
 import com.bjtu.afms.model.Store;
 import com.bjtu.afms.model.StoreExample;
+import com.bjtu.afms.web.param.query.StoreQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -31,17 +32,17 @@ public class StoreService {
         return storeMapper.selectByPrimaryKey(storeId);
     }
 
-    public List<Store> selectStoreList(Store store, String orderByClause) {
+    public List<Store> selectStoreList(StoreQueryParam param) {
         StoreExample example = new StoreExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         StoreExample.Criteria criteria = example.createCriteria();
-        if (StringUtils.isNotBlank(store.getName())) {
-            criteria.andNameLike("%" + store.getName() + "%");
+        if (StringUtils.isNotBlank(param.getName())) {
+            criteria.andNameLike("%" + param.getName() + "%");
         }
-        if (store.getManager() != null) {
-            criteria.andManagerEqualTo(store.getManager());
+        if (param.getManager() != null) {
+            criteria.andManagerEqualTo(param.getManager());
         }
         return storeMapper.selectByExample(example);
     }
