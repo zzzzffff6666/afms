@@ -18,4 +18,6 @@ public interface UserBiz {
     boolean modifyPassword(ModifyPasswordParam param, HttpSession session) throws BizException, NoSuchAlgorithmException;
 
     boolean adminModifyPhone(ModifyPhoneParam param);
+
+    boolean insertUser(User user);
 }

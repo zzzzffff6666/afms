@@ -1,10 +1,12 @@
 package com.bjtu.afms.biz.impl;
 
+import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.UserBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
+import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.model.User;
 import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.service.VerifyService;
@@ -30,6 +32,9 @@ public class UserBizImpl implements UserBiz {
 
     @Resource
     private VerifyService verifyService;
+
+    @Resource
+    private PermissionBiz permissionBiz;
 
     @Resource
     private ConfigUtil configUtil;
@@ -104,6 +109,16 @@ public class UserBizImpl implements UserBiz {
             return userService.updateUser(user) == 1;
         } else {
             throw new BizException(APIError.VERIFY_ERROR);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean insertUser(User user) {
+        if (userService.insertUser(user) == 1) {
+            return permissionBiz.initUserPermission(user.getId());
+        } else {
+            return false;
         }
     }
 }

@@ -17,6 +17,9 @@ public class ConfigUtil {
     @Value("${afms.qr-code.height}")
     private int qrCodeHeight;
 
+    @Value("${afms.default.maintain-interval-days}")
+    private int defaultMaintainInterval;
+
     @Value("${sms.access-key-id}")
     private String accessKeyId;
 

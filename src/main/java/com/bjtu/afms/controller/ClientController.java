@@ -24,8 +24,13 @@ public class ClientController {
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
     @GetMapping("/admin/client/info/{clientId}")
-    public Result getClientInfo(@PathVariable("clientId") int clientId) {
-        return Result.ok(clientService.selectClient(clientId));
+    public Result getClientInfo(@PathVariable("clientId") int id) {
+        Client client = clientService.selectClient(id);
+        if (client != null) {
+            return Result.ok(client);
+        } else {
+            return Result.error(APIError.NOT_FUND);
+        }
     }
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
@@ -66,8 +71,8 @@ public class ClientController {
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
     @PostMapping("/admin/client/delete/{clientId}")
-    public Result deleteClient(@PathVariable("clientId") int clientId) {
-        if (clientService.deleteClient(clientId) == 1) {
+    public Result deleteClient(@PathVariable("clientId") int id) {
+        if (clientService.deleteClient(id) == 1) {
             return Result.ok();
         } else {
             return Result.error(APIError.DELETE_ERROR);

@@ -7,6 +7,7 @@ import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Result;
 import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.service.PermissionService;
+import com.bjtu.afms.web.param.OwnerParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -27,16 +28,15 @@ public class PermissionController {
     }
 
     @GetMapping({"/resource/owner/list", "/resource/owner/list/{page}"})
-    public Result getResourceOwner(@RequestParam("type") String type, @RequestParam("relateId") int relateId,
+    public Result getResourceOwner(@RequestBody OwnerParam param,
                                    @PathVariable(value = "page", required = false) Integer page) {
-        return Result.ok(permissionBiz.getResourceOwnerList(type, relateId, page));
+        return Result.ok(permissionBiz.getResourceOwnerList(param.getType(), param.getRelateId(), page));
     }
 
 
     @PostMapping("/resource/owner/add")
-    public Result addResourceOwner(@RequestParam("type") int type, @RequestParam("relateId") int relateId,
-                                   @RequestParam("userId") int userId) {
-        if (permissionBiz.addResourceOwner(type, relateId, userId)) {
+    public Result addResourceOwner(@RequestBody OwnerParam param) {
+        if (permissionBiz.addResourceOwner(param.getType(), param.getRelateId(), param.getUserId())) {
             return Result.ok();
         } else {
             return Result.error(APIError.INSERT_ERROR);
@@ -55,8 +55,8 @@ public class PermissionController {
 
     @AuthCheck(auth = AuthType.ADMIN)
     @PostMapping("/admin/permission/delete/{permissionId}")
-    public Result deletePermissionByAdmin(@PathVariable("permissionId") int permissionId) {
-        if (permissionService.deletePermission(permissionId) == 1) {
+    public Result deletePermissionByAdmin(@PathVariable("permissionId") int id) {
+        if (permissionService.deletePermission(id) == 1) {
             return Result.ok();
         } else {
             return Result.error(APIError.DELETE_ERROR);

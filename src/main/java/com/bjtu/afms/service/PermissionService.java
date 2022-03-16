@@ -17,9 +17,9 @@ public class PermissionService {
     @Resource
     private PermissionMapper permissionMapper;
     
-    public boolean hasPermission(int userId, List<Integer> types) {
+    public boolean hasPermission(int userId, List<Integer> authIdList) {
         PermissionExample example = new PermissionExample();
-        example.createCriteria().andUserIdEqualTo(userId).andTypeIn(types);
+        example.createCriteria().andUserIdEqualTo(userId).andAuthIn(authIdList);
         long count = permissionMapper.countByExample(example);
         return count > 0;
     }

@@ -59,11 +59,12 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
-    public boolean addResourceOwner(int type, int relateId, int userId) {
+    public boolean addResourceOwner(String type, int relateId, int userId) {
+        DataType dataType = DataType.findDataType(type);
         PermissionQueryParam param = new PermissionQueryParam();
         param.setAuth(AuthType.OWNER.getId());
         param.setUserId(LoginContext.getUserId());
-        param.setType(type);
+        param.setType(dataType.getId());
         param.setRelateId(relateId);
         List<Permission> permissionList = permissionService.selectPermissionList(param);
         if (CollectionUtils.isEmpty(permissionList)) {
@@ -74,7 +75,7 @@ public class PermissionBizImpl implements PermissionBiz {
             if (CollectionUtils.isEmpty(permissionList)) {
                 Permission permission = new Permission();
                 permission.setAuth(AuthType.OWNER.getId());
-                permission.setType(type);
+                permission.setType(dataType.getId());
                 permission.setRelateId(relateId);
                 permission.setUserId(userId);
                 return permissionService.insertPermission(permission) == 1;
@@ -166,6 +167,26 @@ public class PermissionBizImpl implements PermissionBiz {
             permission.setAuth(AuthType.OWNER.getId());
             permission.setType(type);
             permission.setRelateId(relateId);
+            permission.setUserId(userId);
+            if (permissionService.insertPermission(permission) == 1) {
+                return true;
+            } else {
+                throw new BizException(APIError.INSERT_ERROR);
+            }
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public boolean initUserPermission(int userId) {
+        PermissionQueryParam param = new PermissionQueryParam();
+        param.setAuth(AuthType.NORMAL.getId());
+        param.setUserId(userId);
+        List<Permission> permissionList = permissionService.selectPermissionList(param);
+        if (CollectionUtils.isEmpty(permissionList)) {
+            Permission permission = new Permission();
+            permission.setAuth(AuthType.OWNER.getId());
             permission.setUserId(userId);
             if (permissionService.insertPermission(permission) == 1) {
                 return true;

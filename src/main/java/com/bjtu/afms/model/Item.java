@@ -1,5 +1,6 @@
 package com.bjtu.afms.model;
 
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,6 +13,7 @@ public class Item implements Serializable {
 
     private String name;
 
+    @Min(1)
     private Integer amount;
 
     private Date expireTime;

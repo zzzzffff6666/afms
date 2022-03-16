@@ -31,7 +31,7 @@ public class PermissionAspect {
 
     @Around("pointcut() && @annotation(authCheck)")
     public Object beforeExecute(ProceedingJoinPoint pjp, AuthCheck authCheck) throws Throwable {
-        Object result = null;
+        Object result;
         Object[] objs = pjp.getArgs();
         if (hasPermission(objs[0], authCheck)) {
             try {
@@ -49,7 +49,12 @@ public class PermissionAspect {
     public boolean hasPermission(Object object, AuthCheck authCheck) {
         boolean result;
         if (authCheck.owner()) {
-            Integer relateId = ((JSONObject) object).getInteger("id");
+            Integer relateId;
+            if (object instanceof Integer) {
+                relateId = (int) object;
+            } else {
+                relateId = ((JSONObject) object).getInteger("id");
+            }
             result = permissionService.isOwner(LoginContext.getUserId(), authCheck.data().getId(), relateId);
             if (authCheck.auth().length == 0 || result) {
                 return result;

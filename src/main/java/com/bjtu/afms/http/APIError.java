@@ -5,7 +5,6 @@ public interface APIError {
     String FAILED = "失败!";
 
     String INTERNAL_SERVER_ERROR = "服务器内部错误!";
-    String SERVER_BUSY = "服务器正忙，请稍后再试!";
     String REQUEST_METHOD_SUPPORT_ERROR = "请求方法不支持!";
     String PARAMETER_ERROR = "请求参数异常!";
     String NOT_FUND = "未找到该资源!";
@@ -28,4 +27,10 @@ public interface APIError {
 
     String PERMISSION_ALREADY_EXIST = "用户已有该权限";
     String NO_PERMISSION = "无权限";
+
+    String ITEM_TYPE_ERROR = "物品类型错误";
+    String UNKNOWN_ITEM_STATUS = "未知的物品状态";
+    String ITEM_STATUS_CHANGE_ERROR = "物品状态变更错误";
+    String ITEM_CANNOT_USE = "物品不可使用";
+    String ITEM_AMOUNT_NOT_ENOUGH = "物品数量不足";
 }

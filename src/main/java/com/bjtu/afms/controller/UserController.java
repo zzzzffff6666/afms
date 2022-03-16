@@ -99,8 +99,8 @@ public class UserController {
     }
 
     @GetMapping("/user/info/{userId}")
-    public Result getUserInfo(@PathVariable("userId") int userId) {
-        User user = userService.selectUser(userId);
+    public Result getUserInfo(@PathVariable("userId") int id) {
+        User user = userService.selectUser(id);
         if (user != null) {
             return Result.ok(user);
         } else {
@@ -109,12 +109,14 @@ public class UserController {
     }
 
     @GetMapping({"/user/all", "/user/all/{page}"})
-    public Result getAllUser(@RequestParam UserQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
+    public Result getAllUser(@RequestParam UserQueryParam param,
+                             @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(userBiz.getUserList(param, page));
     }
 
-    @GetMapping({"/user/list", "/user/list/page"})
-    public Result getUserList(@RequestParam UserQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
+    @GetMapping({"/user/list", "/user/list/{page}"})
+    public Result getUserList(@RequestParam UserQueryParam param,
+                              @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(userBiz.getUserList(param, page));
     }
 
@@ -172,8 +174,8 @@ public class UserController {
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
     @PostMapping("/admin/user/delete/{userId}")
-    public Result deleteByAdmin(@PathVariable("userId") int userId) {
-        if (userService.deleteUser(userId) == 1) {
+    public Result deleteByAdmin(@PathVariable("userId") int id) {
+        if (userService.deleteUser(id) == 1) {
             return Result.ok();
         } else {
             return Result.error(APIError.DELETE_ERROR);

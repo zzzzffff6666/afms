@@ -3,13 +3,13 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.ItemMapper;
 import com.bjtu.afms.model.Item;
 import com.bjtu.afms.model.ItemExample;
+import com.bjtu.afms.web.param.query.ItemQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ItemService {
@@ -33,39 +33,41 @@ public class ItemService {
         return itemMapper.selectByPrimaryKey(itemId);
     }
 
-    public List<Item> selectItemList(Item item, String orderByClause) {
-        return selectItemList(item, null, orderByClause);
-    }
-
-    public List<Item> selectItemList(Item item, Map<String, Date> timeParam, String orderByClause) {
+    public List<Item> selectItemList(ItemQueryParam param) {
         ItemExample example = new ItemExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         ItemExample.Criteria criteria = example.createCriteria();
-        if (item.getType() != null) {
-            criteria.andTypeEqualTo(item.getType());
+        if (param.getType() != null) {
+            criteria.andTypeEqualTo(param.getType());
         }
-        if (item.getStoreId() != null) {
-            criteria.andStoreIdEqualTo(item.getStoreId());
+        if (param.getStoreId() != null) {
+            criteria.andStoreIdEqualTo(param.getStoreId());
         }
-        if (StringUtils.isNotBlank(item.getName())) {
-            criteria.andNameLike("%" + item.getName() + "%");
+        if (StringUtils.isNotBlank(param.getName())) {
+            criteria.andNameLike("%" + param.getName() + "%");
         }
-        if (item.getStatus() != null) {
-            criteria.andStatusEqualTo(item.getStatus());
+        if (param.getStatus() != null) {
+            criteria.andStatusEqualTo(param.getStatus());
         }
-        if (timeParam != null) {
-            Date start = timeParam.get("start");
-            Date end = timeParam.get("end");
-            if (end == null) {
-                end = new Date();
+        if (param.getExpireStart() != null || param.getExpireEnd() != null) {
+            if (param.getExpireStart() == null) {
+                param.setExpireStart(new Date(0L));
             }
-            if (timeParam.get("expire") != null) {
-                criteria.andExpireTimeBetween(start, end);
-            } else {
-                criteria.andMaintainTimeBetween(start, end);
+            if (param.getExpireEnd() == null) {
+                param.setExpireEnd(new Date());
             }
+            criteria.andExpireTimeBetween(param.getExpireStart(), param.getExpireEnd());
+        }
+        if (param.getMaintainStart() != null || param.getMaintainEnd() != null) {
+            if (param.getMaintainStart() == null) {
+                param.setMaintainStart(new Date(0L));
+            }
+            if (param.getMaintainEnd() == null) {
+                param.setMaintainEnd(new Date());
+            }
+            criteria.andExpireTimeBetween(param.getMaintainStart(), param.getMaintainEnd());
         }
         return itemMapper.selectByExample(example);
     }

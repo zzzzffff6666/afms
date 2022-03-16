@@ -64,8 +64,8 @@ public class PublicAPIController {
 
     @AuthCheck(auth = {AuthType.ADMIN}, owner = true, data = DataType.LOG)
     @PostMapping("/operation/rollback/{logId}")
-    public Result rollbackOperation(@PathVariable("logId") int logId) throws BizException {
-        Log log = logService.selectLog(logId);
+    public Result rollbackOperation(@PathVariable("logId") int id) throws BizException {
+        Log log = logService.selectLog(id);
         if (log == null) {
             return Result.error(APIError.NOT_FUND);
         }
@@ -76,8 +76,8 @@ public class PublicAPIController {
     }
 
     @GetMapping("/QRCode/get")
-    public Result getQRCode(@RequestParam("type") String type, @RequestParam("id") int relateId) {
-        String url = "/" + type + "/info/" + relateId;
+    public Result getQRCode(@RequestParam("type") String type, @RequestParam("id") int id) {
+        String url = "/" + type + "/info/" + id;
         byte[] qrCode;
         try {
             qrCode = toolService.getQRCodeImage(url, configUtil.getQrCodeWidth(), configUtil.getQrCodeHeight());

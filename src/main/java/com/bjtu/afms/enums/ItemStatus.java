@@ -1,5 +1,7 @@
 package com.bjtu.afms.enums;
 
+import java.util.Arrays;
+
 public enum ItemStatus {
     // 通用状态
     ACTIVE(1, "active", "可使用"),
@@ -35,5 +37,19 @@ public enum ItemStatus {
 
     public String getComment() {
         return comment;
+    }
+
+    public static ItemStatus findItemStatus(int id) {
+        return Arrays.stream(values())
+                .filter(itemStatus -> itemStatus.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static ItemStatus findItemStatus(String name) {
+        return Arrays.stream(values())
+                .filter(itemStatus -> itemStatus.getName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 }

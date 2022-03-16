@@ -11,7 +11,7 @@ public interface PermissionBiz {
 
     Page<User> getResourceOwnerList(String type, int relateId, Integer page);
 
-    boolean addResourceOwner(int type, int relateId, int userId);
+    boolean addResourceOwner(String type, int relateId, int userId);
 
     boolean addPermission(Permission permission);
 
@@ -20,4 +20,6 @@ public interface PermissionBiz {
     Page<UserPermission> getPermissionUserList(List<Integer> auths, Integer page);
 
     boolean initResourceOwner(int type, int relateId, int userId);
+
+    boolean initUserPermission(int userId);
 }
