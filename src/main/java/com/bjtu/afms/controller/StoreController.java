@@ -28,7 +28,7 @@ public class StoreController {
         if (store != null) {
             return Result.ok(store);
         } else {
-            return Result.error(APIError.NOT_FUND);
+            return Result.error(APIError.NOT_FOUND);
         }
     }
 
@@ -81,7 +81,7 @@ public class StoreController {
         }
     }
 
-    @AuthCheck(auth = {AuthType.STORE_MANAGER, AuthType.ADMIN})
+    @AuthCheck(auth = {AuthType.STORE_MANAGER, AuthType.ADMIN}, owner = true, data = DataType.CLIENT)
     @PostMapping("/admin/store/delete/{storeId}")
     public Result deleteStore(@PathVariable("storeId") int id) {
         if (storeService.deleteStore(id) == 1) {

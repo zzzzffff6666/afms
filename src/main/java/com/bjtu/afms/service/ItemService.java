@@ -51,23 +51,23 @@ public class ItemService {
         if (param.getStatus() != null) {
             criteria.andStatusEqualTo(param.getStatus());
         }
-        if (param.getExpireStart() != null || param.getExpireEnd() != null) {
-            if (param.getExpireStart() == null) {
-                param.setExpireStart(new Date(0L));
+        if (param.getExpireBegin() != null || param.getExpireLast() != null) {
+            if (param.getExpireBegin() == null) {
+                param.setExpireBegin(new Date(0L));
             }
-            if (param.getExpireEnd() == null) {
-                param.setExpireEnd(new Date());
+            if (param.getExpireLast() == null) {
+                param.setExpireLast(new Date());
             }
-            criteria.andExpireTimeBetween(param.getExpireStart(), param.getExpireEnd());
+            criteria.andExpireTimeBetween(param.getExpireBegin(), param.getExpireLast());
         }
-        if (param.getMaintainStart() != null || param.getMaintainEnd() != null) {
-            if (param.getMaintainStart() == null) {
-                param.setMaintainStart(new Date(0L));
+        if (param.getMaintainBegin() != null || param.getMaintainLast() != null) {
+            if (param.getMaintainBegin() == null) {
+                param.setMaintainBegin(new Date(0L));
             }
-            if (param.getMaintainEnd() == null) {
-                param.setMaintainEnd(new Date());
+            if (param.getMaintainLast() == null) {
+                param.setMaintainLast(new Date());
             }
-            criteria.andExpireTimeBetween(param.getMaintainStart(), param.getMaintainEnd());
+            criteria.andExpireTimeBetween(param.getMaintainBegin(), param.getMaintainLast());
         }
         return itemMapper.selectByExample(example);
     }

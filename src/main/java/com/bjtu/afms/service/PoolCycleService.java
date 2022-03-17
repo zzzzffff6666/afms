@@ -3,6 +3,7 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.PoolCycleMapper;
 import com.bjtu.afms.model.PoolCycle;
 import com.bjtu.afms.model.PoolCycleExample;
+import com.bjtu.afms.web.param.query.PoolCycleQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,35 +34,41 @@ public class PoolCycleService {
         return poolCycleMapper.selectByPrimaryKey(poolCycleId);
     }
 
-    public List<PoolCycle> selectPoolCycleList(PoolCycle poolCycle, String orderByClause) {
-        return selectPoolCycleList(poolCycle, null, orderByClause);
-    }
-
-    public List<PoolCycle> selectPoolCycleList(PoolCycle poolCycle, Map<String, Date> timeParam, String orderByClause) {
+    public List<PoolCycle> selectPoolCycleList(PoolCycleQueryParam param) {
         PoolCycleExample example = new PoolCycleExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         PoolCycleExample.Criteria criteria = example.createCriteria();
-        if (poolCycle.getPoolId() != null) {
-            criteria.andPoolIdEqualTo(poolCycle.getPoolId());
+        if (param.getPoolId() != null) {
+            criteria.andPoolIdEqualTo(param.getPoolId());
         }
-        if (poolCycle.getCycle() != null) {
-            criteria.andCycleEqualTo(poolCycle.getCycle());
+        if (param.getCycle() != null) {
+            criteria.andCycleEqualTo(param.getCycle());
         }
-        if (poolCycle.getUserId() != null) {
-            criteria.andUserIdEqualTo(poolCycle.getUserId());
+        if (param.getUserId() != null) {
+            criteria.andUserIdEqualTo(param.getUserId());
         }
-        if (poolCycle.getStatus() != null) {
-            criteria.andStatusEqualTo(poolCycle.getStatus());
+        if (param.getStatus() != null) {
+            criteria.andStatusEqualTo(param.getStatus());
         }
-        if (timeParam != null) {
-            Date start = timeParam.get("start");
-            Date end = timeParam.get("end");
-            if (end == null) {
-                end = new Date();
+        if (param.getStartBegin() != null || param.getStartLast() != null) {
+            if (param.getStartBegin() == null) {
+                param.setStartBegin(new Date(0L));
             }
-            criteria.andEndTimeBetween(start, end);
+            if (param.getStartLast() == null) {
+                param.setStartLast(new Date());
+            }
+            criteria.andStartTimeBetween(param.getStartBegin(), param.getStartLast());
+        }
+        if (param.getEndBegin() != null || param.getEndLast() != null) {
+            if (param.getEndBegin() == null) {
+                param.setEndBegin(new Date(0L));
+            }
+            if (param.getEndLast() == null) {
+                param.setEndLast(new Date());
+            }
+            criteria.andEndTimeBetween(param.getEndBegin(), param.getEndLast());
         }
         return poolCycleMapper.selectByExample(example);
     }

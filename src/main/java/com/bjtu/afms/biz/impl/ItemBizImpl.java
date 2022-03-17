@@ -17,6 +17,7 @@ import com.bjtu.afms.web.param.query.ItemQueryParam;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -46,7 +47,7 @@ public class ItemBizImpl implements ItemBiz {
     public boolean statusChange(int itemId, ItemType itemType, ItemStatus newStatus) {
         Item item = itemService.selectItem(itemId);
         if (item == null) {
-            throw new BizException(APIError.NOT_FUND);
+            throw new BizException(APIError.NOT_FOUND);
         }
         if (itemType != null && item.getType() != itemType.getId()) {
             throw new BizException(APIError.ITEM_TYPE_ERROR);
@@ -70,7 +71,7 @@ public class ItemBizImpl implements ItemBiz {
     public boolean takeFeedOrMedicine(int itemId, ItemType itemType, int amount) {
         Item item = itemService.selectItem(itemId);
         if (item == null) {
-            throw new BizException(APIError.NOT_FUND);
+            throw new BizException(APIError.NOT_FOUND);
         }
         if (item.getType() != itemType.getId()) {
             throw new BizException(APIError.ITEM_TYPE_ERROR);
@@ -95,6 +96,7 @@ public class ItemBizImpl implements ItemBiz {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean insertItem(Item item) {
         if (itemService.insertItem(item) == 1) {
             return permissionBiz.initResourceOwner(DataType.ITEM.getId(), item.getId(), LoginContext.getUserId());

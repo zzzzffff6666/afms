@@ -13,7 +13,7 @@ import com.bjtu.afms.service.PermissionService;
 import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.web.param.query.PermissionQueryParam;
-import com.bjtu.afms.web.qo.UserPermission;
+import com.bjtu.afms.web.vo.UserPermissionVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Component;
@@ -125,7 +125,7 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
-    public Page<UserPermission> getPermissionUserList(List<Integer> auths, Integer page) {
+    public Page<UserPermissionVO> getPermissionUserList(List<Integer> auths, Integer page) {
         if (CollectionUtils.isEmpty(auths)) {
             return null;
         } else {
@@ -138,19 +138,19 @@ public class PermissionBizImpl implements PermissionBiz {
                     .distinct()
                     .collect(Collectors.toList());
             List<User> userList = userService.selectUserListByIdList(userIdList);
-            List<UserPermission> userPermissionList = new ArrayList<>();
+            List<UserPermissionVO> userPermissionVOList = new ArrayList<>();
             for (Permission permission : pageInfo.getList()) {
-                UserPermission userPermission = new UserPermission();
-                userPermission.setPermission(permission);
+                UserPermissionVO userPermissionVO = new UserPermissionVO();
+                userPermissionVO.setPermission(permission);
                 for (User user : userList) {
                     if (user.getId().equals(permission.getUserId())) {
-                        userPermission.setUser(user);
+                        userPermissionVO.setUser(user);
                         break;
                     }
                 }
-                userPermissionList.add(userPermission);
+                userPermissionVOList.add(userPermissionVO);
             }
-            return new Page<>(pageInfo, userPermissionList);
+            return new Page<>(pageInfo, userPermissionVOList);
         }
     }
 

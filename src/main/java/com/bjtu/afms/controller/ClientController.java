@@ -29,7 +29,7 @@ public class ClientController {
         if (client != null) {
             return Result.ok(client);
         } else {
-            return Result.error(APIError.NOT_FUND);
+            return Result.error(APIError.NOT_FOUND);
         }
     }
 
@@ -69,7 +69,7 @@ public class ClientController {
         }
     }
 
-    @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
+    @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN}, owner = true, data = DataType.CLIENT)
     @PostMapping("/admin/client/delete/{clientId}")
     public Result deleteClient(@PathVariable("clientId") int id) {
         if (clientService.deleteClient(id) == 1) {

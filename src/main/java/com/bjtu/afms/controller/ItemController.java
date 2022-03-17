@@ -31,7 +31,7 @@ public class ItemController {
         if (item != null) {
             return Result.ok(item);
         } else {
-            return Result.error(APIError.NOT_FUND);
+            return Result.error(APIError.NOT_FOUND);
         }
     }
 

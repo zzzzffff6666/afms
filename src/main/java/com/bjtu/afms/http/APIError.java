@@ -7,7 +7,7 @@ public interface APIError {
     String INTERNAL_SERVER_ERROR = "服务器内部错误!";
     String REQUEST_METHOD_SUPPORT_ERROR = "请求方法不支持!";
     String PARAMETER_ERROR = "请求参数异常!";
-    String NOT_FUND = "未找到该资源!";
+    String NOT_FOUND = "未找到该资源!";
 
     String INSERT_ERROR = "新建资源失败";
     String DELETE_ERROR = "删除资源失败";

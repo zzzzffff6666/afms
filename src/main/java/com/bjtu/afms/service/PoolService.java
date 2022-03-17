@@ -3,6 +3,7 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.PoolMapper;
 import com.bjtu.afms.model.Pool;
 import com.bjtu.afms.model.PoolExample;
+import com.bjtu.afms.web.param.query.PoolQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -31,20 +32,20 @@ public class PoolService {
         return poolMapper.selectByPrimaryKey(poolId);
     }
 
-    public List<Pool> selectPoolList(Pool pool, String orderByClause) {
+    public List<Pool> selectPoolList(PoolQueryParam param) {
         PoolExample example = new PoolExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         PoolExample.Criteria criteria = example.createCriteria();
-        if (pool.getPlace() != null) {
-            criteria.andPlaceEqualTo(pool.getPlace());
+        if (param.getPlace() != null) {
+            criteria.andPlaceEqualTo(param.getPlace());
         }
-        if (pool.getType() != null) {
-            criteria.andTypeEqualTo(pool.getType());
+        if (param.getType() != null) {
+            criteria.andTypeEqualTo(param.getType());
         }
-        if (pool.getStatus() != null) {
-            criteria.andStatusEqualTo(pool.getStatus());
+        if (param.getStatus() != null) {
+            criteria.andStatusEqualTo(param.getStatus());
         }
         return poolMapper.selectByExample(example);
     }

@@ -104,7 +104,7 @@ public class UserController {
         if (user != null) {
             return Result.ok(user);
         } else {
-            return Result.error(APIError.NOT_FUND);
+            return Result.error(APIError.NOT_FOUND);
         }
     }
 

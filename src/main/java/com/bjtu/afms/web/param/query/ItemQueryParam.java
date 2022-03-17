@@ -10,9 +10,9 @@ public class ItemQueryParam {
     private Integer storeId;
     private String name;
     private Integer status;
-    private Date expireStart;
-    private Date expireEnd;
-    private Date maintainStart;
-    private Date maintainEnd;
+    private Date expireBegin;
+    private Date expireLast;
+    private Date maintainBegin;
+    private Date maintainLast;
     private String orderBy;
 }

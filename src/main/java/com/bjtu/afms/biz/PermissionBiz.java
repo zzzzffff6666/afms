@@ -3,7 +3,7 @@ package com.bjtu.afms.biz;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.model.User;
-import com.bjtu.afms.web.qo.UserPermission;
+import com.bjtu.afms.web.vo.UserPermissionVO;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public interface PermissionBiz {
 
     Page<Permission> getUserPermissionList(int userId, Integer page);
 
-    Page<UserPermission> getPermissionUserList(List<Integer> auths, Integer page);
+    Page<UserPermissionVO> getPermissionUserList(List<Integer> auths, Integer page);
 
     boolean initResourceOwner(int type, int relateId, int userId);
 

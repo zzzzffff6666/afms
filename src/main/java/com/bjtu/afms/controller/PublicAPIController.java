@@ -67,7 +67,7 @@ public class PublicAPIController {
     public Result rollbackOperation(@PathVariable("logId") int id) throws BizException {
         Log log = logService.selectLog(id);
         if (log == null) {
-            return Result.error(APIError.NOT_FUND);
+            return Result.error(APIError.NOT_FOUND);
         }
         if (commonService.rollbackOperation(log)) {
             return Result.ok();
