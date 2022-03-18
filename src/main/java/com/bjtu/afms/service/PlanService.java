@@ -3,6 +3,7 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.PlanMapper;
 import com.bjtu.afms.model.Plan;
 import com.bjtu.afms.model.PlanExample;
+import com.bjtu.afms.web.param.query.PlanQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -31,14 +32,14 @@ public class PlanService {
         return planMapper.selectByPrimaryKey(planId);
     }
 
-    public List<Plan> selectPlanList(Plan plan, String orderByClause) {
+    public List<Plan> selectPlanList(PlanQueryParam param) {
         PlanExample example = new PlanExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         PlanExample.Criteria criteria = example.createCriteria();
-        if (StringUtils.isNotBlank(plan.getName())) {
-            criteria.andNameLike("%" + plan.getName() + "%");
+        if (StringUtils.isNotBlank(param.getName())) {
+            criteria.andNameLike("%" + param.getName() + "%");
         }
         return planMapper.selectByExample(example);
     }

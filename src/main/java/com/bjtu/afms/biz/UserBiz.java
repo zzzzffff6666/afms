@@ -20,4 +20,6 @@ public interface UserBiz {
     boolean adminModifyPhone(ModifyPhoneParam param);
 
     boolean insertUser(User user);
+
+    boolean deleteUser(int userId);
 }

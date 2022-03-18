@@ -14,4 +14,6 @@ public interface PoolCycleBiz {
     boolean insertPoolCycle(PoolCycle poolCycle);
 
     boolean modifyPoolCycleFund(ModifyCycleFundParam param);
+
+    boolean deletePoolCycle(int poolCycleId);
 }

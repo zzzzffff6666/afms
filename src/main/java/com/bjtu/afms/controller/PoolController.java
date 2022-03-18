@@ -33,14 +33,12 @@ public class PoolController {
     }
 
     @GetMapping({"/pool/all", "/pool/all/{page}"})
-    public Result getAllPool(@RequestParam PoolQueryParam param,
-                             @PathVariable(value = "page", required = false) Integer page) {
+    public Result getAllPool(PoolQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(poolBiz.getPoolList(param, page));
     }
 
     @GetMapping({"/pool/list", "/pool/list/{page}"})
-    public Result getPoolList(@RequestParam PoolQueryParam param,
-                             @PathVariable(value = "page", required = false) Integer page) {
+    public Result getPoolList(PoolQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(poolBiz.getPoolList(param, page));
     }
 
@@ -83,7 +81,7 @@ public class PoolController {
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL)
     @PostMapping("/admin/pool/delete/{poolId}")
     public Result deletePool(@PathVariable("poolId") int id) {
-        if (poolService.deletePool(id) == 1) {
+        if (poolBiz.deletePool(id)) {
             return Result.ok();
         } else {
             return Result.error(APIError.DELETE_ERROR);

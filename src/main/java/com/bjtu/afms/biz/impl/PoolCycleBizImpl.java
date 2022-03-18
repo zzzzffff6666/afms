@@ -94,4 +94,11 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
         }
         return poolCycleService.updatePoolCycle(record) == 1;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deletePoolCycle(int poolCycleId) {
+        permissionBiz.deleteResourceOwner(DataType.POOL_CYCLE.getId(), poolCycleId);
+        return poolCycleService.deletePoolCycle(poolCycleId) == 1;
+    }
 }

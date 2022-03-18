@@ -33,14 +33,12 @@ public class StoreController {
     }
 
     @GetMapping({"/store/all", "/store/all/{page}"})
-    public Result getAllStore(@RequestParam StoreQueryParam param,
-                              @PathVariable(value = "page", required = false) Integer page) {
+    public Result getAllStore(StoreQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(storeBiz.getStoreList(param, page));
     }
 
     @GetMapping({"/store/list", "/store/list/{page}"})
-    public Result getStoreList(@RequestParam StoreQueryParam param,
-                              @PathVariable(value = "page", required = false) Integer page) {
+    public Result getStoreList(StoreQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(storeBiz.getStoreList(param, page));
     }
 
@@ -84,7 +82,7 @@ public class StoreController {
     @AuthCheck(auth = {AuthType.STORE_MANAGER, AuthType.ADMIN}, owner = true, data = DataType.CLIENT)
     @PostMapping("/admin/store/delete/{storeId}")
     public Result deleteStore(@PathVariable("storeId") int id) {
-        if (storeService.deleteStore(id) == 1) {
+        if (storeBiz.deleteStore(id)) {
             return Result.ok();
         } else {
             return Result.error(APIError.DELETE_ERROR);

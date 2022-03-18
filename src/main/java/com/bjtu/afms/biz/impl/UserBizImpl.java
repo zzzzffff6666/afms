@@ -6,7 +6,6 @@ import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
-import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.model.User;
 import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.service.VerifyService;
@@ -34,10 +33,10 @@ public class UserBizImpl implements UserBiz {
     private VerifyService verifyService;
 
     @Resource
-    private PermissionBiz permissionBiz;
+    private ConfigUtil configUtil;
 
     @Resource
-    private ConfigUtil configUtil;
+    private PermissionBiz permissionBiz;
 
     @Override
     public Page<User> getUserList(UserQueryParam param, Integer page) {
@@ -120,5 +119,12 @@ public class UserBizImpl implements UserBiz {
         } else {
             return false;
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteUser(int userId) {
+        permissionBiz.deleteUserPermission(userId);
+        return userService.deleteUser(userId) == 1;
     }
 }

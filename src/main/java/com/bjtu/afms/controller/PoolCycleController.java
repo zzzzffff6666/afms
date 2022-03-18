@@ -41,14 +41,12 @@ public class PoolCycleController {
     }
 
     @GetMapping({"/poolCycle/all", "/poolCycle/all/{page}"})
-    public Result getAllPoolCycle(@RequestParam PoolCycleQueryParam param,
-                                  @PathVariable(value = "page", required = false) Integer page) {
+    public Result getAllPoolCycle(PoolCycleQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(poolCycleBiz.getPoolCycleList(param, page));
     }
 
     @GetMapping({"/poolCycle/list", "/poolCycle/list/{page}"})
-    public Result getPoolCycleList(@RequestParam PoolCycleQueryParam param,
-                                  @PathVariable(value = "page", required = false) Integer page) {
+    public Result getPoolCycleList(PoolCycleQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(poolCycleBiz.getPoolCycleList(param, page));
     }
 
@@ -104,7 +102,7 @@ public class PoolCycleController {
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
     @PostMapping("/admin/poolCycle/delete/{poolCycleId}")
     public Result deletePoolCycle(@PathVariable("poolCycleId") int id) {
-        if (poolCycleService.deletePoolCycle(id) == 1) {
+        if (poolCycleBiz.deletePoolCycle(id)) {
             return Result.ok();
         } else {
             return Result.error(APIError.DELETE_ERROR);

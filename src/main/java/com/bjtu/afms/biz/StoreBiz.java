@@ -9,4 +9,6 @@ public interface StoreBiz {
     Page<Store> getStoreList(StoreQueryParam param, Integer page);
 
     boolean insertStore(Store store);
+
+    boolean deleteStore(int storeId);
 }

@@ -109,14 +109,12 @@ public class UserController {
     }
 
     @GetMapping({"/user/all", "/user/all/{page}"})
-    public Result getAllUser(@RequestParam UserQueryParam param,
-                             @PathVariable(value = "page", required = false) Integer page) {
+    public Result getAllUser(UserQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(userBiz.getUserList(param, page));
     }
 
     @GetMapping({"/user/list", "/user/list/{page}"})
-    public Result getUserList(@RequestParam UserQueryParam param,
-                              @PathVariable(value = "page", required = false) Integer page) {
+    public Result getUserList(UserQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(userBiz.getUserList(param, page));
     }
 
@@ -128,7 +126,7 @@ public class UserController {
         String encodePassword = CommonUtil.encode(password, salt);
         user.setSalt(salt);
         user.setPassword(encodePassword);
-        if (userService.insertUser(user) == 1) {
+        if (userBiz.insertUser(user)) {
             return Result.ok("randomPassword", password);
         } else {
             return Result.error(APIError.INSERT_ERROR);
@@ -175,7 +173,7 @@ public class UserController {
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
     @PostMapping("/admin/user/delete/{userId}")
     public Result deleteByAdmin(@PathVariable("userId") int id) {
-        if (userService.deleteUser(id) == 1) {
+        if (userBiz.deleteUser(id)) {
             return Result.ok();
         } else {
             return Result.error(APIError.DELETE_ERROR);

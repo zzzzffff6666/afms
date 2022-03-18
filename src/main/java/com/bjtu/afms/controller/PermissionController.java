@@ -66,7 +66,7 @@ public class PermissionController {
     @AuthCheck(auth = AuthType.ADMIN)
     @PostMapping("/admin/permission/delete/user/{userId}")
     public Result deleteUserPermissionByAdmin(@PathVariable("userId") int userId) {
-        permissionService.deleteUserPermission(userId);
+        permissionBiz.deleteUserPermission(userId);
         return Result.ok();
     }
 

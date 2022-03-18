@@ -15,4 +15,6 @@ public interface ItemBiz {
     boolean takeFeedOrMedicine(int itemId, ItemType itemType, int amount);
 
     boolean insertItem(Item item);
+
+    boolean deleteItem(int itemId);
 }

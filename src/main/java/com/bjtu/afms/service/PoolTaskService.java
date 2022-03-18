@@ -1,8 +1,10 @@
 package com.bjtu.afms.service;
 
+import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.mapper.PoolTaskMapper;
 import com.bjtu.afms.model.PoolTask;
 import com.bjtu.afms.model.PoolTaskExample;
+import com.bjtu.afms.web.param.query.PoolTaskQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PoolTaskService {
@@ -33,39 +36,59 @@ public class PoolTaskService {
         return poolTaskMapper.selectByPrimaryKey(poolTaskId);
     }
 
-    public List<PoolTask> selectPoolTaskList(PoolTask poolTask, String orderByClause) {
-        return selectPoolTaskList(poolTask, null, orderByClause);
-    }
-
-    public List<PoolTask> selectPoolTaskList(PoolTask poolTask, Map<String, Date> timeParam, String orderByClause) {
+    public List<PoolTask> selectPoolTaskList(PoolTaskQueryParam param) {
         PoolTaskExample example = new PoolTaskExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         PoolTaskExample.Criteria criteria = example.createCriteria();
-        if (poolTask.getPoolId() != null) {
-            criteria.andPoolIdEqualTo(poolTask.getPoolId());
+        if (param.getPoolId() != null) {
+            criteria.andPoolIdEqualTo(param.getPoolId());
         }
-        if (poolTask.getCycle() != null) {
-            criteria.andCycleEqualTo(poolTask.getCycle());
+        if (param.getCycle() != null) {
+            criteria.andCycleEqualTo(param.getCycle());
         }
-        if (poolTask.getUserId() != null) {
-            criteria.andUserIdEqualTo(poolTask.getUserId());
+        if (param.getUserId() != null) {
+            criteria.andUserIdEqualTo(param.getUserId());
         }
-        if (poolTask.getTaskId() != null) {
-            criteria.andTaskIdEqualTo(poolTask.getTaskId());
+        if (param.getTaskId() != null) {
+            criteria.andTaskIdEqualTo(param.getTaskId());
         }
-        if (poolTask.getStatus() != null) {
-            criteria.andStatusEqualTo(poolTask.getStatus());
+        if (param.getStatus() != null) {
+            criteria.andStatusEqualTo(param.getStatus());
         }
-        if (timeParam != null) {
-            Date start = timeParam.get("start");
-            Date end = timeParam.get("end");
-            if (end == null) {
-                end = new Date();
+        if (param.getStartActBegin() != null || param.getStartActLast() != null) {
+            if (param.getStartActBegin() == null) {
+                param.setStartActBegin(new Date(0L));
             }
-            criteria.andEndActBetween(start, end);
+            if (param.getStartActLast() == null) {
+                param.setStartActLast(new Date());
+            }
+            criteria.andStartActBetween(param.getStartActBegin(), param.getStartActLast());
         }
+        if (param.getEndActBegin() != null || param.getEndActLast() != null) {
+            if (param.getEndActBegin() == null) {
+                param.setEndActBegin(new Date(0L));
+            }
+            if (param.getEndActLast() == null) {
+                param.setEndActLast(new Date());
+            }
+            criteria.andEndActBetween(param.getEndActBegin(), param.getEndActLast());
+        }
+        return poolTaskMapper.selectByExample(example);
+    }
+
+    public List<PoolTask> selectUnfinishedTaskList(int taskId) {
+        PoolTaskExample example = new PoolTaskExample();
+        example.createCriteria().andTaskIdEqualTo(taskId).andStatusIn(
+                TaskStatus.getUnfinished().stream().map(TaskStatus::getId).collect(Collectors.toList()));
+        return poolTaskMapper.selectByExample(example);
+    }
+
+    public List<PoolTask> selectUnfinishedTaskList() {
+        PoolTaskExample example = new PoolTaskExample();
+        example.createCriteria().andStatusIn(
+                TaskStatus.getUnfinished().stream().map(TaskStatus::getId).collect(Collectors.toList()));
         return poolTaskMapper.selectByExample(example);
     }
 }

@@ -36,14 +36,12 @@ public class ItemController {
     }
 
     @GetMapping({"/item/all", "/item/all/{page}"})
-    public Result getAllItem(@RequestParam ItemQueryParam param,
-                             @PathVariable(value = "page", required = false) Integer page) {
+    public Result getAllItem(ItemQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(itemBiz.getItemList(param, page));
     }
 
     @GetMapping({"/item/list", "/item/list/{page}"})
-    public Result getItemList(@RequestParam ItemQueryParam param,
-                              @PathVariable(value = "page", required = false) Integer page) {
+    public Result getItemList(ItemQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(itemBiz.getItemList(param, page));
     }
 
@@ -172,7 +170,7 @@ public class ItemController {
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STORE_MANAGER}, owner = true, data = DataType.ITEM)
     @PostMapping("/admin/item/delete/{itemId}")
     public Result deleteItem(@PathVariable("itemId") int id) {
-        if (itemService.deleteItem(id) == 1) {
+        if (itemBiz.deleteItem(id)) {
             return Result.ok();
         } else {
             return Result.error(APIError.DELETE_ERROR);

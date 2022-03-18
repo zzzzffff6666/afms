@@ -9,4 +9,6 @@ public interface PoolBiz {
     Page<Pool> getPoolList(PoolQueryParam param, Integer page);
 
     boolean insertPool(Pool pool);
+
+    boolean deletePool(int poolId);
 }

@@ -42,9 +42,7 @@ public class PermissionService {
         return permissionMapper.deleteByPrimaryKey(permissionId);
     }
 
-    public void deleteUserPermission(int userId) {
-        PermissionExample example = new PermissionExample();
-        example.createCriteria().andUserIdEqualTo(userId);
+    public void deletePermissionByExample(PermissionExample example) {
         permissionMapper.deleteByExample(example);
     }
 

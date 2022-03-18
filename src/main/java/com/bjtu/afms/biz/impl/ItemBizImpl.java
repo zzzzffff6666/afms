@@ -105,6 +105,13 @@ public class ItemBizImpl implements ItemBiz {
         }
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteItem(int itemId) {
+        permissionBiz.deleteResourceOwner(DataType.ITEM.getId(), itemId);
+        return itemService.deleteItem(itemId) == 1;
+    }
+
     private boolean statusChangeCheck(int originStatus, ItemStatus newStatus) {
         if (originStatus == newStatus.getId()) {
             return false;

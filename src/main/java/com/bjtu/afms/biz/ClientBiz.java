@@ -9,4 +9,6 @@ public interface ClientBiz {
     Page<Client> getClientList(ClientQueryParam param, Integer page);
 
     boolean insertClient(Client client);
+
+    boolean deleteClient(int clientId);
 }

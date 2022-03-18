@@ -1,5 +1,9 @@
 package com.bjtu.afms.enums;
 
+import com.bjtu.afms.utils.ListUtil;
+
+import java.util.List;
+
 public enum TaskStatus {
     CREATED(1, "created", "已创建"),
     HANDLING(2, "handling", "处理中"),
@@ -29,5 +33,13 @@ public enum TaskStatus {
 
     public String getComment() {
         return comment;
+    }
+
+    public static List<TaskStatus> getUnfinished() {
+        return ListUtil.newArrayList(TaskStatus.CREATED, TaskStatus.HANDLING, TaskStatus.ERROR);
+    }
+
+    public static List<TaskStatus> getFinished() {
+        return ListUtil.newArrayList(TaskStatus.FINISH, TaskStatus.OVERDUE, TaskStatus.CANCEL);
     }
 }

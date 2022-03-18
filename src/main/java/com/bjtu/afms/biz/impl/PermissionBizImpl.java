@@ -8,6 +8,7 @@ import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Permission;
+import com.bjtu.afms.model.PermissionExample;
 import com.bjtu.afms.model.User;
 import com.bjtu.afms.service.PermissionService;
 import com.bjtu.afms.service.UserService;
@@ -155,6 +156,26 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
+    public boolean initUserPermission(int userId) {
+        PermissionQueryParam param = new PermissionQueryParam();
+        param.setAuth(AuthType.NORMAL.getId());
+        param.setUserId(userId);
+        List<Permission> permissionList = permissionService.selectPermissionList(param);
+        if (CollectionUtils.isEmpty(permissionList)) {
+            Permission permission = new Permission();
+            permission.setAuth(AuthType.OWNER.getId());
+            permission.setUserId(userId);
+            if (permissionService.insertPermission(permission) == 1) {
+                return true;
+            } else {
+                throw new BizException(APIError.INSERT_ERROR);
+            }
+        } else {
+            return true;
+        }
+    }
+
+    @Override
     public boolean initResourceOwner(int type, int relateId, int userId) {
         PermissionQueryParam param = new PermissionQueryParam();
         param.setAuth(AuthType.OWNER.getId());
@@ -179,22 +200,16 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
-    public boolean initUserPermission(int userId) {
-        PermissionQueryParam param = new PermissionQueryParam();
-        param.setAuth(AuthType.NORMAL.getId());
-        param.setUserId(userId);
-        List<Permission> permissionList = permissionService.selectPermissionList(param);
-        if (CollectionUtils.isEmpty(permissionList)) {
-            Permission permission = new Permission();
-            permission.setAuth(AuthType.OWNER.getId());
-            permission.setUserId(userId);
-            if (permissionService.insertPermission(permission) == 1) {
-                return true;
-            } else {
-                throw new BizException(APIError.INSERT_ERROR);
-            }
-        } else {
-            return true;
-        }
+    public void deleteUserPermission(int userId) {
+        PermissionExample example = new PermissionExample();
+        example.createCriteria().andUserIdEqualTo(userId);
+        permissionService.deletePermissionByExample(example);
+    }
+
+    @Override
+    public void deleteResourceOwner(int type, int relateId) {
+        PermissionExample example = new PermissionExample();
+        example.createCriteria().andAuthEqualTo(AuthType.OWNER.getId()).andTypeEqualTo(type).andRelateIdEqualTo(relateId);
+        permissionService.deletePermissionByExample(example);
     }
 }

@@ -35,15 +35,13 @@ public class ClientController {
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
     @GetMapping({"/admin/client/all", "/admin/client/all/{page}"})
-    public Result getAllClient(@RequestParam ClientQueryParam param,
-                               @PathVariable(value = "page", required = false) Integer page) {
+    public Result getAllClient(ClientQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(clientBiz.getClientList(param, page));
     }
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
     @GetMapping({"/admin/client/list", "/admin/client/list/{page}"})
-    public Result getClientListByContent(@RequestParam ClientQueryParam param,
-                                         @PathVariable(value = "page", required = false) Integer page) {
+    public Result getClientListByContent(ClientQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(clientBiz.getClientList(param, page));
     }
 
@@ -72,7 +70,7 @@ public class ClientController {
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN}, owner = true, data = DataType.CLIENT)
     @PostMapping("/admin/client/delete/{clientId}")
     public Result deleteClient(@PathVariable("clientId") int id) {
-        if (clientService.deleteClient(id) == 1) {
+        if (clientBiz.deleteClient(id)) {
             return Result.ok();
         } else {
             return Result.error(APIError.DELETE_ERROR);

@@ -12,6 +12,7 @@ public interface APIError {
     String INSERT_ERROR = "新建资源失败";
     String DELETE_ERROR = "删除资源失败";
     String UPDATE_ERROR = "更新资源失败";
+    String IMPORT_ERROR = "导入资源失败";
 
     String NOT_LOGIN = "未登录!";
     String USER_NOT_REGISTER = "用户未注册，请联系管理员注册";
@@ -33,4 +34,6 @@ public interface APIError {
     String ITEM_STATUS_CHANGE_ERROR = "物品状态变更错误";
     String ITEM_CANNOT_USE = "物品不可使用";
     String ITEM_AMOUNT_NOT_ENOUGH = "物品数量不足";
+
+    String TASK_NOW_USED = "该任务仍在被使用";
 }

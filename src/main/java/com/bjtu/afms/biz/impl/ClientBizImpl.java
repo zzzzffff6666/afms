@@ -49,4 +49,11 @@ public class ClientBizImpl implements ClientBiz {
             return false;
         }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteClient(int clientId) {
+        permissionBiz.deleteResourceOwner(DataType.CLIENT.getId(), clientId);
+        return clientService.deleteClient(clientId) == 1;
+    }
 }

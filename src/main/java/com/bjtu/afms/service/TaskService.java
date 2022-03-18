@@ -3,6 +3,7 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.TaskMapper;
 import com.bjtu.afms.model.Task;
 import com.bjtu.afms.model.TaskExample;
+import com.bjtu.afms.web.param.query.TaskQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -31,20 +32,20 @@ public class TaskService {
         return taskMapper.selectByPrimaryKey(taskId);
     }
 
-    public List<Task> selectTaskList(Task task, String orderByClause) {
+    public List<Task> selectTaskList(TaskQueryParam param) {
         TaskExample example = new TaskExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         TaskExample.Criteria criteria = example.createCriteria();
-        if (task.getType() != null) {
-            criteria.andTypeEqualTo(task.getType());
+        if (param.getType() != null) {
+            criteria.andTypeEqualTo(param.getType());
         }
-        if (StringUtils.isNotBlank(task.getName())) {
-            criteria.andNameLike("%" + task.getName() + "%");
+        if (StringUtils.isNotBlank(param.getName())) {
+            criteria.andNameLike("%" + param.getName() + "%");
         }
-        if (task.getLevel() != null) {
-            criteria.andLevelEqualTo(task.getLevel());
+        if (param.getLevel() != null) {
+            criteria.andLevelEqualTo(param.getLevel());
         }
         return taskMapper.selectByExample(example);
     }

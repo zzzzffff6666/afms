@@ -47,4 +47,11 @@ public class PoolBizImpl implements PoolBiz {
             return false;
         }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deletePool(int poolId) {
+        permissionBiz.deleteResourceOwner(DataType.POOL.getId(), poolId);
+        return poolService.deletePool(poolId) == 1;
+    }
 }

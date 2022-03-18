@@ -47,4 +47,11 @@ public class StoreBizImpl implements StoreBiz {
             return false;
         }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteStore(int storeId) {
+        permissionBiz.deleteResourceOwner(DataType.STORE.getId(), storeId);
+        return storeService.deleteStore(storeId) == 1;
+    }
 }
