@@ -77,6 +77,27 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     }
 
     @Override
+    public boolean modifyPoolCycleStatus(int id, int status) {
+        PoolCycle poolCycle = poolCycleService.selectPoolCycle(id);
+        if (poolCycle == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (TaskStatus.changeCheck(poolCycle.getStatus(), status)) {
+            PoolCycle record = new PoolCycle();
+            record.setId(id);
+            record.setStatus(status);
+            if (TaskStatus.isFinish(status)) {
+                record.setEndTime(new Date());
+            } else if (TaskStatus.isStart(status)) {
+                record.setStartTime(new Date());
+            }
+            return poolCycleService.updatePoolCycle(record) == 1;
+        } else {
+            throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
+        }
+    }
+
+    @Override
     public boolean modifyPoolCycleFund(ModifyCycleFundParam param) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(param.getId());
         if (poolCycle == null) {

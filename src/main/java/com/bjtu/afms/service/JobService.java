@@ -3,13 +3,13 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.JobMapper;
 import com.bjtu.afms.model.Job;
 import com.bjtu.afms.model.JobExample;
+import com.bjtu.afms.web.param.query.JobQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class JobService {
@@ -39,35 +39,32 @@ public class JobService {
         return jobMapper.selectByPrimaryKey(jobId);
     }
 
-    public List<Job> selectJobList(Job job, String orderByClause) {
-        return selectJobList(job, null, orderByClause);
-    }
-
-    public List<Job> selectJobList(Job job, Map<String, Date> timeParam, String orderByClause) {
+    public List<Job> selectJobList(JobQueryParam param) {
         JobExample example = new JobExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         JobExample.Criteria criteria = example.createCriteria();
-        if (job.getUserId() != null) {
-            criteria.andUserIdEqualTo(job.getUserId());
+        if (param.getUserId() != null) {
+            criteria.andUserIdEqualTo(param.getUserId());
         }
-        if (job.getType() != null) {
-            criteria.andTypeEqualTo(job.getType());
+        if (param.getType() != null) {
+            criteria.andTypeEqualTo(param.getType());
         }
-        if (job.getRelateId() != null) {
-            criteria.andRelateIdEqualTo(job.getRelateId());
+        if (param.getRelateId() != null) {
+            criteria.andRelateIdEqualTo(param.getRelateId());
         }
-        if (job.getStatus() != null) {
-            criteria.andStatusEqualTo(job.getStatus());
+        if (param.getStatus() != null) {
+            criteria.andStatusEqualTo(param.getStatus());
         }
-        if (timeParam != null) {
-            Date start = timeParam.get("start");
-            Date end = timeParam.get("end");
-            if (end == null) {
-                end = new Date();
+        if (param.getDeadlineBegin() != null || param.getDeadlineLast() != null) {
+            if (param.getDeadlineBegin() == null) {
+                param.setDeadlineBegin(new Date(0L));
             }
-            criteria.andDeadlineBetween(start, end);
+            if (param.getDeadlineLast() == null) {
+                param.setDeadlineLast(new Date());
+            }
+            criteria.andDeadlineBetween(param.getDeadlineBegin(), param.getDeadlineLast());
         }
         return jobMapper.selectByExample(example);
     }

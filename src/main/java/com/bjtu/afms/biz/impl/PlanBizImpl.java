@@ -60,6 +60,7 @@ public class PlanBizImpl implements PlanBiz {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean insertPlan(Plan plan) {
         plan.setUseNum(0);
         plan.setModTime(null);
@@ -72,6 +73,7 @@ public class PlanBizImpl implements PlanBiz {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean importPlan(PlanImportParam param) {
         PoolCycle poolCycle;
         if (param.getPoolCycleId() != null) {

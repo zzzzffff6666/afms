@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,13 +80,6 @@ public class PoolTaskService {
     public List<PoolTask> selectUnfinishedTaskList(int taskId) {
         PoolTaskExample example = new PoolTaskExample();
         example.createCriteria().andTaskIdEqualTo(taskId).andStatusIn(
-                TaskStatus.getUnfinished().stream().map(TaskStatus::getId).collect(Collectors.toList()));
-        return poolTaskMapper.selectByExample(example);
-    }
-
-    public List<PoolTask> selectUnfinishedTaskList() {
-        PoolTaskExample example = new PoolTaskExample();
-        example.createCriteria().andStatusIn(
                 TaskStatus.getUnfinished().stream().map(TaskStatus::getId).collect(Collectors.toList()));
         return poolTaskMapper.selectByExample(example);
     }

@@ -3,13 +3,13 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.FundMapper;
 import com.bjtu.afms.model.Fund;
 import com.bjtu.afms.model.FundExample;
+import com.bjtu.afms.web.param.query.FundQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class FundService {
@@ -33,29 +33,26 @@ public class FundService {
         return fundMapper.selectByPrimaryKey(fundId);
     }
 
-    public List<Fund> selectFundList(Fund fund, String orderByClause) {
-        return selectFundList(fund, null, orderByClause);
-    }
-
-    public List<Fund> selectFundList(Fund fund, Map<String, Date> timeParam, String orderByClause) {
+    public List<Fund> selectFundList(FundQueryParam param) {
         FundExample example = new FundExample();
-        if (StringUtils.isNotBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNotBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         FundExample.Criteria criteria = example.createCriteria();
-        if (StringUtils.isNotBlank(fund.getName())) {
-            criteria.andNameLike("%" + fund.getName() + "%");
+        if (StringUtils.isNotBlank(param.getName())) {
+            criteria.andNameLike("%" + param.getName() + "%");
         }
-        if (fund.getType() != null) {
-            criteria.andTypeEqualTo(fund.getType());
+        if (param.getType() != null) {
+            criteria.andTypeEqualTo(param.getType());
         }
-        if (timeParam != null) {
-            Date start = timeParam.get("start");
-            Date end = timeParam.get("end");
-            if (end == null) {
-                end = new Date();
+        if (param.getAddBegin() != null || param.getAddLast() != null) {
+            if (param.getAddBegin() == null) {
+                param.setAddBegin(new Date(0L));
             }
-            criteria.andAddTimeBetween(start, end);
+            if (param.getAddLast() == null) {
+                param.setAddLast(new Date());
+            }
+            criteria.andAddTimeBetween(param.getAddBegin(), param.getAddLast());
         }
         return fundMapper.selectByExample(example);
     }

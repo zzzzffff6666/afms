@@ -4,10 +4,10 @@ public interface APIError {
     String SUCCESS = "成功!";
     String FAILED = "失败!";
 
-    String INTERNAL_SERVER_ERROR = "服务器内部错误!";
-    String REQUEST_METHOD_SUPPORT_ERROR = "请求方法不支持!";
-    String PARAMETER_ERROR = "请求参数异常!";
-    String NOT_FOUND = "未找到该资源!";
+    String INTERNAL_SERVER_ERROR = "服务器内部错误";
+    String REQUEST_METHOD_SUPPORT_ERROR = "请求方法不支持";
+    String PARAMETER_ERROR = "请求参数异常";
+    String NOT_FOUND = "未找到资源";
 
     String INSERT_ERROR = "新建资源失败";
     String DELETE_ERROR = "删除资源失败";
@@ -36,4 +36,9 @@ public interface APIError {
     String ITEM_AMOUNT_NOT_ENOUGH = "物品数量不足";
 
     String TASK_NOW_USED = "该任务仍在被使用";
+    String UNKNOWN_TASK_STATUS = "未知的任务状态";
+    String TASK_STATUS_CHANGE_ERROR = "任务状态变更错误";
+
+    String UNKNOWN_PLAN_FINISH = "未知的计划完成状态";
+    String PLAN_FINISH_CHANGE_ERROR = "计划完成状态变更错误";
 }

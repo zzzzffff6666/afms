@@ -3,6 +3,7 @@ package com.bjtu.afms.service;
 import com.bjtu.afms.mapper.CommentMapper;
 import com.bjtu.afms.model.Comment;
 import com.bjtu.afms.model.CommentExample;
+import com.bjtu.afms.web.param.query.CommentQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -31,20 +32,20 @@ public class CommentService {
         return commentMapper.selectByPrimaryKey(commentId);
     }
 
-    public List<Comment> selectCommentList(Comment comment, String orderByClause) {
+    public List<Comment> selectCommentList(CommentQueryParam param) {
         CommentExample example = new CommentExample();
-        if (StringUtils.isNoneBlank(orderByClause)) {
-            example.setOrderByClause(orderByClause);
+        if (StringUtils.isNoneBlank(param.getOrderBy())) {
+            example.setOrderByClause(param.getOrderBy());
         }
         CommentExample.Criteria criteria = example.createCriteria();
-        if (comment.getUserId() != null) {
-            criteria.andUserIdEqualTo(comment.getUserId());
+        if (param.getUserId() != null) {
+            criteria.andUserIdEqualTo(param.getUserId());
         }
-        if (comment.getType() != null) {
-            criteria.andTypeEqualTo(comment.getType());
+        if (param.getType() != null) {
+            criteria.andTypeEqualTo(param.getType());
         }
-        if (comment.getRelateId() != null) {
-            criteria.andRelateIdEqualTo(comment.getRelateId());
+        if (param.getRelateId() != null) {
+            criteria.andRelateIdEqualTo(param.getRelateId());
         }
         return commentMapper.selectByExample(example);
     }

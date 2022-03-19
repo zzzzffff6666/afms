@@ -1,5 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.bjtu.afms.exception.BizException;
+import com.bjtu.afms.http.APIError;
+
 import java.util.Arrays;
 
 public enum ItemStatus {
@@ -51,5 +54,39 @@ public enum ItemStatus {
                 .filter(itemStatus -> itemStatus.getName().equals(name))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public static boolean changeCheck(int originStatus, int newStatus) {
+        ItemStatus status = findItemStatus(newStatus);
+        if (status == null) {
+            throw new BizException(APIError.UNKNOWN_ITEM_STATUS);
+        }
+        return changeCheck(originStatus, status);
+    }
+
+    public static boolean changeCheck(int originStatus, ItemStatus newStatus) {
+        if (newStatus == null) {
+            throw new BizException(APIError.UNKNOWN_ITEM_STATUS);
+        }
+        if (originStatus == newStatus.getId()) {
+            return false;
+        }
+        ItemStatus status1 = findItemStatus(originStatus);
+        switch (status1) {
+            case ACTIVE:
+                return true;
+            case DISUSED:
+            case UPKEEP:
+                return newStatus == ACTIVE;
+            case BROKEN:
+                return newStatus == UPKEEP;
+            case LENT:
+                return newStatus == ACTIVE || newStatus == BROKEN;
+            case EXPIRED:
+            case DEPLETED:
+                return false;
+            default:
+                throw new BizException(APIError.UNKNOWN_ITEM_STATUS);
+        }
     }
 }

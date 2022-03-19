@@ -54,6 +54,12 @@ public class PermissionAspect {
                 relateId = (int) object;
             } else {
                 relateId = ((JSONObject) object).getInteger("id");
+                if (relateId == null) {
+                    relateId = ((JSONObject) object).getInteger(authCheck.data().getName() + "Id");
+                }
+                if (relateId == null) {
+                    throw new BizException(APIError.PARAMETER_ERROR);
+                }
             }
             result = permissionService.isOwner(LoginContext.getUserId(), authCheck.data().getId(), relateId);
             if (authCheck.auth().length == 0 || result) {

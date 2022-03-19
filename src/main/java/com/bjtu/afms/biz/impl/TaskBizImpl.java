@@ -53,6 +53,7 @@ public class TaskBizImpl implements TaskBiz {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean insertTask(Task task) {
         task.setModTime(null);
         task.setModUser(null);

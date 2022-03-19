@@ -52,7 +52,7 @@ public class ItemBizImpl implements ItemBiz {
         if (itemType != null && item.getType() != itemType.getId()) {
             throw new BizException(APIError.ITEM_TYPE_ERROR);
         }
-        if (statusChangeCheck(item.getStatus(), newStatus)) {
+        if (ItemStatus.changeCheck(item.getStatus(), newStatus)) {
             Item record = new Item();
             record.setId(itemId);
             record.setStatus(newStatus.getId());
@@ -110,28 +110,5 @@ public class ItemBizImpl implements ItemBiz {
     public boolean deleteItem(int itemId) {
         permissionBiz.deleteResourceOwner(DataType.ITEM.getId(), itemId);
         return itemService.deleteItem(itemId) == 1;
-    }
-
-    private boolean statusChangeCheck(int originStatus, ItemStatus newStatus) {
-        if (originStatus == newStatus.getId()) {
-            return false;
-        }
-        ItemStatus status1 = ItemStatus.findItemStatus(originStatus);
-        switch (status1) {
-            case ACTIVE:
-                return true;
-            case DISUSED:
-            case UPKEEP:
-                return newStatus.equals(ItemStatus.ACTIVE);
-            case BROKEN:
-                return newStatus.equals(ItemStatus.UPKEEP);
-            case LENT:
-                return newStatus.equals(ItemStatus.ACTIVE) || newStatus.equals(ItemStatus.BROKEN);
-            case EXPIRED:
-            case DEPLETED:
-                return false;
-            default:
-                throw new BizException(APIError.UNKNOWN_ITEM_STATUS);
-        }
     }
 }

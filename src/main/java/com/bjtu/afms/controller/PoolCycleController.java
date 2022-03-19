@@ -75,14 +75,8 @@ public class PoolCycleController {
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
     @PostMapping("/admin/poolCycle/status/modify")
-    public Result modifyPoolCycleStatus(@RequestBody PoolCycle poolCycle) {
-        PoolCycle record = new PoolCycle();
-        record.setId(poolCycle.getId());
-        record.setStatus(poolCycle.getStatus());
-        if (poolCycle.getStatus() == TaskStatus.FINISH.getId()) {
-            record.setEndTime(new Date());
-        }
-        if (poolCycleService.updatePoolCycle(record) == 1) {
+    public Result modifyPoolCycleStatus(@RequestParam("id") int id, @RequestParam("status") int status) {
+        if (poolCycleBiz.modifyPoolCycleStatus(id, status)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

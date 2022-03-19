@@ -13,6 +13,8 @@ public interface PoolCycleBiz {
 
     boolean insertPoolCycle(PoolCycle poolCycle);
 
+    boolean modifyPoolCycleStatus(int id, int status);
+
     boolean modifyPoolCycleFund(ModifyCycleFundParam param);
 
     boolean deletePoolCycle(int poolCycleId);
