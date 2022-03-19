@@ -15,20 +15,17 @@ import com.bjtu.afms.service.PlanService;
 import com.bjtu.afms.service.PoolCycleService;
 import com.bjtu.afms.service.PoolTaskService;
 import com.bjtu.afms.utils.ConfigUtil;
-import com.bjtu.afms.web.param.PlanImportParam;
+import com.bjtu.afms.web.param.ImportPlanParam;
 import com.bjtu.afms.web.param.query.PlanQueryParam;
-import com.bjtu.afms.web.param.query.PoolCycleQueryParam;
 import com.bjtu.afms.web.param.query.PoolTaskQueryParam;
 import com.bjtu.afms.web.pojo.PlanTask;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -74,7 +71,7 @@ public class PlanBizImpl implements PlanBiz {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean importPlan(PlanImportParam param) {
+    public boolean importPlan(ImportPlanParam param) {
         PoolCycle poolCycle;
         if (param.getPoolCycleId() != null) {
             poolCycle = poolCycleService.selectPoolCycle(param.getPoolCycleId());

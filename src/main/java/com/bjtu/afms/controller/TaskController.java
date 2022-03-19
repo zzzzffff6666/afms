@@ -64,7 +64,7 @@ public class TaskController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.TASK)
-    @PostMapping("/admin/task/delete/{taskId}")
+    @PostMapping("/task/delete/{taskId}")
     public Result deleteTask(@PathVariable("taskId") int id) {
         if (taskBiz.deleteTask(id)) {
             return Result.ok();

@@ -23,7 +23,7 @@ public class ClientController {
     private ClientBiz clientBiz;
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
-    @GetMapping("/admin/client/info/{clientId}")
+    @GetMapping("/client/info/{clientId}")
     public Result getClientInfo(@PathVariable("clientId") int id) {
         Client client = clientService.selectClient(id);
         if (client != null) {
@@ -34,19 +34,19 @@ public class ClientController {
     }
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
-    @GetMapping({"/admin/client/all", "/admin/client/all/{page}"})
+    @GetMapping({"/client/all", "/client/all/{page}"})
     public Result getAllClient(ClientQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(clientBiz.getClientList(param, page));
     }
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
-    @GetMapping({"/admin/client/list", "/admin/client/list/{page}"})
+    @GetMapping({"/client/list", "/client/list/{page}"})
     public Result getClientListByContent(ClientQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(clientBiz.getClientList(param, page));
     }
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN})
-    @PostMapping("/admin/client/insert")
+    @PostMapping("/client/insert")
     public Result addClient(@RequestBody Client client) {
         if (clientBiz.insertClient(client)) {
             return Result.ok();
@@ -56,7 +56,7 @@ public class ClientController {
     }
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN}, owner = true, data = DataType.CLIENT)
-    @PostMapping("/admin/client/info/modify")
+    @PostMapping("/client/info/modify")
     public Result modifyClientInfo(@RequestBody Client client) {
         client.setAddTime(null);
         client.setAddUser(null);
@@ -68,7 +68,7 @@ public class ClientController {
     }
 
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN}, owner = true, data = DataType.CLIENT)
-    @PostMapping("/admin/client/delete/{clientId}")
+    @PostMapping("/client/delete/{clientId}")
     public Result deleteClient(@PathVariable("clientId") int id) {
         if (clientBiz.deleteClient(id)) {
             return Result.ok();

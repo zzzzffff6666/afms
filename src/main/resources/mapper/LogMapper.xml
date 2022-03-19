@@ -106,21 +106,22 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bjtu.afms.model.Log">
-    insert into log (id, type, relate_id, 
-      user_id, operation_id, operation, 
-      old_value, new_value, add_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{relateId,jdbcType=INTEGER}, 
-      #{userId,jdbcType=INTEGER}, #{operationId,jdbcType=INTEGER}, #{operation,jdbcType=VARCHAR}, 
-      #{oldValue,jdbcType=VARCHAR}, #{newValue,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}
-      )
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into log (type, relate_id, user_id, 
+      operation_id, operation, old_value, 
+      new_value, add_time)
+    values (#{type,jdbcType=INTEGER}, #{relateId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{operationId,jdbcType=INTEGER}, #{operation,jdbcType=VARCHAR}, #{oldValue,jdbcType=VARCHAR}, 
+      #{newValue,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Log">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into log
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="type != null">
         type,
       </if>
@@ -147,9 +148,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
       </if>

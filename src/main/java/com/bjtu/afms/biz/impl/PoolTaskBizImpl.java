@@ -2,15 +2,35 @@ package com.bjtu.afms.biz.impl;
 
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolTaskBiz;
+import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.enums.AuthType;
+import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.TaskStatus;
+import com.bjtu.afms.exception.BizException;
+import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
+import com.bjtu.afms.mapper.PermissionMapper;
+import com.bjtu.afms.mapper.PoolTaskMapper;
+import com.bjtu.afms.model.Permission;
+import com.bjtu.afms.model.PoolCycle;
 import com.bjtu.afms.model.PoolTask;
-import com.bjtu.afms.service.JobService;
+import com.bjtu.afms.service.PoolCycleService;
 import com.bjtu.afms.service.PoolTaskService;
 import com.bjtu.afms.utils.ConfigUtil;
+import com.bjtu.afms.web.param.BatchInsertPoolTaskParam;
 import com.bjtu.afms.web.param.query.PoolTaskQueryParam;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class PoolTaskBizImpl implements PoolTaskBiz {
@@ -19,7 +39,7 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     private PoolTaskService poolTaskService;
 
     @Resource
-    private JobService jobService;
+    private PoolCycleService poolCycleService;
 
     @Resource
     private ConfigUtil configUtil;
@@ -27,18 +47,108 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     @Resource
     private PermissionBiz permissionBiz;
 
+    @Resource
+    private SqlSessionFactory sqlSessionFactory;
+
     @Override
     public Page<PoolTask> getPoolTaskList(PoolTaskQueryParam param, Integer page) {
-        return null;
+        if (page == null) {
+            page = 0;
+        }
+        PageHelper.startPage(page, configUtil.getPageSize());
+        PageInfo<PoolTask> pageInfo = new PageInfo<>(poolTaskService.selectPoolTaskList(param));
+        return new Page<>(pageInfo);
     }
 
     @Override
     public boolean insertPoolTask(PoolTask poolTask) {
-        return false;
+        poolTask.setStatus(TaskStatus.CREATED.getId());
+        poolTask.setModTime(null);
+        poolTask.setModUser(null);
+        poolTask.setStartAct(null);
+        poolTask.setEndAct(null);
+        if (poolTaskService.insertPoolTask(poolTask) == 1) {
+            return permissionBiz.initResourceOwner(DataType.POOL_TASK.getId(), poolTask.getId(), LoginContext.getUserId()) &&
+                    permissionBiz.initResourceOwner(DataType.POOL_TASK.getId(), poolTask.getId(), poolTask.getUserId());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchInsertPoolTask(BatchInsertPoolTaskParam param) {
+        PoolCycle poolCycle = poolCycleService.selectPoolCycle(param.getPoolCycleId());
+        if (poolCycle == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        int userId = param.getUserId() == null ? poolCycle.getUserId() : param.getUserId();
+        List<PoolTask> poolTaskList = new ArrayList<>();
+        for (BatchInsertPoolTaskParam.InnerTask innerTask : param.getTaskList()) {
+            PoolTask poolTask = new PoolTask();
+            poolTask.setPoolId(poolCycle.getPoolId());
+            poolTask.setCycle(poolCycle.getCycle());
+            poolTask.setTaskId(innerTask.getTaskId());
+            poolTask.setUserId(innerTask.getUserId() == null ? userId : innerTask.getUserId());
+            poolTask.setStatus(TaskStatus.CREATED.getId());
+            poolTask.setStartPre(innerTask.getStartPre());
+            poolTask.setEndPre(innerTask.getEndPre());
+            poolTaskList.add(poolTask);
+        }
+        batchInsertPoolTask(poolTaskList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchInsertPoolTask(List<PoolTask> poolTaskList) {
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
+        PoolTaskMapper poolTaskMapper = sqlSession.getMapper(PoolTaskMapper.class);
+        poolTaskList.forEach(poolTaskMapper::insertSelective);
+        sqlSession.commit();
+        sqlSession.clearCache();
+        PermissionMapper permissionMapper = sqlSession.getMapper(PermissionMapper.class);
+        poolTaskList.forEach(poolTask -> {
+            Permission permission1 = new Permission();
+            permission1.setUserId(LoginContext.getUserId());
+            permission1.setAuth(AuthType.OWNER.getId());
+            permission1.setType(DataType.POOL_TASK.getId());
+            permission1.setRelateId(poolTask.getId());
+            permissionMapper.insertSelective(permission1);
+            Permission permission2 = new Permission();
+            permission2.setUserId(poolTask.getUserId());
+            permission2.setAuth(AuthType.OWNER.getId());
+            permission2.setType(DataType.POOL_TASK.getId());
+            permission2.setRelateId(poolTask.getId());
+            permissionMapper.insertSelective(permission2);
+        });
+        sqlSession.commit();
+        sqlSession.clearCache();
+    }
+
+    @Override
+    public boolean modifyPoolTaskStatus(int id, int status) {
+        PoolTask poolTask = poolTaskService.selectPoolTask(id);
+        if (poolTask == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (TaskStatus.changeCheck(poolTask.getStatus(), status)) {
+            PoolTask record = new PoolTask();
+            record.setId(id);
+            record.setStatus(status);
+            if (TaskStatus.isFinish(status)) {
+                record.setEndAct(new Date());
+            } else if (TaskStatus.isStart(status)) {
+                record.setStartAct(new Date());
+            }
+            return poolTaskService.updatePoolTask(record) == 1;
+        } else {
+            throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
+        }
     }
 
     @Override
     public boolean deletePoolTask(int poolTaskId) {
-        return false;
+        permissionBiz.deleteResourceOwner(DataType.POOL_TASK.getId(), poolTaskId);
+        return poolTaskService.deletePoolTask(poolTaskId) == 1;
     }
 }

@@ -119,7 +119,7 @@ public class UserController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
-    @PostMapping("/admin/user/insert")
+    @PostMapping("/user/insert")
     public Result registerUser(@RequestBody @Validated User user) throws NoSuchAlgorithmException {
         String salt = CommonUtil.generateSalt();
         String password = CommonUtil.generatePassword();
@@ -134,7 +134,7 @@ public class UserController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
-    @PostMapping("/admin/user/phone/modify")
+    @PostMapping("/user/phone/modify")
     public Result modifyPhoneByAdmin(@RequestBody @Validated ModifyPhoneParam param) {
         if (userBiz.adminModifyPhone(param)) {
             return Result.ok();
@@ -144,7 +144,7 @@ public class UserController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
-    @PostMapping("/admin/user/status/modify")
+    @PostMapping("/user/status/modify")
     public Result modifyStatusByAdmin(@RequestBody User user) {
         User record = new User();
         record.setId(user.getId());
@@ -157,7 +157,7 @@ public class UserController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
-    @PostMapping("/admin/user/info/modify")
+    @PostMapping("/user/info/modify")
     public Result modifyInfoByAdmin(@RequestBody User user) {
         User record = new User();
         record.setId(user.getId());
@@ -171,7 +171,7 @@ public class UserController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
-    @PostMapping("/admin/user/delete/{userId}")
+    @PostMapping("/user/delete/{userId}")
     public Result deleteByAdmin(@PathVariable("userId") int id) {
         if (userBiz.deleteUser(id)) {
             return Result.ok();

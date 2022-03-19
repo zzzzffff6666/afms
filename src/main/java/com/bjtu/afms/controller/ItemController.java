@@ -136,7 +136,7 @@ public class ItemController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STORE_MANAGER}, owner = true, data = DataType.ITEM)
-    @PostMapping("/admin/item/disuse/{itemId}")
+    @PostMapping("/item/disuse/{itemId}")
     public Result itemDisuse(@PathVariable("itemId") int id) {
         if (itemBiz.statusChange(id, null, ItemStatus.DISUSED)) {
             return Result.ok();
@@ -146,7 +146,7 @@ public class ItemController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STORE_MANAGER})
-    @PostMapping("/admin/item/insert")
+    @PostMapping("/item/insert")
     public Result addItem(@RequestBody @Validated Item item) {
         if (itemBiz.insertItem(item)) {
             return Result.ok();
@@ -156,7 +156,7 @@ public class ItemController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STORE_MANAGER}, owner = true, data = DataType.ITEM)
-    @PostMapping("/admin/item/info/modify")
+    @PostMapping("/item/info/modify")
     public Result modifyItemInfo(@RequestBody @Validated Item item) {
         item.setAddTime(null);
         item.setAddUser(null);
@@ -168,7 +168,7 @@ public class ItemController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STORE_MANAGER}, owner = true, data = DataType.ITEM)
-    @PostMapping("/admin/item/delete/{itemId}")
+    @PostMapping("/item/delete/{itemId}")
     public Result deleteItem(@PathVariable("itemId") int id) {
         if (itemBiz.deleteItem(id)) {
             return Result.ok();

@@ -108,21 +108,24 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bjtu.afms.model.Client">
-    insert into client (id, name, phone, 
-      wechat, addr, name_ep, 
-      addr_ep, add_time, add_user, 
-      mod_time, mod_user)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
-      #{wechat,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR}, #{nameEp,jdbcType=VARCHAR}, 
-      #{addrEp,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, 
-      #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into client (name, phone, wechat, 
+      addr, name_ep, addr_ep, 
+      add_time, add_user, mod_time, 
+      mod_user)
+    values (#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{wechat,jdbcType=VARCHAR}, 
+      #{addr,jdbcType=VARCHAR}, #{nameEp,jdbcType=VARCHAR}, #{addrEp,jdbcType=VARCHAR}, 
+      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, 
+      #{modUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Client">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into client
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="name != null">
         name,
       </if>
@@ -155,9 +158,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>

@@ -105,19 +105,22 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bjtu.afms.model.Job">
-    insert into job (id, user_id, type, 
-      relate_id, deadline, status, 
-      add_time, add_user)
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
-      #{relateId,jdbcType=INTEGER}, #{deadline,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into job (user_id, type, relate_id, 
+      deadline, status, add_time, 
+      add_user)
+    values (#{userId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{relateId,jdbcType=INTEGER}, 
+      #{deadline,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Job">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into job
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="userId != null">
         user_id,
       </if>
@@ -141,9 +144,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
       </if>

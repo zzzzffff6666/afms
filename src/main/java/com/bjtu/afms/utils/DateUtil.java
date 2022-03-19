@@ -59,4 +59,17 @@ public class DateUtil {
         time += day * DAY_LENGTH;
         return new Date(time);
     }
+
+    public static long plusMillis(long millis) {
+        return plusMillis(millis, null);
+    }
+
+    public static long plusMillis(long millis, Date date) {
+        if (date == null) {
+            date = new Date();
+        }
+        long time = date.getTime();
+        time += millis;
+        return time;
+    }
 }

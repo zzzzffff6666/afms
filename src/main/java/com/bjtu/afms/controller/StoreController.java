@@ -43,7 +43,7 @@ public class StoreController {
     }
 
     @AuthCheck(auth = {AuthType.STORE_MANAGER, AuthType.ADMIN})
-    @PostMapping("/admin/store/insert")
+    @PostMapping("/store/insert")
     public Result addStore(@RequestBody Store store) {
         if (storeBiz.insertStore(store)) {
             return Result.ok();
@@ -53,7 +53,7 @@ public class StoreController {
     }
 
     @AuthCheck(auth = {AuthType.STORE_MANAGER, AuthType.ADMIN}, owner = true, data = DataType.STORE)
-    @PostMapping("/admin/store/manager/modify")
+    @PostMapping("/store/manager/modify")
     public Result modifyStoreManager(@RequestBody Store store) {
         Store record = new Store();
         record.setId(store.getId());
@@ -66,7 +66,7 @@ public class StoreController {
     }
 
     @AuthCheck(auth = {AuthType.STORE_MANAGER, AuthType.ADMIN}, owner = true, data = DataType.STORE)
-    @PostMapping("/admin/store/info/modify")
+    @PostMapping("/store/info/modify")
     public Result modifyStoreInfo(@RequestBody Store store) {
         Store record = new Store();
         record.setId(store.getId());
@@ -80,7 +80,7 @@ public class StoreController {
     }
 
     @AuthCheck(auth = {AuthType.STORE_MANAGER, AuthType.ADMIN}, owner = true, data = DataType.CLIENT)
-    @PostMapping("/admin/store/delete/{storeId}")
+    @PostMapping("/store/delete/{storeId}")
     public Result deleteStore(@PathVariable("storeId") int id) {
         if (storeBiz.deleteStore(id)) {
             return Result.ok();

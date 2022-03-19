@@ -43,7 +43,7 @@ public class PoolController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER})
-    @PostMapping("/admin/pool/insert")
+    @PostMapping("/pool/insert")
     public Result addPool(@RequestBody Pool pool) {
         if (poolBiz.insertPool(pool)) {
             return Result.ok();
@@ -53,7 +53,7 @@ public class PoolController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL)
-    @PostMapping("/admin/pool/info/modify")
+    @PostMapping("/pool/info/modify")
     public Result modifyPoolInfo(@RequestBody Pool pool) {
         pool.setDetail(null);
         pool.setAddTime(null);
@@ -66,7 +66,7 @@ public class PoolController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL)
-    @PostMapping("/admin/pool/detail/modify")
+    @PostMapping("/pool/detail/modify")
     public Result modifyPoolDetail(@RequestBody Pool pool) {
         Pool record = new Pool();
         record.setId(pool.getId());
@@ -79,7 +79,7 @@ public class PoolController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL)
-    @PostMapping("/admin/pool/delete/{poolId}")
+    @PostMapping("/pool/delete/{poolId}")
     public Result deletePool(@PathVariable("poolId") int id) {
         if (poolBiz.deletePool(id)) {
             return Result.ok();

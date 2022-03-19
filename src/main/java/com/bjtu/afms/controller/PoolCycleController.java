@@ -51,7 +51,7 @@ public class PoolCycleController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER})
-    @PostMapping("/admin/poolCycle/insert")
+    @PostMapping("/poolCycle/insert")
     public Result addPoolCycle(@RequestBody PoolCycle poolCycle) {
         if (poolCycleBiz.insertPoolCycle(poolCycle)) {
             return Result.ok();
@@ -61,7 +61,7 @@ public class PoolCycleController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
-    @PostMapping("/admin/poolCycle/userId/modify")
+    @PostMapping("/poolCycle/userId/modify")
     public Result modifyPoolCycleManager(@RequestBody PoolCycle poolCycle) {
         PoolCycle record = new PoolCycle();
         record.setId(poolCycle.getId());
@@ -74,7 +74,7 @@ public class PoolCycleController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
-    @PostMapping("/admin/poolCycle/status/modify")
+    @PostMapping("/poolCycle/status/modify")
     public Result modifyPoolCycleStatus(@RequestParam("id") int id, @RequestParam("status") int status) {
         if (poolCycleBiz.modifyPoolCycleStatus(id, status)) {
             return Result.ok();
@@ -84,7 +84,7 @@ public class PoolCycleController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
-    @PostMapping("/admin/poolCycle/fund/modify")
+    @PostMapping("/poolCycle/fund/modify")
     public Result modifyPoolCycleFund(@RequestBody ModifyCycleFundParam param) {
         if (poolCycleBiz.modifyPoolCycleFund(param)) {
             return Result.ok();
@@ -94,7 +94,7 @@ public class PoolCycleController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
-    @PostMapping("/admin/poolCycle/delete/{poolCycleId}")
+    @PostMapping("/poolCycle/delete/{poolCycleId}")
     public Result deletePoolCycle(@PathVariable("poolCycleId") int id) {
         if (poolCycleBiz.deletePoolCycle(id)) {
             return Result.ok();

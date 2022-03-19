@@ -113,25 +113,26 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bjtu.afms.model.Pool">
-    insert into pool (id, place, ordinal, 
-      length, width, height, 
-      type, usage, status, 
-      detail, url, add_time, 
-      add_user, mod_time, mod_user
-      )
-    values (#{id,jdbcType=INTEGER}, #{place,jdbcType=INTEGER}, #{ordinal,jdbcType=INTEGER}, 
-      #{length,jdbcType=DECIMAL}, #{width,jdbcType=DECIMAL}, #{height,jdbcType=DECIMAL}, 
-      #{type,jdbcType=INTEGER}, #{usage,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
-      #{detail,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, 
-      #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER}
-      )
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into pool (place, ordinal, length, 
+      width, height, type, 
+      usage, status, detail, 
+      url, add_time, add_user, 
+      mod_time, mod_user)
+    values (#{place,jdbcType=INTEGER}, #{ordinal,jdbcType=INTEGER}, #{length,jdbcType=DECIMAL}, 
+      #{width,jdbcType=DECIMAL}, #{height,jdbcType=DECIMAL}, #{type,jdbcType=INTEGER}, 
+      #{usage,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{detail,jdbcType=VARCHAR}, 
+      #{url,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, 
+      #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Pool">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into pool
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="place != null">
         place,
       </if>
@@ -176,9 +177,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="place != null">
         #{place,jdbcType=INTEGER},
       </if>

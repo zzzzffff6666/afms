@@ -8,7 +8,7 @@ import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Result;
 import com.bjtu.afms.model.Plan;
 import com.bjtu.afms.service.PlanService;
-import com.bjtu.afms.web.param.PlanImportParam;
+import com.bjtu.afms.web.param.ImportPlanParam;
 import com.bjtu.afms.web.param.query.PlanQueryParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -54,8 +54,8 @@ public class PlanController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL})
-    @PostMapping("/admin/plan/import")
-    public Result importPlan(@RequestBody @Validated PlanImportParam param) {
+    @PostMapping("/plan/import")
+    public Result importPlan(@RequestBody @Validated ImportPlanParam param) {
         if (planBiz.importPlan(param)) {
             return Result.ok();
         } else {
@@ -64,7 +64,7 @@ public class PlanController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.PLAN)
-    @PostMapping("/admin/plan/info/modify")
+    @PostMapping("/plan/info/modify")
     public Result modifyPlanInfo(@RequestBody Plan plan) {
         plan.setUseNum(null);
         plan.setAddTime(null);
@@ -77,7 +77,7 @@ public class PlanController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.PLAN)
-    @PostMapping("/admin/plan/delete/{planId}")
+    @PostMapping("/plan/delete/{planId}")
     public Result deletePlan(@PathVariable("planId") int id) {
         if (planBiz.deletePlan(id)) {
             return Result.ok();

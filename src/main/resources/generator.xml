@@ -142,31 +142,57 @@
                     useActualColumnNames：是否使用列名作为实体类的属性名
         -->
 
-<!--        <table tableName="sys_user"-->
-<!--               enableCountByExample="false"-->
-<!--               enableUpdateByExample="false"-->
-<!--               enableDeleteByExample="false"-->
-<!--               enableSelectByExample="false"-->
-<!--               selectByExampleQueryId="false" />-->
-        <!-- <table tableName="course_info" domainObjectName="CourseInfo" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" />
-        <table tableName="course_user_info" domainObjectName="CourseUserInfo" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" /> -->
-<!--        <table tableName="alert" domainObjectName="Alert"/>-->
-<!--        <table tableName="client" domainObjectName="Client"/>-->
-<!--        <table tableName="comment" domainObjectName="Comment"/>-->
-<!--        <table tableName="daily_task" domainObjectName="DailyTask"/>-->
-<!--        <table tableName="fund" domainObjectName="Fund"/>-->
-<!--        <table tableName="item" domainObjectName="Item"/>-->
-<!--        <table tableName="job" domainObjectName="Job"/>-->
-<!--        <table tableName="log" domainObjectName="Log"/>-->
-        <table tableName="permission" domainObjectName="Permission"/>
-<!--        <table tableName="plan" domainObjectName="Plan"/>-->
-<!--        <table tableName="pool" domainObjectName="Pool"/>-->
-<!--        <table tableName="pool_cycle" domainObjectName="PoolCycle"/>-->
-<!--        <table tableName="pool_plan" domainObjectName="PoolPlan"/>-->
-<!--        <table tableName="pool_task" domainObjectName="PoolTask"/>-->
-<!--        <table tableName="store" domainObjectName="Store"/>-->
-<!--        <table tableName="task" domainObjectName="Task"/>-->
-<!--        <table tableName="user" domainObjectName="User"/>-->
-<!--        <table tableName="verify" domainObjectName="Verify"/>-->
+<!--        <table tableName="alert" domainObjectName="Alert">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="client" domainObjectName="Client">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="comment" domainObjectName="Comment">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="daily_task" domainObjectName="DailyTask">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="fund" domainObjectName="Fund">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="item" domainObjectName="Item">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="job" domainObjectName="Job">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="log" domainObjectName="Log">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="permission" domainObjectName="Permission">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="plan" domainObjectName="Plan">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="pool" domainObjectName="Pool">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="pool_cycle" domainObjectName="PoolCycle">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="pool_plan" domainObjectName="PoolPlan">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="pool_task" domainObjectName="PoolTask">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="store" domainObjectName="Store">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="task" domainObjectName="Task">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="user" domainObjectName="User">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
+        <table tableName="verify" domainObjectName="Verify"/>
     </context>
 </generatorConfiguration>

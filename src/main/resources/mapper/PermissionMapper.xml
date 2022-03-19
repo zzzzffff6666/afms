@@ -104,19 +104,22 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bjtu.afms.model.Permission">
-    insert into permission (id, user_id, auth, 
-      type, relate_id, add_time, 
-      add_user)
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{auth,jdbcType=INTEGER}, 
-      #{type,jdbcType=INTEGER}, #{relateId,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
-      #{addUser,jdbcType=INTEGER})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into permission (user_id, auth, type, 
+      relate_id, add_time, add_user
+      )
+    values (#{userId,jdbcType=INTEGER}, #{auth,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+      #{relateId,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Permission">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into permission
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="userId != null">
         user_id,
       </if>
@@ -137,9 +140,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
       </if>

@@ -42,8 +42,8 @@ public class PoolPlanController {
         return Result.ok(poolPlanBiz.getPoolPlanList(param, page));
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL)
-    @PostMapping("/admin/poolPlan/insert")
+    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
+    @PostMapping("/poolPlan/insert")
     public Result insertPoolPlan(@RequestBody PoolPlan poolPlan) {
         if (poolPlanBiz.insertPoolPlan(poolPlan)) {
             return Result.ok();
@@ -53,7 +53,7 @@ public class PoolPlanController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_PLAN)
-    @PostMapping("/admin/poolPlan/time/modify")
+    @PostMapping("/poolPlan/time/modify")
     public Result modifyPoolPlanTime(@RequestParam("id") int id, @RequestParam("finish") int finish) {
         if (poolPlanBiz.modifyPoolPlanTime(id, finish)) {
             return Result.ok();
@@ -63,7 +63,7 @@ public class PoolPlanController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_PLAN)
-    @PostMapping("/admin/poolPlan/delete/{poolPlanId}")
+    @PostMapping("/poolPlan/delete/{poolPlanId}")
     public Result deletePoolPlan(@PathVariable("poolPlanId") int id) {
         if (poolPlanBiz.deletePoolPlan(id)) {
             return Result.ok();

@@ -112,23 +112,26 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bjtu.afms.model.PoolTask">
-    insert into pool_task (id, pool_id, cycle, 
-      user_id, task_id, start_pre, 
-      end_pre, start_act, end_act, 
-      status, add_time, add_user, 
-      mod_time, mod_user)
-    values (#{id,jdbcType=INTEGER}, #{poolId,jdbcType=INTEGER}, #{cycle,jdbcType=INTEGER}, 
-      #{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, #{startPre,jdbcType=TIMESTAMP}, 
-      #{endPre,jdbcType=TIMESTAMP}, #{startAct,jdbcType=TIMESTAMP}, #{endAct,jdbcType=TIMESTAMP}, 
-      #{status,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, 
-      #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into pool_task (pool_id, cycle, user_id, 
+      task_id, start_pre, end_pre, 
+      start_act, end_act, status, 
+      add_time, add_user, mod_time, 
+      mod_user)
+    values (#{poolId,jdbcType=INTEGER}, #{cycle,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{taskId,jdbcType=INTEGER}, #{startPre,jdbcType=TIMESTAMP}, #{endPre,jdbcType=TIMESTAMP}, 
+      #{startAct,jdbcType=TIMESTAMP}, #{endAct,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, 
+      #{modUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.PoolTask">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into pool_task
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="poolId != null">
         pool_id,
       </if>
@@ -170,9 +173,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="poolId != null">
         #{poolId,jdbcType=INTEGER},
       </if>

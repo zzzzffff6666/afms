@@ -2,7 +2,7 @@ package com.bjtu.afms.biz;
 
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Plan;
-import com.bjtu.afms.web.param.PlanImportParam;
+import com.bjtu.afms.web.param.ImportPlanParam;
 import com.bjtu.afms.web.param.query.PlanQueryParam;
 
 public interface PlanBiz {
@@ -11,7 +11,7 @@ public interface PlanBiz {
 
     boolean insertPlan(Plan plan);
 
-    boolean importPlan(PlanImportParam param);
+    boolean importPlan(ImportPlanParam param);
 
     boolean deletePlan(int planId);
 }

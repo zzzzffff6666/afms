@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class PlanImportParam {
+public class ImportPlanParam {
     @NotNull
     private Integer poolCycleId;
     @NotNull

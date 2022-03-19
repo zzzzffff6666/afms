@@ -111,23 +111,26 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bjtu.afms.model.PoolPlan">
-    insert into pool_plan (id, plan_id, pool_id, 
-      cycle, start_pre, end_pre, 
-      start_act, end_act, finish, 
-      add_time, add_user, mod_time, 
-      mod_user)
-    values (#{id,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, #{poolId,jdbcType=INTEGER}, 
-      #{cycle,jdbcType=INTEGER}, #{startPre,jdbcType=TIMESTAMP}, #{endPre,jdbcType=TIMESTAMP}, 
-      #{startAct,jdbcType=TIMESTAMP}, #{endAct,jdbcType=TIMESTAMP}, #{finish,jdbcType=INTEGER}, 
-      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, 
-      #{modUser,jdbcType=INTEGER})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into pool_plan (plan_id, pool_id, cycle, 
+      start_pre, end_pre, start_act, 
+      end_act, finish, add_time, 
+      add_user, mod_time, mod_user
+      )
+    values (#{planId,jdbcType=INTEGER}, #{poolId,jdbcType=INTEGER}, #{cycle,jdbcType=INTEGER}, 
+      #{startPre,jdbcType=TIMESTAMP}, #{endPre,jdbcType=TIMESTAMP}, #{startAct,jdbcType=TIMESTAMP}, 
+      #{endAct,jdbcType=TIMESTAMP}, #{finish,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.PoolPlan">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into pool_plan
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="planId != null">
         plan_id,
       </if>
@@ -166,9 +169,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="planId != null">
         #{planId,jdbcType=INTEGER},
       </if>

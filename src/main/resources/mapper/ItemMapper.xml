@@ -112,23 +112,26 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.bjtu.afms.model.Item">
-    insert into item (id, type, store_id, 
-      name, amount, expire_time, 
-      maintain_time, maintain_interval, status, 
-      url, add_time, add_user, 
-      mod_time, mod_user)
-    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{storeId,jdbcType=INTEGER}, 
-      #{name,jdbcType=VARCHAR}, #{amount,jdbcType=INTEGER}, #{expireTime,jdbcType=TIMESTAMP}, 
-      #{maintainTime,jdbcType=TIMESTAMP}, #{maintainInterval,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
-      #{url,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, 
-      #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into item (type, store_id, name, 
+      amount, expire_time, maintain_time, 
+      maintain_interval, status, url, 
+      add_time, add_user, mod_time, 
+      mod_user)
+    values (#{type,jdbcType=INTEGER}, #{storeId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{amount,jdbcType=INTEGER}, #{expireTime,jdbcType=TIMESTAMP}, #{maintainTime,jdbcType=TIMESTAMP}, 
+      #{maintainInterval,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, 
+      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, 
+      #{modUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Item">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into item
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="type != null">
         type,
       </if>
@@ -170,9 +173,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
       </if>

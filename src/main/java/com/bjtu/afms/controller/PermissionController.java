@@ -44,7 +44,7 @@ public class PermissionController {
     }
 
     @AuthCheck(auth = AuthType.ADMIN)
-    @PostMapping("/admin/permission/insert")
+    @PostMapping("/permission/insert")
     public Result addPermissionByAdmin(@RequestBody Permission permission) {
         if (permissionBiz.addPermission(permission)) {
             return Result.ok();
@@ -54,7 +54,7 @@ public class PermissionController {
     }
 
     @AuthCheck(auth = AuthType.ADMIN)
-    @PostMapping("/admin/permission/delete/{permissionId}")
+    @PostMapping("/permission/delete/{permissionId}")
     public Result deletePermissionByAdmin(@PathVariable("permissionId") int id) {
         if (permissionService.deletePermission(id) == 1) {
             return Result.ok();
@@ -64,21 +64,21 @@ public class PermissionController {
     }
 
     @AuthCheck(auth = AuthType.ADMIN)
-    @PostMapping("/admin/permission/delete/user/{userId}")
+    @PostMapping("/permission/delete/user/{userId}")
     public Result deleteUserPermissionByAdmin(@PathVariable("userId") int userId) {
         permissionBiz.deleteUserPermission(userId);
         return Result.ok();
     }
 
     @AuthCheck(auth = AuthType.ADMIN)
-    @GetMapping({"/admin/permission/list/user/{userId}", "/admin/permission/list/user/{userId}/{page}"})
+    @GetMapping({"/permission/list/user/{userId}", "/permission/list/user/{userId}/{page}"})
     public Result getUserPermissionListByAdmin(@PathVariable("userId") int userId,
                                                @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(permissionBiz.getUserPermissionList(userId, page));
     }
 
     @AuthCheck(auth = AuthType.ADMIN)
-    @GetMapping({"/admin/permission/user/list", "/admin/permission/user/list/{page}"})
+    @GetMapping({"/permission/user/list", "/permission/user/list/{page}"})
     public Result getPermissionUserList(@RequestParam("auths") List<Integer> auths,
                                         @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(permissionBiz.getPermissionUserList(auths, page));
