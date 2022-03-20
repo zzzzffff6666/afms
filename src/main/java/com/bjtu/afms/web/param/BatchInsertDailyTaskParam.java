@@ -5,10 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class BatchInsertPoolTaskParam {
-    private Integer poolCycleId;
-    private Integer poolId;
-    private Integer cycle;
+public class BatchInsertDailyTaskParam {
     private Integer userId;
     private List<SetTaskParam> taskList;
 }

@@ -39,19 +39,20 @@ public class PoolBizImpl implements PoolBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean insertPool(Pool pool) {
         if (poolService.insertPool(pool) == 1) {
-            return permissionBiz.initResourceOwner(DataType.POOL.getId(), pool.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.POOL.getId(), pool.getId(), LoginContext.getUserId());
+            return true;
         } else {
             return false;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deletePool(int poolId) {
-        permissionBiz.deleteResourceOwner(DataType.POOL.getId(), poolId);
+        permissionBiz.deleteResource(DataType.POOL.getId(), poolId);
         return poolService.deletePool(poolId) == 1;
     }
 }

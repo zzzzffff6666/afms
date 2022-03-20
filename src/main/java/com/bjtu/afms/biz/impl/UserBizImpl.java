@@ -112,17 +112,18 @@ public class UserBizImpl implements UserBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean insertUser(User user) {
         if (userService.insertUser(user) == 1) {
-            return permissionBiz.initUserPermission(user.getId());
+            permissionBiz.initUserPermission(user.getId());
+            return true;
         } else {
             return false;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteUser(int userId) {
         permissionBiz.deleteUserPermission(userId);
         return userService.deleteUser(userId) == 1;

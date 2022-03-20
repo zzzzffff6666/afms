@@ -156,7 +156,7 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
-    public boolean initUserPermission(int userId) {
+    public void initUserPermission(int userId) {
         PermissionQueryParam param = new PermissionQueryParam();
         param.setAuth(AuthType.NORMAL.getId());
         param.setUserId(userId);
@@ -165,18 +165,14 @@ public class PermissionBizImpl implements PermissionBiz {
             Permission permission = new Permission();
             permission.setAuth(AuthType.OWNER.getId());
             permission.setUserId(userId);
-            if (permissionService.insertPermission(permission) == 1) {
-                return true;
-            } else {
+            if (permissionService.insertPermission(permission) != 1) {
                 throw new BizException(APIError.INSERT_ERROR);
             }
-        } else {
-            return true;
         }
     }
 
     @Override
-    public boolean initResourceOwner(int type, int relateId, int userId) {
+    public void initResourceOwner(int type, int relateId, int userId) {
         PermissionQueryParam param = new PermissionQueryParam();
         param.setAuth(AuthType.OWNER.getId());
         param.setUserId(userId);
@@ -189,13 +185,9 @@ public class PermissionBizImpl implements PermissionBiz {
             permission.setType(type);
             permission.setRelateId(relateId);
             permission.setUserId(userId);
-            if (permissionService.insertPermission(permission) == 1) {
-                return true;
-            } else {
+            if (permissionService.insertPermission(permission) != 1) {
                 throw new BizException(APIError.INSERT_ERROR);
             }
-        } else {
-            return true;
         }
     }
 
@@ -206,10 +198,20 @@ public class PermissionBizImpl implements PermissionBiz {
         permissionService.deletePermissionByExample(example);
     }
 
-    @Override
-    public void deleteResourceOwner(int type, int relateId) {
+    public void deleteResource(int type, int relateId) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andAuthEqualTo(AuthType.OWNER.getId()).andTypeEqualTo(type).andRelateIdEqualTo(relateId);
+        permissionService.deletePermissionByExample(example);
+    }
+
+    @Override
+    public void deleteResourceOwner(int type, int relateId, int userId) {
+        PermissionExample example = new PermissionExample();
+        example.createCriteria()
+                .andUserIdEqualTo(userId)
+                .andAuthEqualTo(AuthType.OWNER.getId())
+                .andTypeEqualTo(type)
+                .andRelateIdEqualTo(relateId);
         permissionService.deletePermissionByExample(example);
     }
 }

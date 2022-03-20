@@ -96,19 +96,20 @@ public class ItemBizImpl implements ItemBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean insertItem(Item item) {
         if (itemService.insertItem(item) == 1) {
-            return permissionBiz.initResourceOwner(DataType.ITEM.getId(), item.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.ITEM.getId(), item.getId(), LoginContext.getUserId());
+            return true;
         } else {
             return false;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteItem(int itemId) {
-        permissionBiz.deleteResourceOwner(DataType.ITEM.getId(), itemId);
+        permissionBiz.deleteResource(DataType.ITEM.getId(), itemId);
         return itemService.deleteItem(itemId) == 1;
     }
 }

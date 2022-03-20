@@ -24,7 +24,7 @@ public class PoolTaskController {
     @Resource
     private PoolTaskBiz poolTaskBiz;
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_TASK)
+    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.POOL_TASK)
     @GetMapping("/poolTask/info/{poolTaskId}")
     public Result getPoolTaskInfo(@PathVariable("poolTaskId") int id) {
         PoolTask poolTask = poolTaskService.selectPoolTask(id);
@@ -41,13 +41,13 @@ public class PoolTaskController {
         return Result.ok(poolTaskBiz.getPoolTaskList(param, page));
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER})
+    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER, AuthType.TASK_PRINCIPAL})
     @GetMapping({"/poolTask/all", "/poolTask/all/{page}"})
     public Result getAllPoolTask(PoolTaskQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(poolTaskBiz.getPoolTaskList(param, page));
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER})
+    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER, AuthType.TASK_PRINCIPAL})
     @GetMapping({"/poolTask/list", "/poolTask/list/{page}"})
     public Result getPoolTaskList(PoolTaskQueryParam param, @PathVariable(value = "page", required = false) Integer page) {
         return Result.ok(poolTaskBiz.getPoolTaskList(param, page));
@@ -70,7 +70,7 @@ public class PoolTaskController {
         return Result.ok();
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_TASK)
+    @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.POOL_TASK)
     @PostMapping("/poolTask/status/modify")
     public Result modifyPoolTaskStatus(@RequestParam("id") int id, @RequestParam("status") int status) {
         if (poolTaskBiz.modifyPoolTaskStatus(id, status)) {
@@ -80,20 +80,17 @@ public class PoolTaskController {
         }
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_TASK)
+    @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.POOL_TASK)
     @PostMapping("/poolTask/user/modify")
-    public Result modifyPoolTaskUserId(@RequestParam("id") int id, @RequestParam("userId") int userId) {
-        PoolTask poolTask = new PoolTask();
-        poolTask.setId(id);
-        poolTask.setUserId(userId);
-        if (poolTaskService.updatePoolTask(poolTask) == 1) {
+    public Result modifyPoolTaskUser(@RequestParam("id") int id, @RequestParam("userId") int userId) {
+        if (poolTaskBiz.modifyPoolTaskUser(id, userId)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);
         }
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_TASK)
+    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.POOL_TASK)
     @PostMapping("/poolTask/delete/{poolTaskId}")
     public Result deletePoolTask(@PathVariable("poolTaskId") int id) {
         if (poolTaskBiz.deletePoolTask(id)) {

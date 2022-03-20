@@ -19,5 +19,7 @@ public interface PoolTaskBiz {
 
     boolean modifyPoolTaskStatus(int id, int status);
 
+    boolean modifyPoolTaskUser(int id, int userId);
+
     boolean deletePoolTask(int poolTaskId);
 }

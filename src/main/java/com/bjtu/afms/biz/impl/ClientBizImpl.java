@@ -41,19 +41,20 @@ public class ClientBizImpl implements ClientBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean insertClient(Client client) {
         if (clientService.insertClient(client) == 1) {
-            return permissionBiz.initResourceOwner(DataType.CLIENT.getId(), client.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.CLIENT.getId(), client.getId(), LoginContext.getUserId());
+            return true;
         } else {
             return false;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteClient(int clientId) {
-        permissionBiz.deleteResourceOwner(DataType.CLIENT.getId(), clientId);
+        permissionBiz.deleteResource(DataType.CLIENT.getId(), clientId);
         return clientService.deleteClient(clientId) == 1;
     }
 }

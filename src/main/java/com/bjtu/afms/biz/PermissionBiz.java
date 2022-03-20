@@ -19,11 +19,13 @@ public interface PermissionBiz {
 
     Page<UserPermissionVO> getPermissionUserList(List<Integer> auths, Integer page);
 
-    boolean initUserPermission(int userId);
+    void initUserPermission(int userId);
 
-    boolean initResourceOwner(int type, int relateId, int userId);
+    void initResourceOwner(int type, int relateId, int userId);
 
     void deleteUserPermission(int userId);
 
-    void deleteResourceOwner(int type, int relateId);
+    void deleteResource(int type, int relateId);
+
+    void deleteResourceOwner(int type, int relateId, int userId);
 }

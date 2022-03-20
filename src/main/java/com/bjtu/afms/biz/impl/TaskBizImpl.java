@@ -53,19 +53,20 @@ public class TaskBizImpl implements TaskBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean insertTask(Task task) {
         task.setModTime(null);
         task.setModUser(null);
         if (taskService.insertTask(task) == 1) {
-            return permissionBiz.initResourceOwner(DataType.TASK.getId(), task.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.TASK.getId(), task.getId(), LoginContext.getUserId());
+            return true;
         } else {
             return false;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteTask(int taskId) {
         List<DailyTask> dailyTaskList = dailyTaskService.selectUnfinishedTaskList(taskId);
         if (!CollectionUtils.isEmpty(dailyTaskList)) {
@@ -75,7 +76,7 @@ public class TaskBizImpl implements TaskBiz {
         if (!CollectionUtils.isEmpty(poolTaskList)) {
             throw new BizException(APIError.TASK_NOW_USED);
         }
-        permissionBiz.deleteResourceOwner(DataType.TASK.getId(), taskId);
+        permissionBiz.deleteResource(DataType.TASK.getId(), taskId);
         return taskService.deleteTask(taskId) == 1;
     }
 }

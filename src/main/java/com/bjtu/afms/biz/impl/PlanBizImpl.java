@@ -57,20 +57,21 @@ public class PlanBizImpl implements PlanBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean insertPlan(Plan plan) {
         plan.setUseNum(0);
         plan.setModTime(null);
         plan.setModUser(null);
         if (planService.insertPlan(plan) == 1) {
-            return permissionBiz.initResourceOwner(DataType.PLAN.getId(), plan.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.PLAN.getId(), plan.getId(), LoginContext.getUserId());
+            return true;
         } else {
             return false;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean importPlan(ImportPlanParam param) {
         PoolCycle poolCycle;
         if (param.getPoolCycleId() != null) {
@@ -99,16 +100,17 @@ public class PlanBizImpl implements PlanBiz {
         plan.setUseNum(0);
         plan.setTaskList(JSON.toJSONString(taskList));
         if (planService.insertPlan(plan) == 1) {
-            return permissionBiz.initResourceOwner(DataType.PLAN.getId(), plan.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.PLAN.getId(), plan.getId(), LoginContext.getUserId());
+            return true;
         } else {
             return false;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deletePlan(int planId) {
-        permissionBiz.deleteResourceOwner(DataType.PLAN.getId(), planId);
+        permissionBiz.deleteResource(DataType.PLAN.getId(), planId);
         return planService.deletePlan(planId) == 1;
     }
 }

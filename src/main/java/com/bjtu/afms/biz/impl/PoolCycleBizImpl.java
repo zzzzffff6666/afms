@@ -61,7 +61,7 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean insertPoolCycle(PoolCycle poolCycle) {
         PoolCycle record = new PoolCycle();
         record.setPoolId(poolCycle.getPoolId());
@@ -70,7 +70,8 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
         record.setStartTime(new Date());
         record.setStatus(TaskStatus.CREATED.getId());
         if (poolCycleService.insertPoolCycle(record) == 1) {
-            return permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), poolCycle.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), poolCycle.getId(), LoginContext.getUserId());
+            return true;
         } else {
             return false;
         }
@@ -117,9 +118,9 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deletePoolCycle(int poolCycleId) {
-        permissionBiz.deleteResourceOwner(DataType.POOL_CYCLE.getId(), poolCycleId);
+        permissionBiz.deleteResource(DataType.POOL_CYCLE.getId(), poolCycleId);
         return poolCycleService.deletePoolCycle(poolCycleId) == 1;
     }
 }

@@ -39,19 +39,20 @@ public class StoreBizImpl implements StoreBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean insertStore(Store store) {
         if (storeService.insertStore(store) == 1) {
-            return permissionBiz.initResourceOwner(DataType.CLIENT.getId(), store.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.CLIENT.getId(), store.getId(), LoginContext.getUserId());
+            return true;
         } else {
             return false;
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deleteStore(int storeId) {
-        permissionBiz.deleteResourceOwner(DataType.STORE.getId(), storeId);
+        permissionBiz.deleteResource(DataType.STORE.getId(), storeId);
         return storeService.deleteStore(storeId) == 1;
     }
 }

@@ -25,6 +25,7 @@ import com.bjtu.afms.web.param.query.PoolPlanQueryParam;
 import com.bjtu.afms.web.pojo.PlanTask;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Component
 public class PoolPlanBizImpl implements PoolPlanBiz {
 
@@ -66,7 +68,7 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean insertPoolPlan(PoolPlan poolPlan) {
         PoolCycleQueryParam param = new PoolCycleQueryParam();
         param.setPoolId(poolPlan.getPoolId());
@@ -109,7 +111,8 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
             record.setUseNum(plan.getUseNum() + 1);
             planService.updatePlan(record);
             poolTaskBiz.batchInsertPoolTask(poolTaskList);
-            return permissionBiz.initResourceOwner(DataType.POOL_PLAN.getId(), poolPlan.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.POOL_PLAN.getId(), poolPlan.getId(), LoginContext.getUserId());
+            return true;
         } else {
             return false;
         }
@@ -137,9 +140,9 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean deletePoolPlan(int poolPlanId) {
-        permissionBiz.deleteResourceOwner(DataType.POOL_PLAN.getId(), poolPlanId);
+        permissionBiz.deleteResource(DataType.POOL_PLAN.getId(), poolPlanId);
         return poolPlanService.deletePoolPlan(poolPlanId) == 1;
     }
 }

@@ -47,6 +47,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public Result exceptionHandler(HttpServletRequest req, Exception e) {
         log.error("未知异常！原因是:", e);
-        return Result.error(APIError.INTERNAL_SERVER_ERROR);
+        return Result.error(APIError.INTERNAL_SERVER_ERROR + ": " + e.getMessage());
     }
 }
