@@ -44,6 +44,7 @@ public class ItemBizImpl implements ItemBiz {
     }
 
     @Override
+    @Transactional
     public boolean statusChange(int itemId, ItemType itemType, ItemStatus newStatus) {
         Item item = itemService.selectItem(itemId);
         if (item == null) {
@@ -68,6 +69,7 @@ public class ItemBizImpl implements ItemBiz {
     }
 
     @Override
+    @Transactional
     public boolean takeFeedOrMedicine(int itemId, ItemType itemType, int amount) {
         Item item = itemService.selectItem(itemId);
         if (item == null) {
@@ -98,12 +100,24 @@ public class ItemBizImpl implements ItemBiz {
     @Override
     @Transactional
     public boolean insertItem(Item item) {
+        item.setStatus(ItemStatus.ACTIVE.getId());
+        item.setModTime(null);
+        item.setModUser(null);
         if (itemService.insertItem(item) == 1) {
             permissionBiz.initResourceOwner(DataType.ITEM.getId(), item.getId(), LoginContext.getUserId());
             return true;
         } else {
             return false;
         }
+    }
+
+    @Override
+    @Transactional
+    public boolean modifyItemInfo(Item item) {
+        item.setAddTime(null);
+        item.setAddUser(null);
+        item.setStatus(null);
+        return itemService.updateItem(item) == 1;
     }
 
     @Override

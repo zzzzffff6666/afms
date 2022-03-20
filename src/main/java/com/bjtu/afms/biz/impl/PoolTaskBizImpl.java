@@ -33,6 +33,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -81,6 +82,7 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     }
 
     @Override
+    @Transactional
     public void batchInsertPoolTask(BatchInsertPoolTaskParam param) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(param.getPoolCycleId());
         if (poolCycle == null) {
@@ -112,21 +114,26 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
         sqlSession.clearCache();
         PermissionMapper permissionMapper = sqlSession.getMapper(PermissionMapper.class);
         poolTaskList.forEach(poolTask -> {
-            Permission permission = new Permission();
-            permission.setUserId(LoginContext.getUserId());
-            permission.setAuth(AuthType.OWNER.getId());
-            permission.setType(DataType.POOL_TASK.getId());
-            permission.setRelateId(poolTask.getId());
-            permissionMapper.insertSelective(permission);
-            permission.setId(null);
-            permission.setUserId(poolTask.getUserId());
-            permissionMapper.insertSelective(permission);
+            Permission permission1 = new Permission();
+            permission1.setUserId(LoginContext.getUserId());
+            permission1.setAuth(AuthType.OWNER.getId());
+            permission1.setType(DataType.POOL_TASK.getId());
+            permission1.setRelateId(poolTask.getId());
+            permissionMapper.insertSelective(permission1);
+            Permission permission2 = new Permission();
+            permission2.setUserId(poolTask.getUserId());
+            permission2.setAuth(AuthType.OWNER.getId());
+            permission2.setType(DataType.POOL_TASK.getId());
+            permission2.setRelateId(poolTask.getId());
+            permissionMapper.insertSelective(permission2);
         });
         sqlSession.commit();
         sqlSession.clearCache();
+        sqlSession.close();
     }
 
     @Override
+    @Transactional
     public boolean modifyPoolTaskStatus(int id, int status) {
         PoolTask poolTask = poolTaskService.selectPoolTask(id);
         if (poolTask == null) {

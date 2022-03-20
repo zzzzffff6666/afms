@@ -10,5 +10,9 @@ public interface PoolBiz {
 
     boolean insertPool(Pool pool);
 
+    boolean modifyPoolInfo(Pool pool);
+
+    boolean modifyPoolDetail(int id, String detail);
+
     boolean deletePool(int poolId);
 }

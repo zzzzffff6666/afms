@@ -54,11 +54,8 @@ public class StoreController {
 
     @AuthCheck(auth = {AuthType.STORE_MANAGER, AuthType.ADMIN}, owner = true, data = DataType.STORE)
     @PostMapping("/store/manager/modify")
-    public Result modifyStoreManager(@RequestBody Store store) {
-        Store record = new Store();
-        record.setId(store.getId());
-        record.setManager(store.getManager());
-        if (storeService.updateStore(record) == 1) {
+    public Result modifyStoreManager(@RequestParam("id") int id, @RequestParam("manager") int manager) {
+        if (storeBiz.modifyStoreManager(id, manager)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);
@@ -68,11 +65,7 @@ public class StoreController {
     @AuthCheck(auth = {AuthType.STORE_MANAGER, AuthType.ADMIN}, owner = true, data = DataType.STORE)
     @PostMapping("/store/info/modify")
     public Result modifyStoreInfo(@RequestBody Store store) {
-        Store record = new Store();
-        record.setId(store.getId());
-        record.setName(store.getName());
-        record.setUrl(store.getUrl());
-        if (storeService.updateStore(record) == 1) {
+        if (storeBiz.modifyStoreInfo(store)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

@@ -53,6 +53,14 @@ public class ClientBizImpl implements ClientBiz {
 
     @Override
     @Transactional
+    public boolean modifyClientInfo(Client client) {
+        client.setAddTime(null);
+        client.setAddUser(null);
+        return clientService.updateClient(client) == 1;
+    }
+
+    @Override
+    @Transactional
     public boolean deleteClient(int clientId) {
         permissionBiz.deleteResource(DataType.CLIENT.getId(), clientId);
         return clientService.deleteClient(clientId) == 1;

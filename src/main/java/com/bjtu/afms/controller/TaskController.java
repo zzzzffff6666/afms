@@ -54,9 +54,7 @@ public class TaskController {
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.TASK)
     @PostMapping("/task/info/modify")
     public Result modifyTaskInfo(@RequestBody Task task) {
-        task.setAddTime(null);
-        task.setAddUser(null);
-        if (taskService.updateTask(task) == 1) {
+        if (taskBiz.modifyTaskInfo(task)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

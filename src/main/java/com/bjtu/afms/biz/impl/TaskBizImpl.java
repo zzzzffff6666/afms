@@ -67,6 +67,14 @@ public class TaskBizImpl implements TaskBiz {
 
     @Override
     @Transactional
+    public boolean modifyTaskInfo(Task task) {
+        task.setAddTime(null);
+        task.setAddUser(null);
+        return taskService.updateTask(task) == 1;
+    }
+
+    @Override
+    @Transactional
     public boolean deleteTask(int taskId) {
         List<DailyTask> dailyTaskList = dailyTaskService.selectUnfinishedTaskList(taskId);
         if (!CollectionUtils.isEmpty(dailyTaskList)) {

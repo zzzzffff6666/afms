@@ -66,10 +66,7 @@ public class PlanController {
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.PLAN)
     @PostMapping("/plan/info/modify")
     public Result modifyPlanInfo(@RequestBody Plan plan) {
-        plan.setUseNum(null);
-        plan.setAddTime(null);
-        plan.setAddUser(null);
-        if (planService.updatePlan(plan) == 1) {
+        if (planBiz.modifyPlanInfo(plan)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

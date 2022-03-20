@@ -55,10 +55,7 @@ public class PoolController {
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL)
     @PostMapping("/pool/info/modify")
     public Result modifyPoolInfo(@RequestBody Pool pool) {
-        pool.setDetail(null);
-        pool.setAddTime(null);
-        pool.setAddUser(null);
-        if (poolService.updatePool(pool) == 1) {
+        if (poolBiz.modifyPoolInfo(pool)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);
@@ -67,11 +64,8 @@ public class PoolController {
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL)
     @PostMapping("/pool/detail/modify")
-    public Result modifyPoolDetail(@RequestBody Pool pool) {
-        Pool record = new Pool();
-        record.setId(pool.getId());
-        record.setDetail(pool.getDetail());
-        if (poolService.updatePool(record) == 1) {
+    public Result modifyPoolDetail(@RequestParam("id") int id, @RequestParam("detail") String detail) {
+        if (poolBiz.modifyPoolDetail(id, detail)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

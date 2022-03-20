@@ -76,6 +76,16 @@ public class UserController {
         }
     }
 
+    @PostMapping("/my/info/modify")
+    public Result modifySelfInfo(@RequestBody User user) {
+        user.setId(LoginContext.getUserId());
+        if (userBiz.modifyUserInfo(user)) {
+            return Result.ok();
+        } else {
+            return Result.error(APIError.UPDATE_ERROR);
+        }
+    }
+
     @PostMapping("/my/phone/modify")
     public Result modifySelfPhone(@RequestBody @Validated ModifyPhoneParam param, HttpSession session) {
         if (userBiz.modifyPhone(param, session)) {
@@ -135,7 +145,7 @@ public class UserController {
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
     @PostMapping("/user/phone/modify")
-    public Result modifyPhoneByAdmin(@RequestBody @Validated ModifyPhoneParam param) {
+    public Result modifyUserPhone(@RequestBody @Validated ModifyPhoneParam param) {
         if (userBiz.adminModifyPhone(param)) {
             return Result.ok();
         } else {
@@ -145,11 +155,8 @@ public class UserController {
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
     @PostMapping("/user/status/modify")
-    public Result modifyStatusByAdmin(@RequestBody User user) {
-        User record = new User();
-        record.setId(user.getId());
-        record.setStatus(user.getStatus());
-        if (userService.updateUser(record) == 1) {
+    public Result modifyUserStatus(@RequestParam("id") int id, @RequestParam("status") int status) {
+        if (userBiz.modifyUserStatus(id, status)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);
@@ -158,12 +165,8 @@ public class UserController {
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
     @PostMapping("/user/info/modify")
-    public Result modifyInfoByAdmin(@RequestBody User user) {
-        User record = new User();
-        record.setId(user.getId());
-        record.setName(user.getName());
-        record.setCardId(user.getCardId());
-        if (userService.updateUser(record) == 1) {
+    public Result modifyUserInfo(@RequestBody User user) {
+        if (userBiz.modifyUserInfo(user)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);
@@ -172,7 +175,7 @@ public class UserController {
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STUFF_MANAGER})
     @PostMapping("/user/delete/{userId}")
-    public Result deleteByAdmin(@PathVariable("userId") int id) {
+    public Result deleteUser(@PathVariable("userId") int id) {
         if (userBiz.deleteUser(id)) {
             return Result.ok();
         } else {

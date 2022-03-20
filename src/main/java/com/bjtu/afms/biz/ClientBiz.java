@@ -10,5 +10,7 @@ public interface ClientBiz {
 
     boolean insertClient(Client client);
 
+    boolean modifyClientInfo(Client client);
+
     boolean deleteClient(int clientId);
 }

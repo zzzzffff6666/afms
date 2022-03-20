@@ -58,9 +58,7 @@ public class ClientController {
     @AuthCheck(auth = {AuthType.CLIENT_CONTACT, AuthType.ADMIN}, owner = true, data = DataType.CLIENT)
     @PostMapping("/client/info/modify")
     public Result modifyClientInfo(@RequestBody Client client) {
-        client.setAddTime(null);
-        client.setAddUser(null);
-        if (clientService.updateClient(client) == 1) {
+        if (clientBiz.modifyClientInfo(client)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

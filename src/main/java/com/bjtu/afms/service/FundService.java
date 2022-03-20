@@ -56,4 +56,10 @@ public class FundService {
         }
         return fundMapper.selectByExample(example);
     }
+
+    public List<Fund> selectFundByIdList(List<Integer> idList) {
+        FundExample example = new FundExample();
+        example.createCriteria().andIdIn(idList);
+        return fundMapper.selectByExample(example);
+    }
 }

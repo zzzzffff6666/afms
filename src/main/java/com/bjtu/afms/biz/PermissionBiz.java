@@ -6,6 +6,8 @@ import com.bjtu.afms.model.User;
 import com.bjtu.afms.web.vo.UserPermissionVO;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface PermissionBiz {
 
@@ -22,6 +24,8 @@ public interface PermissionBiz {
     void initUserPermission(int userId);
 
     void initResourceOwner(int type, int relateId, int userId);
+
+    void initResourceOwner(int type, int relateId, Set<Integer> userIdSet);
 
     void deleteUserPermission(int userId);
 

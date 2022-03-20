@@ -87,5 +87,9 @@ public class AlertService {
         return alertMapper.selectByExample(example);
     }
 
-
+    public List<Alert> selectAlertByIdList(List<Integer> idList) {
+        AlertExample example = new AlertExample();
+        example.createCriteria().andIdIn(idList);
+        return alertMapper.selectByExample(example);
+    }
 }

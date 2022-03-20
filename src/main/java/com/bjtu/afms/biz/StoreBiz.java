@@ -10,5 +10,9 @@ public interface StoreBiz {
 
     boolean insertStore(Store store);
 
+    boolean modifyStoreManager(int id, int manager);
+
+    boolean modifyStoreInfo(Store store);
+
     boolean deleteStore(int storeId);
 }

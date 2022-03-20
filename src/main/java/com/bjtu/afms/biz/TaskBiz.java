@@ -10,5 +10,7 @@ public interface TaskBiz {
 
     boolean insertTask(Task task);
 
+    boolean modifyTaskInfo(Task task);
+
     boolean deleteTask(int taskId);
 }

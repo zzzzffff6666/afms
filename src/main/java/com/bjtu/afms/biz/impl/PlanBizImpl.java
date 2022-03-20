@@ -109,6 +109,15 @@ public class PlanBizImpl implements PlanBiz {
 
     @Override
     @Transactional
+    public boolean modifyPlanInfo(Plan plan) {
+        plan.setUseNum(null);
+        plan.setAddTime(null);
+        plan.setAddUser(null);
+        return planService.updatePlan(plan) == 1;
+    }
+
+    @Override
+    @Transactional
     public boolean deletePlan(int planId) {
         permissionBiz.deleteResource(DataType.PLAN.getId(), planId);
         return planService.deletePlan(planId) == 1;

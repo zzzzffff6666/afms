@@ -51,6 +51,24 @@ public class PoolBizImpl implements PoolBiz {
 
     @Override
     @Transactional
+    public boolean modifyPoolInfo(Pool pool) {
+        pool.setDetail(null);
+        pool.setAddTime(null);
+        pool.setAddUser(null);
+        return poolService.updatePool(pool) == 1;
+    }
+
+    @Override
+    @Transactional
+    public boolean modifyPoolDetail(int id, String detail) {
+        Pool pool = new Pool();
+        pool.setId(id);
+        pool.setDetail(detail);
+        return poolService.updatePool(pool) == 1;
+    }
+
+    @Override
+    @Transactional
     public boolean deletePool(int poolId) {
         permissionBiz.deleteResource(DataType.POOL.getId(), poolId);
         return poolService.deletePool(poolId) == 1;

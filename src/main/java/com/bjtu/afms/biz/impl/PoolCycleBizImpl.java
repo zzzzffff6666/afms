@@ -11,6 +11,7 @@ import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.PoolCycle;
 import com.bjtu.afms.service.PoolCycleService;
 import com.bjtu.afms.utils.ConfigUtil;
+import com.bjtu.afms.utils.SetUtil;
 import com.bjtu.afms.web.param.ModifyCycleFundParam;
 import com.bjtu.afms.web.param.query.PoolCycleQueryParam;
 import com.github.pagehelper.PageHelper;
@@ -23,6 +24,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class PoolCycleBizImpl implements PoolCycleBiz {
@@ -70,7 +72,8 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
         record.setStartTime(new Date());
         record.setStatus(TaskStatus.CREATED.getId());
         if (poolCycleService.insertPoolCycle(record) == 1) {
-            permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), poolCycle.getId(), LoginContext.getUserId());
+            Set<Integer> userIdSet = SetUtil.newHashSet(LoginContext.getUserId(), poolCycle.getUserId());
+            permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), poolCycle.getId(), userIdSet);
             return true;
         } else {
             return false;
@@ -78,6 +81,26 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     }
 
     @Override
+    @Transactional
+    public boolean modifyPoolCycleUser(int id, int userId) {
+        PoolCycle poolCycle = poolCycleService.selectPoolCycle(id);
+        if (poolCycle == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        PoolCycle record = new PoolCycle();
+        record.setId(id);
+        record.setUserId(userId);
+        if (poolCycleService.updatePoolCycle(record) == 1) {
+            permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), id, userId);
+            permissionBiz.deleteResourceOwner(DataType.POOL_CYCLE.getId(), id, poolCycle.getUserId());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    @Transactional
     public boolean modifyPoolCycleStatus(int id, int status) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(id);
         if (poolCycle == null) {
@@ -99,6 +122,7 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     }
 
     @Override
+    @Transactional
     public boolean modifyPoolCycleFund(ModifyCycleFundParam param) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(param.getId());
         if (poolCycle == null) {

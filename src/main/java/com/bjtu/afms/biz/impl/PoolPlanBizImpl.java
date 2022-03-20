@@ -97,14 +97,12 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
             poolTask.setTaskId(planTask.getTaskId());
             poolTask.setUserId(poolCycle.getUserId());
             poolTask.setStatus(TaskStatus.CREATED.getId());
-            long start = DateUtil.plusMillis(planTask.getStartOffset(), poolPlan.getStartPre());
-            poolTask.setStartPre(new Date(start));
-            long end = DateUtil.plusMillis(planTask.getEndOffset(), poolPlan.getStartPre());
-            poolTask.setEndPre(new Date(end));
-            endPre = Math.max(endPre, end);
+            poolTask.setStartPre(DateUtil.plusMillis(planTask.getStartOffset(), poolPlan.getStartPre()));
+            poolTask.setEndPre(DateUtil.plusMillis(planTask.getEndOffset(), poolPlan.getStartPre()));
+            endPre = Math.max(endPre, planTask.getEndOffset());
             poolTaskList.add(poolTask);
         }
-        poolPlan.setEndPre(new Date(endPre));
+        poolPlan.setEndPre(DateUtil.plusMillis(endPre, poolPlan.getStartPre()));
         if (poolPlanService.insertPoolPlan(poolPlan) == 1) {
             Plan record = new Plan();
             record.setId(poolPlan.getPlanId());
@@ -119,6 +117,7 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
     }
 
     @Override
+    @Transactional
     public boolean modifyPoolPlanTime(int id, int finish) {
         PoolPlan poolPlan = poolPlanService.selectPoolPlan(id);
         if (poolPlan == null) {

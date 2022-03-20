@@ -7,6 +7,7 @@ import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
+import com.bjtu.afms.mapper.PermissionMapper;
 import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.model.PermissionExample;
 import com.bjtu.afms.model.User;
@@ -17,13 +18,19 @@ import com.bjtu.afms.web.param.query.PermissionQueryParam;
 import com.bjtu.afms.web.vo.UserPermissionVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -37,6 +44,9 @@ public class PermissionBizImpl implements PermissionBiz {
 
     @Resource
     private ConfigUtil configUtil;
+
+    @Resource
+    private SqlSessionTemplate sqlSessionTemplate;
 
     @Override
     public Page<User> getResourceOwnerList(String type, int relateId, Integer page) {
@@ -60,6 +70,7 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
+    @Transactional
     public boolean addResourceOwner(String type, int relateId, int userId) {
         DataType dataType = DataType.findDataType(type);
         PermissionQueryParam param = new PermissionQueryParam();
@@ -88,6 +99,7 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
+    @Transactional
     public boolean addPermission(Permission permission) {
         PermissionQueryParam param = new PermissionQueryParam();
         param.setUserId(permission.getUserId());
@@ -156,6 +168,7 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
+    @Transactional
     public void initUserPermission(int userId) {
         PermissionQueryParam param = new PermissionQueryParam();
         param.setAuth(AuthType.NORMAL.getId());
@@ -172,6 +185,7 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
+    @Transactional
     public void initResourceOwner(int type, int relateId, int userId) {
         PermissionQueryParam param = new PermissionQueryParam();
         param.setAuth(AuthType.OWNER.getId());
@@ -192,12 +206,41 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
+    @Transactional
+    public void initResourceOwner(int type, int relateId, Set<Integer> userIdSet) {
+        PermissionQueryParam param = new PermissionQueryParam();
+        param.setAuth(AuthType.OWNER.getId());
+        param.setType(type);
+        param.setRelateId(relateId);
+        List<Integer> existUserIdList = permissionService.selectPermissionList(param).stream()
+                .map(Permission::getUserId)
+                .collect(Collectors.toList());
+        userIdSet.removeAll(existUserIdList);
+        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+        PermissionMapper permissionMapper = sqlSession.getMapper(PermissionMapper.class);
+        userIdSet.forEach(userId -> {
+            Permission permission = new Permission();
+            permission.setAuth(AuthType.OWNER.getId());
+            permission.setType(type);
+            permission.setRelateId(relateId);
+            permission.setUserId(userId);
+            permissionMapper.insertSelective(permission);
+        });
+        sqlSession.commit();
+        sqlSession.clearCache();
+        sqlSession.close();
+    }
+
+    @Override
+    @Transactional
     public void deleteUserPermission(int userId) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andUserIdEqualTo(userId);
         permissionService.deletePermissionByExample(example);
     }
 
+    @Override
+    @Transactional
     public void deleteResource(int type, int relateId) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andAuthEqualTo(AuthType.OWNER.getId()).andTypeEqualTo(type).andRelateIdEqualTo(relateId);
@@ -205,6 +248,7 @@ public class PermissionBizImpl implements PermissionBiz {
     }
 
     @Override
+    @Transactional
     public void deleteResourceOwner(int type, int relateId, int userId) {
         PermissionExample example = new PermissionExample();
         example.createCriteria()

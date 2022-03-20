@@ -100,6 +100,7 @@ public class UserBizImpl implements UserBiz {
     }
 
     @Override
+    @Transactional
     public boolean adminModifyPhone(ModifyPhoneParam param) {
         if (verifyService.matchVerify(param.getPhoneNew(), param.getCodeNew())) {
             User user = new User();
@@ -120,6 +121,25 @@ public class UserBizImpl implements UserBiz {
         } else {
             return false;
         }
+    }
+
+    @Override
+    @Transactional
+    public boolean modifyUserInfo(User user) {
+        User record = new User();
+        record.setId(user.getId());
+        record.setName(user.getName());
+        record.setCardId(user.getCardId());
+        return userService.updateUser(record) == 1;
+    }
+
+    @Override
+    @Transactional
+    public boolean modifyUserStatus(int id, int status) {
+        User user = new User();
+        user.setId(id);
+        user.setStatus(status);
+        return userService.updateUser(user) == 1;
     }
 
     @Override

@@ -21,5 +21,9 @@ public interface UserBiz {
 
     boolean insertUser(User user);
 
+    boolean modifyUserInfo(User user);
+
+    boolean modifyUserStatus(int id, int status);
+
     boolean deleteUser(int userId);
 }

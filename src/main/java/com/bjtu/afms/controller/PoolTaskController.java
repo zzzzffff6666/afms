@@ -53,7 +53,7 @@ public class PoolTaskController {
         return Result.ok(poolTaskBiz.getPoolTaskList(param, page));
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
+    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL)
     @PostMapping("/poolTask/insert")
     public Result addPoolTask(@RequestBody PoolTask poolTask) {
         if (poolTaskBiz.insertPoolTask(poolTask)) {

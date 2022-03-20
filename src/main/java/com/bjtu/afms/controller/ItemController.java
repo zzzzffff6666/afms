@@ -158,9 +158,7 @@ public class ItemController {
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.STORE_MANAGER}, owner = true, data = DataType.ITEM)
     @PostMapping("/item/info/modify")
     public Result modifyItemInfo(@RequestBody @Validated Item item) {
-        item.setAddTime(null);
-        item.setAddUser(null);
-        if (itemService.updateItem(item) == 1) {
+        if (itemBiz.modifyItemInfo(item)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

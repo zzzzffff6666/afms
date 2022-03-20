@@ -16,5 +16,7 @@ public interface ItemBiz {
 
     boolean insertItem(Item item);
 
+    boolean modifyItemInfo(Item item);
+
     boolean deleteItem(int itemId);
 }

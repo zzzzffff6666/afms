@@ -60,16 +60,16 @@ public class DateUtil {
         return new Date(time);
     }
 
-    public static long plusMillis(long millis) {
+    public static Date plusMillis(long millis) {
         return plusMillis(millis, null);
     }
 
-    public static long plusMillis(long millis, Date date) {
+    public static Date plusMillis(long millis, Date date) {
         if (date == null) {
             date = new Date();
         }
         long time = date.getTime();
         time += millis;
-        return time;
+        return new Date(time);
     }
 }

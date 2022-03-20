@@ -13,5 +13,7 @@ public interface PlanBiz {
 
     boolean importPlan(ImportPlanParam param);
 
+    boolean modifyPlanInfo(Plan plan);
+
     boolean deletePlan(int planId);
 }

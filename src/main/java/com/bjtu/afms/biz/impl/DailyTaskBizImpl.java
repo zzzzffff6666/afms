@@ -75,6 +75,7 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
     }
 
     @Override
+    @Transactional
     public void batchInsertDailyTask(BatchInsertDailyTaskParam param) {
         int userId = param.getUserId() == null ? LoginContext.getUserId() : param.getUserId();
         List<DailyTask> dailyTaskList = new ArrayList<>();
@@ -100,21 +101,26 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
         sqlSession.clearCache();
         PermissionMapper permissionMapper = sqlSession.getMapper(PermissionMapper.class);
         dailyTaskList.forEach(dailyTask -> {
-            Permission permission = new Permission();
-            permission.setUserId(LoginContext.getUserId());
-            permission.setAuth(AuthType.OWNER.getId());
-            permission.setType(DataType.DAILY_TASK.getId());
-            permission.setRelateId(dailyTask.getId());
-            permissionMapper.insertSelective(permission);
-            permission.setId(null);
-            permission.setUserId(dailyTask.getUserId());
-            permissionMapper.insertSelective(permission);
+            Permission permission1 = new Permission();
+            permission1.setUserId(LoginContext.getUserId());
+            permission1.setAuth(AuthType.OWNER.getId());
+            permission1.setType(DataType.DAILY_TASK.getId());
+            permission1.setRelateId(dailyTask.getId());
+            permissionMapper.insertSelective(permission1);
+            Permission permission2 = new Permission();
+            permission2.setUserId(dailyTask.getUserId());
+            permission2.setAuth(AuthType.OWNER.getId());
+            permission2.setType(DataType.DAILY_TASK.getId());
+            permission2.setRelateId(dailyTask.getId());
+            permissionMapper.insertSelective(permission2);
         });
         sqlSession.commit();
         sqlSession.clearCache();
+        sqlSession.close();
     }
 
     @Override
+    @Transactional
     public boolean modifyDailyTaskStatus(int id, int status) {
         DailyTask dailyTask = dailyTaskService.selectDailyTask(id);
         if (dailyTask == null) {
