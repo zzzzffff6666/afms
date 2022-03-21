@@ -25,8 +25,8 @@ DROP TABLE IF EXISTS `alert`;
 CREATE TABLE `alert` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `name` varchar(100) NOT NULL COMMENT '告警名称',
-  `type` int NOT NULL COMMENT '告警类型',
-  `relate_id` int NOT NULL COMMENT '告警对象',
+  `type` int NOT NULL COMMENT '资源类型',
+  `relate_id` int NOT NULL COMMENT '资源id',
   `user_id` int NOT NULL COMMENT '负责人',
   `content` varchar(10240) NOT NULL COMMENT '告警内容',
   `level` int NOT NULL COMMENT '告警等级',
@@ -99,7 +99,7 @@ CREATE TABLE `comment` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int NOT NULL COMMENT '评价人',
   `type` int NOT NULL COMMENT '资源类型',
-  `relate_id` int NOT NULL COMMENT '评价对象',
+  `relate_id` int NOT NULL COMMENT '资源id',
   `score` int NOT NULL COMMENT '评分',
   `content` varchar(1000) NOT NULL COMMENT '评价内容',
   `add_time` datetime NOT NULL COMMENT '创建时间',
@@ -232,8 +232,9 @@ DROP TABLE IF EXISTS `job`;
 CREATE TABLE `job` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int NOT NULL COMMENT '执行人',
-  `type` int NOT NULL COMMENT '任务类型',
-  `relate_id` int NOT NULL COMMENT '任务对象',
+  `task_id` int NOT NULL COMMENT '任务ID',
+  `type` int NOT NULL COMMENT '资源类型',
+  `relate_id` int NOT NULL COMMENT '资源id',
   `deadline` datetime NOT NULL COMMENT '截止时间',
   `status` int NOT NULL COMMENT '任务状态',
   `add_time` datetime NOT NULL COMMENT '创建时间',
@@ -262,17 +263,18 @@ DROP TABLE IF EXISTS `log`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `log` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `type` int NOT NULL COMMENT '类型',
-  `relate_id` int NOT NULL COMMENT '日志对象',
+  `type` int NOT NULL COMMENT '资源类型',
+  `relate_id` int NOT NULL COMMENT '资源id',
   `user_id` int NOT NULL COMMENT '员工id',
-  `operation_type` int NOT NULL COMMENT '操作类型',
+  `operation_id` int NOT NULL COMMENT '操作类型id',
+  `operation` varchar(40) NOT NULL COMMENT '操作类型名称',
   `old_value` varchar(1000) DEFAULT NULL COMMENT '旧值',
   `new_value` varchar(1000) DEFAULT NULL COMMENT '新值',
-  `log_time` datetime NOT NULL COMMENT '创建时间',
+  `add_time` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
-  KEY `log_log_time_index` (`log_time`),
-  KEY `log_user_id_index` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  KEY `log_user_id_index` (`user_id`),
+  KEY `log_add_time_index` (`add_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +296,9 @@ DROP TABLE IF EXISTS `permission`;
 CREATE TABLE `permission` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int NOT NULL COMMENT '用户id',
-  `type` int NOT NULL COMMENT '权限类型',
+  `auth` int NOT NULL COMMENT '权限类型',
+  `type` int DEFAULT NULL COMMENT '资源类型',
+  `relate_id` int DEFAULT NULL COMMENT '资源id',
   `add_time` datetime NOT NULL COMMENT '创建时间',
   `add_user` int NOT NULL COMMENT '创建人',
   PRIMARY KEY (`id`),
@@ -559,7 +563,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '用户id',
   `phone` varchar(11) NOT NULL COMMENT '手机号',
-  `password` varchar(20) NOT NULL COMMENT '密码',
+  `password` varchar(32) NOT NULL COMMENT '密码',
   `salt` varchar(20) NOT NULL COMMENT '随机盐值',
   `name` varchar(100) NOT NULL COMMENT '真实姓名',
   `card_id` varchar(20) NOT NULL COMMENT '身份证号',
@@ -619,4 +623,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-02-13 14:16:46
+-- Dump completed on 2022-03-21 15:03:57
