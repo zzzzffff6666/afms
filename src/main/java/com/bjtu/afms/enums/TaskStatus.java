@@ -5,6 +5,7 @@ import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.utils.ListUtil;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public enum TaskStatus {
@@ -61,6 +62,10 @@ public enum TaskStatus {
         return ListUtil.newArrayList(FINISH, OVERDUE, CANCEL);
     }
 
+    public static List<TaskStatus> getCycleStatus() {
+        return ListUtil.newArrayList(CREATED, HANDLING, FINISH, CANCEL, ERROR);
+    }
+
     public static boolean changeCheck(int originStatus, int newStatus) {
         if (originStatus == newStatus) {
             return false;
@@ -82,6 +87,14 @@ public enum TaskStatus {
                 return false;
             default:
                 throw new BizException(APIError.UNKNOWN_TASK_STATUS);
+        }
+    }
+
+    public static TaskStatus dateCompare(Date pre, Date act) {
+        if (pre.getTime() > act.getTime()) {
+            return FINISH;
+        } else {
+            return OVERDUE;
         }
     }
 }

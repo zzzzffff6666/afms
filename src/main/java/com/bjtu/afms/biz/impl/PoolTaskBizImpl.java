@@ -142,11 +142,13 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
         if (TaskStatus.changeCheck(poolTask.getStatus(), status)) {
             PoolTask record = new PoolTask();
             record.setId(id);
-            record.setStatus(status);
             if (TaskStatus.isFinish(status)) {
-                record.setEndAct(new Date());
+                Date now = new Date();
+                record.setEndAct(now);
+                record.setStatus(TaskStatus.dateCompare(poolTask.getEndPre(), now).getId());
             } else if (TaskStatus.isStart(status)) {
                 record.setStartAct(new Date());
+                record.setStatus(status);
             }
             return poolTaskService.updatePoolTask(record) == 1;
         } else {

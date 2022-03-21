@@ -106,7 +106,7 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
         if (poolCycle == null) {
             throw new BizException(APIError.NOT_FOUND);
         }
-        if (TaskStatus.changeCheck(poolCycle.getStatus(), status)) {
+        if (TaskStatus.changeCheck(poolCycle.getStatus(), status) && status != TaskStatus.OVERDUE.getId()) {
             PoolCycle record = new PoolCycle();
             record.setId(id);
             record.setStatus(status);

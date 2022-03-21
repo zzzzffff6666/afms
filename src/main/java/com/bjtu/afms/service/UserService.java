@@ -73,7 +73,7 @@ public class UserService {
         return userMapper.countByExample(example) > 0;
     }
 
-    public List<User> selectUserListByIdList(List<Integer> idList) {
+    public List<User> selectUserByIdList(List<Integer> idList) {
         UserExample example = new UserExample();
         example.createCriteria().andIdIn(idList).andStatusEqualTo(UserStatus.WORK.getId());
         return userMapper.selectByExample(example);

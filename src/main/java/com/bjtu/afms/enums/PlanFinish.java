@@ -2,9 +2,11 @@ package com.bjtu.afms.enums;
 
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
+import com.bjtu.afms.utils.DateUtil;
 import com.bjtu.afms.utils.ListUtil;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public enum PlanFinish {
@@ -77,6 +79,19 @@ public enum PlanFinish {
                 return false;
             default:
                 throw new BizException(APIError.UNKNOWN_PLAN_FINISH);
+        }
+    }
+
+    public static PlanFinish dateCompare(Date pre, Date act) {
+        long preT = pre.getTime();
+        long actT = act.getTime();
+        long diff = Math.abs(preT - actT);
+        if (diff < 2 * DateUtil.DAY_LENGTH) {
+            return PUNCTUAL;
+        } else if (preT < actT) {
+            return OVERDUE;
+        } else {
+            return ADVANCE;
         }
     }
 }

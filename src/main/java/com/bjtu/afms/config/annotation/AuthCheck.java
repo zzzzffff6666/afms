@@ -10,9 +10,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface AuthCheck {
 
-    AuthType[] auth();
+    AuthType[] auth() default {};
 
     boolean owner() default false;
 
     DataType data() default DataType.USER;
+
+    boolean relate() default false;
 }

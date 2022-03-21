@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -46,6 +47,15 @@ public class CommentService {
         }
         if (param.getRelateId() != null) {
             criteria.andRelateIdEqualTo(param.getRelateId());
+        }
+        if (param.getAddBegin() != null || param.getAddLast() != null) {
+            if (param.getAddBegin() == null) {
+                param.setAddBegin(new Date(0L));
+            }
+            if (param.getAddLast() == null) {
+                param.setAddLast(new Date());
+            }
+            criteria.andAddTimeBetween(param.getAddBegin(), param.getAddLast());
         }
         return commentMapper.selectByExample(example);
     }

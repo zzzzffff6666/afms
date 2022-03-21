@@ -3,10 +3,10 @@ package com.bjtu.afms.utils;
 import java.util.Date;
 
 public class DateUtil {
-    private static final long SECOND_LENGTH = 1000;
-    private static final long MINUTE_LENGTH = 60000;
-    private static final long HOUR_LENGTH = 3600000;
-    private static final long DAY_LENGTH = 86400000;
+    public static final long SECOND_LENGTH = 1000;
+    public static final long MINUTE_LENGTH = 60000;
+    public static final long HOUR_LENGTH = 3600000;
+    public static final long DAY_LENGTH = 86400000;
 
     public static Date plusSeconds(int second) {
         return plusSeconds(second, null);

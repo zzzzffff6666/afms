@@ -5,6 +5,7 @@
     <constructor>
       <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="task_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="type" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="relate_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="deadline" javaType="java.util.Date" jdbcType="TIMESTAMP" />
@@ -72,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, type, relate_id, deadline, status, add_time, add_user
+    id, user_id, task_id, type, relate_id, deadline, status, add_time, add_user
   </sql>
   <select id="selectByExample" parameterType="com.bjtu.afms.model.JobExample" resultMap="BaseResultMap">
     select
@@ -108,12 +109,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into job (user_id, type, relate_id, 
-      deadline, status, add_time, 
-      add_user)
-    values (#{userId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{relateId,jdbcType=INTEGER}, 
-      #{deadline,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
-      #{addUser,jdbcType=INTEGER})
+    insert into job (user_id, task_id, type, 
+      relate_id, deadline, status, 
+      add_time, add_user)
+    values (#{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+      #{relateId,jdbcType=INTEGER}, #{deadline,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Job">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -123,6 +124,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="userId != null">
         user_id,
+      </if>
+      <if test="taskId != null">
+        task_id,
       </if>
       <if test="type != null">
         type,
@@ -146,6 +150,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=INTEGER},
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
@@ -182,6 +189,9 @@
       <if test="record.userId != null">
         user_id = #{record.userId,jdbcType=INTEGER},
       </if>
+      <if test="record.taskId != null">
+        task_id = #{record.taskId,jdbcType=INTEGER},
+      </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
       </if>
@@ -209,6 +219,7 @@
     update job
     set id = #{record.id,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=INTEGER},
+      task_id = #{record.taskId,jdbcType=INTEGER},
       type = #{record.type,jdbcType=INTEGER},
       relate_id = #{record.relateId,jdbcType=INTEGER},
       deadline = #{record.deadline,jdbcType=TIMESTAMP},
@@ -224,6 +235,9 @@
     <set>
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=INTEGER},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
@@ -249,6 +263,7 @@
   <update id="updateByPrimaryKey" parameterType="com.bjtu.afms.model.Job">
     update job
     set user_id = #{userId,jdbcType=INTEGER},
+      task_id = #{taskId,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
       relate_id = #{relateId,jdbcType=INTEGER},
       deadline = #{deadline,jdbcType=TIMESTAMP},

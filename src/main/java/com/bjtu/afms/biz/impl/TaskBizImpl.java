@@ -4,6 +4,7 @@ import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.TaskBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.UrgentLevel;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
@@ -57,6 +58,9 @@ public class TaskBizImpl implements TaskBiz {
     public boolean insertTask(Task task) {
         task.setModTime(null);
         task.setModUser(null);
+        if (task.getLevel() == null) {
+            task.setLevel(UrgentLevel.U1.getId());
+        }
         if (taskService.insertTask(task) == 1) {
             permissionBiz.initResourceOwner(DataType.TASK.getId(), task.getId(), LoginContext.getUserId());
             return true;

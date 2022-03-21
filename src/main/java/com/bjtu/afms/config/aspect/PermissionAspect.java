@@ -48,20 +48,27 @@ public class PermissionAspect {
 
     public boolean hasPermission(Object object, AuthCheck authCheck) {
         boolean result;
+        Integer relateId;
+        int type;
         if (authCheck.owner()) {
-            Integer relateId;
-            if (object instanceof Integer) {
-                relateId = (int) object;
+            if (authCheck.relate()) {
+                relateId = ((JSONObject) object).getInteger("relateId");
+                type = ((JSONObject) object).getInteger("type");
             } else {
-                relateId = ((JSONObject) object).getInteger("id");
-                if (relateId == null) {
-                    relateId = ((JSONObject) object).getInteger(authCheck.data().getName() + "Id");
+                if (object instanceof Integer) {
+                    relateId = (int) object;
+                } else {
+                    relateId = ((JSONObject) object).getInteger("id");
+                    if (relateId == null) {
+                        relateId = ((JSONObject) object).getInteger(authCheck.data().getName() + "Id");
+                    }
+                    if (relateId == null) {
+                        throw new BizException(APIError.PARAMETER_ERROR);
+                    }
                 }
-                if (relateId == null) {
-                    throw new BizException(APIError.PARAMETER_ERROR);
-                }
+                type = authCheck.data().getId();
             }
-            result = permissionService.isOwner(LoginContext.getUserId(), authCheck.data().getId(), relateId);
+            result = permissionService.isOwner(LoginContext.getUserId(), type, relateId);
             if (authCheck.auth().length == 0 || result) {
                 return result;
             }

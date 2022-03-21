@@ -29,7 +29,6 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,7 +64,7 @@ public class PermissionBizImpl implements PermissionBiz {
         if (CollectionUtils.isEmpty(userIdList)) {
             return null;
         } else {
-            return new Page<>(pageInfo, userService.selectUserListByIdList(userIdList));
+            return new Page<>(pageInfo, userService.selectUserByIdList(userIdList));
         }
     }
 
@@ -150,7 +149,7 @@ public class PermissionBizImpl implements PermissionBiz {
                     .map(Permission::getUserId)
                     .distinct()
                     .collect(Collectors.toList());
-            List<User> userList = userService.selectUserListByIdList(userIdList);
+            List<User> userList = userService.selectUserByIdList(userIdList);
             List<UserPermissionVO> userPermissionVOList = new ArrayList<>();
             for (Permission permission : pageInfo.getList()) {
                 UserPermissionVO userPermissionVO = new UserPermissionVO();
@@ -244,6 +243,14 @@ public class PermissionBizImpl implements PermissionBiz {
     public void deleteResource(int type, int relateId) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andAuthEqualTo(AuthType.OWNER.getId()).andTypeEqualTo(type).andRelateIdEqualTo(relateId);
+        permissionService.deletePermissionByExample(example);
+    }
+
+    @Override
+    @Transactional
+    public void deleteResource(int type, List<Integer> relateIdList) {
+        PermissionExample example = new PermissionExample();
+        example.createCriteria().andAuthEqualTo(AuthType.OWNER.getId()).andTypeEqualTo(type).andRelateIdIn(relateIdList);
         permissionService.deletePermissionByExample(example);
     }
 

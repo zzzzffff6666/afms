@@ -139,7 +139,7 @@ public class AlertBizImpl implements AlertBiz {
         if (alert == null) {
             throw new BizException(APIError.NOT_FOUND);
         }
-        if (TaskStatus.changeCheck(alert.getStatus(), status)) {
+        if (TaskStatus.changeCheck(alert.getStatus(), status) && status != TaskStatus.OVERDUE.getId()) {
             Alert record = new Alert();
             record.setId(id);
             record.setStatus(status);

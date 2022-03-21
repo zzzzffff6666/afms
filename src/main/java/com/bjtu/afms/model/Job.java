@@ -8,6 +8,8 @@ public class Job implements Serializable {
 
     private Integer userId;
 
+    private Integer taskId;
+
     private Integer type;
 
     private Integer relateId;
@@ -22,9 +24,10 @@ public class Job implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Job(Integer id, Integer userId, Integer type, Integer relateId, Date deadline, Integer status, Date addTime, Integer addUser) {
+    public Job(Integer id, Integer userId, Integer taskId, Integer type, Integer relateId, Date deadline, Integer status, Date addTime, Integer addUser) {
         this.id = id;
         this.userId = userId;
+        this.taskId = taskId;
         this.type = type;
         this.relateId = relateId;
         this.deadline = deadline;
@@ -51,6 +54,14 @@ public class Job implements Serializable {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public Integer getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
     }
 
     public Integer getType() {

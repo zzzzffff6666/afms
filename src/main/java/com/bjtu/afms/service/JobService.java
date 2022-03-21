@@ -25,6 +25,18 @@ public class JobService {
         return jobMapper.deleteByPrimaryKey(jobId);
     }
 
+    public void deleteJob(int type, int relateId) {
+        JobExample example = new JobExample();
+        example.createCriteria().andTypeEqualTo(type).andRelateIdEqualTo(relateId);
+        jobMapper.deleteByExample(example);
+    }
+
+    public int deleteJob(int type, int relateId, List<Integer> userIdList) {
+        JobExample example = new JobExample();
+        example.createCriteria().andTypeEqualTo(type).andRelateIdEqualTo(relateId).andUserIdIn(userIdList);
+        return jobMapper.deleteByExample(example);
+    }
+
     public int updateJob(Job job) {
         return jobMapper.updateByPrimaryKeySelective(job);
     }
@@ -66,6 +78,12 @@ public class JobService {
             }
             criteria.andDeadlineBetween(param.getDeadlineBegin(), param.getDeadlineLast());
         }
+        return jobMapper.selectByExample(example);
+    }
+
+    public List<Job> selectJobList(int type, int relateId, List<Integer> userIdList) {
+        JobExample example = new JobExample();
+        example.createCriteria().andTypeEqualTo(type).andRelateIdEqualTo(relateId).andUserIdIn(userIdList);
         return jobMapper.selectByExample(example);
     }
 }

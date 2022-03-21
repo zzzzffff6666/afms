@@ -31,5 +31,7 @@ public interface PermissionBiz {
 
     void deleteResource(int type, int relateId);
 
+    void deleteResource(int type, List<Integer> relateIdList);
+
     void deleteResourceOwner(int type, int relateId, int userId);
 }

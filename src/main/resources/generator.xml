@@ -160,9 +160,9 @@
 <!--        <table tableName="item" domainObjectName="Item">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
-<!--        <table tableName="job" domainObjectName="Job">-->
-<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
-<!--        </table>-->
+        <table tableName="job" domainObjectName="Job">
+            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>
+        </table>
 <!--        <table tableName="log" domainObjectName="Log">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
@@ -193,6 +193,6 @@
 <!--        <table tableName="user" domainObjectName="User">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
-        <table tableName="verify" domainObjectName="Verify"/>
+<!--        <table tableName="verify" domainObjectName="Verify"/>-->
     </context>
 </generatorConfiguration>

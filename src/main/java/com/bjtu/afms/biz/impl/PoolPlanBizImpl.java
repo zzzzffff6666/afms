@@ -127,11 +127,13 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
             PoolPlan record = new PoolPlan();
             record.setId(id);
             if (PlanFinish.isFinish(finish)) {
-                record.setEndAct(new Date());
+                Date now = new Date();
+                record.setEndAct(now);
+                record.setFinish(PlanFinish.dateCompare(poolPlan.getEndPre(), now).getId());
             } else if (PlanFinish.isStart(finish)) {
                 record.setStartAct(new Date());
+                record.setFinish(finish);
             }
-            record.setFinish(finish);
             return poolPlanService.updatePoolPlan(record) == 1;
         } else {
             throw new BizException(APIError.PLAN_FINISH_CHANGE_ERROR);

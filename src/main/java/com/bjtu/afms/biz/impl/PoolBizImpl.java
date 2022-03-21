@@ -4,6 +4,7 @@ import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.PoolStatus;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Pool;
 import com.bjtu.afms.service.PoolService;
@@ -41,6 +42,9 @@ public class PoolBizImpl implements PoolBiz {
     @Override
     @Transactional
     public boolean insertPool(Pool pool) {
+        pool.setStatus(PoolStatus.EMPTY.getId());
+        pool.setModTime(null);
+        pool.setModUser(null);
         if (poolService.insertPool(pool) == 1) {
             permissionBiz.initResourceOwner(DataType.POOL.getId(), pool.getId(), LoginContext.getUserId());
             return true;
