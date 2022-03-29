@@ -44,6 +44,18 @@ public class User implements Serializable {
         this.modUser = modUser;
     }
 
+    public User(Integer id, String phone, String name, String cardId, Integer status, Date addTime, Integer addUser, Date modTime, Integer modUser) {
+        this.id = id;
+        this.phone = phone;
+        this.name = name;
+        this.cardId = cardId;
+        this.status = status;
+        this.addTime = addTime;
+        this.addUser = addUser;
+        this.modTime = modTime;
+        this.modUser = modUser;
+    }
+
     public User(Integer id, String phone, String password, String salt, String name) {
         this.id = id;
         this.phone = phone;
