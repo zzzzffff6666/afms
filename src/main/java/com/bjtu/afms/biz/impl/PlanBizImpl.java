@@ -1,10 +1,12 @@
 package com.bjtu.afms.biz.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PlanBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
@@ -46,6 +48,9 @@ public class PlanBizImpl implements PlanBiz {
     @Resource
     private PermissionBiz permissionBiz;
 
+    @Resource
+    private LogBiz logBiz;
+
     @Override
     public Page<Plan> getPlanList(PlanQueryParam param, Integer page) {
         if (page == null) {
@@ -64,6 +69,8 @@ public class PlanBizImpl implements PlanBiz {
         plan.setModUser(null);
         if (planService.insertPlan(plan) == 1) {
             permissionBiz.initResourceOwner(DataType.PLAN.getId(), plan.getId(), LoginContext.getUserId());
+            logBiz.saveLog(DataType.PLAN, plan.getId(), OperationType.INSERT_PLAN,
+                    null, JSON.toJSONString(plan));
             return true;
         } else {
             return false;
@@ -101,6 +108,8 @@ public class PlanBizImpl implements PlanBiz {
         plan.setTaskList(JSON.toJSONString(taskList));
         if (planService.insertPlan(plan) == 1) {
             permissionBiz.initResourceOwner(DataType.PLAN.getId(), plan.getId(), LoginContext.getUserId());
+            logBiz.saveLog(DataType.PLAN, plan.getId(), OperationType.INSERT_PLAN,
+                    null, JSON.toJSONString(plan));
             return true;
         } else {
             return false;
@@ -110,16 +119,36 @@ public class PlanBizImpl implements PlanBiz {
     @Override
     @Transactional
     public boolean modifyPlanInfo(Plan plan) {
+        Plan old = planService.selectPlan(plan.getId());
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
         plan.setUseNum(null);
         plan.setAddTime(null);
         plan.setAddUser(null);
-        return planService.updatePlan(plan) == 1;
+        if (planService.updatePlan(plan) == 1) {
+            logBiz.saveLog(DataType.PLAN, plan.getId(), OperationType.UPDATE_PLAN_INFO,
+                    JSON.toJSONString(old), JSON.toJSONString(plan));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     @Transactional
     public boolean deletePlan(int planId) {
-        permissionBiz.deleteResource(DataType.PLAN.getId(), planId);
-        return planService.deletePlan(planId) == 1;
+        Plan old = planService.selectPlan(planId);
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (planService.deletePlan(planId) == 1) {
+            permissionBiz.deleteResource(DataType.PLAN.getId(), planId);
+            logBiz.saveLog(DataType.PLAN, planId, OperationType.DELETE_PLAN,
+                    JSON.toJSONString(old), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

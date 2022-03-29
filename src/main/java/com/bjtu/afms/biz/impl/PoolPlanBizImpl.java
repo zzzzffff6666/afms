@@ -1,11 +1,13 @@
 package com.bjtu.afms.biz.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolPlanBiz;
 import com.bjtu.afms.biz.PoolTaskBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.PlanFinish;
 import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.exception.BizException;
@@ -56,6 +58,9 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
 
     @Resource
     private PermissionBiz permissionBiz;
+
+    @Resource
+    private LogBiz logBiz;
 
     @Override
     public Page<PoolPlan> getPoolPlanList(PoolPlanQueryParam param, Integer page) {
@@ -110,6 +115,8 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
             planService.updatePlan(record);
             poolTaskBiz.batchInsertPoolTask(poolTaskList);
             permissionBiz.initResourceOwner(DataType.POOL_PLAN.getId(), poolPlan.getId(), LoginContext.getUserId());
+            logBiz.saveLog(DataType.POOL_PLAN, poolPlan.getId(), OperationType.INSERT_POOL_PLAN,
+                    null, JSON.toJSONString(poolPlan));
             return true;
         } else {
             return false;
@@ -134,7 +141,13 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
                 record.setStartAct(new Date());
                 record.setFinish(finish);
             }
-            return poolPlanService.updatePoolPlan(record) == 1;
+            if (poolPlanService.updatePoolPlan(record) == 1) {
+                logBiz.saveLog(DataType.POOL_PLAN, poolPlan.getId(), OperationType.UPDATE_POOL_PLAN_FINISH,
+                        JSON.toJSONString(poolPlan), JSON.toJSONString(record));
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new BizException(APIError.PLAN_FINISH_CHANGE_ERROR);
         }
@@ -143,7 +156,17 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
     @Override
     @Transactional
     public boolean deletePoolPlan(int poolPlanId) {
-        permissionBiz.deleteResource(DataType.POOL_PLAN.getId(), poolPlanId);
-        return poolPlanService.deletePoolPlan(poolPlanId) == 1;
+        PoolPlan poolPlan = poolPlanService.selectPoolPlan(poolPlanId);
+        if (poolPlan == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (poolPlanService.deletePoolPlan(poolPlanId) == 1) {
+            permissionBiz.deleteResource(DataType.POOL_PLAN.getId(), poolPlanId);
+            logBiz.saveLog(DataType.POOL_PLAN, poolPlanId, OperationType.DELETE_POOL_PLAN,
+                    JSON.toJSONString(poolPlan), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

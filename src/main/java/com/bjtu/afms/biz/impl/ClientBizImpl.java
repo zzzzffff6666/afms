@@ -1,9 +1,14 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.bjtu.afms.biz.ClientBiz;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
+import com.bjtu.afms.exception.BizException;
+import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Client;
 import com.bjtu.afms.service.ClientService;
@@ -30,6 +35,9 @@ public class ClientBizImpl implements ClientBiz {
     @Resource
     private PermissionBiz permissionBiz;
 
+    @Resource
+    private LogBiz logBiz;
+
     @Override
     public Page<Client> getClientList(ClientQueryParam param, Integer page) {
         if (page == null) {
@@ -45,6 +53,8 @@ public class ClientBizImpl implements ClientBiz {
     public boolean insertClient(Client client) {
         if (clientService.insertClient(client) == 1) {
             permissionBiz.initResourceOwner(DataType.CLIENT.getId(), client.getId(), LoginContext.getUserId());
+            logBiz.saveLog(DataType.CLIENT, client.getId(), OperationType.INSERT_CLIENT,
+                    null, JSON.toJSONString(client));
             return true;
         } else {
             return false;
@@ -54,15 +64,35 @@ public class ClientBizImpl implements ClientBiz {
     @Override
     @Transactional
     public boolean modifyClientInfo(Client client) {
+        Client old = clientService.selectClient(client.getId());
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
         client.setAddTime(null);
         client.setAddUser(null);
-        return clientService.updateClient(client) == 1;
+        if (clientService.updateClient(client) == 1) {
+            logBiz.saveLog(DataType.CLIENT, client.getId(), OperationType.UPDATE_CLIENT_INFO,
+                    JSON.toJSONString(old), JSON.toJSONString(client));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     @Transactional
     public boolean deleteClient(int clientId) {
-        permissionBiz.deleteResource(DataType.CLIENT.getId(), clientId);
-        return clientService.deleteClient(clientId) == 1;
+        Client old = clientService.selectClient(clientId);
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (clientService.deleteClient(clientId) == 1) {
+            permissionBiz.deleteResource(DataType.CLIENT.getId(), clientId);
+            logBiz.saveLog(DataType.CLIENT, clientId, OperationType.DELETE_CLIENT,
+                    JSON.toJSONString(old), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

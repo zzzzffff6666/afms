@@ -42,7 +42,7 @@ public class PermissionService {
         return permissionMapper.deleteByPrimaryKey(permissionId);
     }
 
-    public void deletePermissionByExample(PermissionExample example) {
+    public void deleteByExample(PermissionExample example) {
         permissionMapper.deleteByExample(example);
     }
 
@@ -68,6 +68,10 @@ public class PermissionService {
         if (param.getRelateId() != null) {
             criteria.andRelateIdEqualTo(param.getRelateId());
         }
+        return permissionMapper.selectByExample(example);
+    }
+
+    public List<Permission> selectByExample(PermissionExample example) {
         return permissionMapper.selectByExample(example);
     }
 

@@ -1,10 +1,13 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.bjtu.afms.biz.AlertBiz;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
@@ -42,6 +45,9 @@ public class AlertBizImpl implements AlertBiz {
 
     @Resource
     private PermissionService permissionService;
+
+    @Resource
+    private LogBiz logBiz;
 
     @Override
     public Page<Alert> getAlertList(AlertQueryParam param, Integer page) {
@@ -95,6 +101,8 @@ public class AlertBizImpl implements AlertBiz {
                 userIdSet.addAll(userIdList);
             }
             permissionBiz.initResourceOwner(DataType.ALERT.getId(), record.getId(), userIdSet);
+            logBiz.saveLog(DataType.ALERT, record.getId(), OperationType.INSERT_ALERT,
+                    null, JSON.toJSONString(record));
             return true;
         } else {
             return false;
@@ -104,13 +112,23 @@ public class AlertBizImpl implements AlertBiz {
     @Override
     @Transactional
     public boolean modifyAlertInfo(Alert alert) {
+        Alert old = alertService.selectAlert(alert.getId());
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
         alert.setStartTime(null);
         alert.setHandleTime(null);
         alert.setEndTime(null);
         alert.setStatus(null);
         alert.setAddTime(null);
         alert.setAddUser(null);
-        return alertService.updateAlert(alert) == 1;
+        if (alertService.updateAlert(alert) == 1) {
+            logBiz.saveLog(DataType.ALERT, alert.getId(), OperationType.UPDATE_ALERT_INFO,
+                    JSON.toJSONString(old), JSON.toJSONString(alert));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -123,9 +141,11 @@ public class AlertBizImpl implements AlertBiz {
         Alert record = new Alert();
         record.setId(id);
         record.setUserId(userId);
-        if (alertService.updateAlert(alert) == 1) {
+        if (alertService.updateAlert(record) == 1) {
             permissionBiz.initResourceOwner(DataType.ALERT.getId(), record.getId(), userId);
             permissionBiz.deleteResourceOwner(DataType.ALERT.getId(), record.getId(), alert.getUserId());
+            logBiz.saveLog(DataType.ALERT, alert.getId(), OperationType.UPDATE_ALERT_USER,
+                    JSON.toJSONString(alert), JSON.toJSONString(record));
             return true;
         } else {
             return false;
@@ -148,7 +168,13 @@ public class AlertBizImpl implements AlertBiz {
             } else if (TaskStatus.isStart(status)) {
                 record.setHandleTime(new Date());
             }
-            return alertService.updateAlert(record) == 1;
+            if (alertService.updateAlert(record) == 1) {
+                logBiz.saveLog(DataType.ALERT, alert.getId(), OperationType.UPDATE_ALERT_STATUS,
+                        JSON.toJSONString(alert), JSON.toJSONString(record));
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
         }
@@ -157,7 +183,17 @@ public class AlertBizImpl implements AlertBiz {
     @Override
     @Transactional
     public boolean deleteAlert(int alertId) {
-        permissionBiz.deleteResource(DataType.ALERT.getId(), alertId);
-        return alertService.deleteAlert(alertId) == 1;
+        Alert alert = alertService.selectAlert(alertId);
+        if (alert == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (alertService.deleteAlert(alertId) == 1) {
+            permissionBiz.deleteResource(DataType.ALERT.getId(), alertId);
+            logBiz.saveLog(DataType.ALERT, alertId, OperationType.DELETE_ALERT,
+                    JSON.toJSONString(alert), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

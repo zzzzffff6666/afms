@@ -1,9 +1,12 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.TaskBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.UrgentLevel;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
@@ -43,6 +46,9 @@ public class TaskBizImpl implements TaskBiz {
     @Resource
     private PermissionBiz permissionBiz;
 
+    @Resource
+    private LogBiz logBiz;
+
     @Override
     public Page<Task> getTaskList(TaskQueryParam param, Integer page) {
         if (page == null) {
@@ -63,6 +69,8 @@ public class TaskBizImpl implements TaskBiz {
         }
         if (taskService.insertTask(task) == 1) {
             permissionBiz.initResourceOwner(DataType.TASK.getId(), task.getId(), LoginContext.getUserId());
+            logBiz.saveLog(DataType.TASK, task.getId(), OperationType.INSERT_TASK,
+                    null, JSON.toJSONString(task));
             return true;
         } else {
             return false;
@@ -72,9 +80,19 @@ public class TaskBizImpl implements TaskBiz {
     @Override
     @Transactional
     public boolean modifyTaskInfo(Task task) {
+        Task old = taskService.selectTask(task.getId());
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
         task.setAddTime(null);
         task.setAddUser(null);
-        return taskService.updateTask(task) == 1;
+        if (taskService.updateTask(task) == 1) {
+            logBiz.saveLog(DataType.TASK, task.getId(), OperationType.UPDATE_TASK_INFO,
+                    JSON.toJSONString(old), JSON.toJSONString(task));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -88,7 +106,17 @@ public class TaskBizImpl implements TaskBiz {
         if (!CollectionUtils.isEmpty(poolTaskList)) {
             throw new BizException(APIError.TASK_NOW_USED);
         }
-        permissionBiz.deleteResource(DataType.TASK.getId(), taskId);
-        return taskService.deleteTask(taskId) == 1;
+        Task task = taskService.selectTask(taskId);
+        if (task == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (taskService.deleteTask(taskId) == 1) {
+            permissionBiz.deleteResource(DataType.TASK.getId(), taskId);
+            logBiz.saveLog(DataType.TASK, taskId, OperationType.DELETE_TASK,
+                    JSON.toJSONString(task), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

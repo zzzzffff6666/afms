@@ -1,16 +1,18 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.bjtu.afms.biz.JobBiz;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.mapper.JobMapper;
-import com.bjtu.afms.mapper.PermissionMapper;
 import com.bjtu.afms.model.*;
 import com.bjtu.afms.service.*;
 import com.bjtu.afms.utils.ConfigUtil;
@@ -55,7 +57,13 @@ public class JobBizImpl implements JobBiz {
     private PermissionBiz permissionBiz;
 
     @Resource
+    private PermissionService permissionService;
+
+    @Resource
     private SqlSessionTemplate sqlSessionTemplate;
+
+    @Resource
+    private LogBiz logBiz;
 
     @Override
     public JobDetailVO getJobDetail(int jobId) {
@@ -108,29 +116,32 @@ public class JobBizImpl implements JobBiz {
             job.setStatus(TaskStatus.CREATED.getId());
             jobList.add(job);
         }
+
         SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
         JobMapper jobMapper = sqlSession.getMapper(JobMapper.class);
         jobList.forEach(jobMapper::insertSelective);
         sqlSession.commit();
         sqlSession.clearCache();
-        PermissionMapper permissionMapper = sqlSession.getMapper(PermissionMapper.class);
+        sqlSession.close();
+        logBiz.saveLog(DataType.JOB, LoginContext.getUserId(), OperationType.BATCH_INSERT_JOB,
+                null, JSON.toJSONString(jobList));
+
+        List<Permission> permissionList = new ArrayList<>();
         jobList.forEach(job -> {
             Permission permission1 = new Permission();
             permission1.setUserId(LoginContext.getUserId());
             permission1.setAuth(AuthType.OWNER.getId());
             permission1.setType(DataType.JOB.getId());
             permission1.setRelateId(job.getId());
-            permissionMapper.insertSelective(permission1);
+            permissionList.add(permission1);
             Permission permission2 = new Permission();
             permission2.setUserId(job.getUserId());
             permission2.setAuth(AuthType.OWNER.getId());
             permission2.setType(DataType.JOB.getId());
             permission2.setRelateId(job.getId());
-            permissionMapper.insertSelective(permission2);
+            permissionList.add(permission2);
         });
-        sqlSession.commit();
-        sqlSession.clearCache();
-        sqlSession.close();
+        permissionBiz.batchInsertPermission(permissionList);
     }
 
     @Override
@@ -148,7 +159,13 @@ public class JobBizImpl implements JobBiz {
             } else {
                 record.setStatus(status);
             }
-            return jobService.updateJob(job) == 1;
+            if (jobService.updateJob(job) == 1) {
+                logBiz.saveLog(DataType.JOB, LoginContext.getUserId(), OperationType.UPDATE_JOB_STATUS,
+                        JSON.toJSONString(job), JSON.toJSONString(record));
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
         }
@@ -199,29 +216,44 @@ public class JobBizImpl implements JobBiz {
     @Override
     @Transactional
     public boolean deleteJob(int jobId) {
-        permissionBiz.deleteResource(DataType.JOB.getId(), jobId);
-        return jobService.deleteJob(jobId) == 1;
+        Job old = jobService.selectJob(jobId);
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (jobService.deleteJob(jobId) == 1) {
+            permissionBiz.deleteResource(DataType.JOB.getId(), jobId);
+            logBiz.saveLog(DataType.JOB, jobId, OperationType.DELETE_JOB,
+                    JSON.toJSONString(old), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     @Transactional
     public void deleteJob(AssignJobParam param) {
         List<Job> jobList = jobService.selectJobList(param.getType(), param.getRelateId(), new ArrayList<>(param.getUserSet()));
-        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
-        PermissionMapper permissionMapper = sqlSession.getMapper(PermissionMapper.class);
+        List<Permission> permissionList = new ArrayList<>();
         jobList.forEach(job -> {
             PermissionExample example = new PermissionExample();
             example.createCriteria()
                     .andAuthEqualTo(AuthType.OWNER.getId())
                     .andTypeEqualTo(DataType.JOB.getId())
                     .andRelateIdEqualTo(job.getId());
-            permissionMapper.deleteByExample(example);
+            permissionList.addAll(permissionService.selectByExample(example));
         });
+
+        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
         JobMapper jobMapper = sqlSession.getMapper(JobMapper.class);
         jobList.forEach(job -> jobMapper.deleteByPrimaryKey(job.getId()));
         sqlSession.commit();
         sqlSession.clearCache();
         sqlSession.close();
+        logBiz.saveLog(DataType.JOB, LoginContext.getUserId(), OperationType.BATCH_DELETE_JOB,
+                JSON.toJSONString(jobList), null);
+
+        permissionBiz.batchDeletePermission(permissionList);
     }
 
     @Override
@@ -233,5 +265,7 @@ public class JobBizImpl implements JobBiz {
         List<Job> jobList = jobService.selectJobList(param1);
         permissionBiz.deleteResource(DataType.JOB.getId(), jobList.stream().map(Job::getId).collect(Collectors.toList()));
         jobService.deleteJob(param.getType(), param.getRelateId());
+        logBiz.saveLog(DataType.JOB, LoginContext.getUserId(), OperationType.BATCH_DELETE_JOB,
+                JSON.toJSONString(jobList), null);
     }
 }

@@ -1,9 +1,12 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
@@ -47,6 +50,9 @@ public class PermissionBizImpl implements PermissionBiz {
     @Resource
     private SqlSessionTemplate sqlSessionTemplate;
 
+    @Resource
+    private LogBiz logBiz;
+
     @Override
     public Page<User> getResourceOwnerList(String type, int relateId, Integer page) {
         if (page == null) {
@@ -89,11 +95,16 @@ public class PermissionBizImpl implements PermissionBiz {
                 permission.setType(dataType.getId());
                 permission.setRelateId(relateId);
                 permission.setUserId(userId);
-                return permissionService.insertPermission(permission) == 1;
+                if (permissionService.insertPermission(permission) == 1) {
+                    logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
+                            null, JSON.toJSONString(permission));
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 throw new BizException(APIError.PERMISSION_ALREADY_EXIST);
             }
-
         }
     }
 
@@ -118,7 +129,13 @@ public class PermissionBizImpl implements PermissionBiz {
                 record.setType(permission.getType());
                 record.setRelateId(permission.getRelateId());
             }
-            return permissionService.insertPermission(record) == 1;
+            if (permissionService.insertPermission(record) == 1) {
+                logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
+                        null, JSON.toJSONString(record));
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new BizException(APIError.PERMISSION_ALREADY_EXIST);
         }
@@ -177,7 +194,10 @@ public class PermissionBizImpl implements PermissionBiz {
             Permission permission = new Permission();
             permission.setAuth(AuthType.OWNER.getId());
             permission.setUserId(userId);
-            if (permissionService.insertPermission(permission) != 1) {
+            if (permissionService.insertPermission(permission) == 1) {
+                logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
+                        null, JSON.toJSONString(permission));
+            } else {
                 throw new BizException(APIError.INSERT_ERROR);
             }
         }
@@ -198,7 +218,10 @@ public class PermissionBizImpl implements PermissionBiz {
             permission.setType(type);
             permission.setRelateId(relateId);
             permission.setUserId(userId);
-            if (permissionService.insertPermission(permission) != 1) {
+            if (permissionService.insertPermission(permission) == 1) {
+                logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
+                        null, JSON.toJSONString(permission));
+            } else {
                 throw new BizException(APIError.INSERT_ERROR);
             }
         }
@@ -215,19 +238,40 @@ public class PermissionBizImpl implements PermissionBiz {
                 .map(Permission::getUserId)
                 .collect(Collectors.toList());
         userIdSet.removeAll(existUserIdList);
-        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
-        PermissionMapper permissionMapper = sqlSession.getMapper(PermissionMapper.class);
+        List<Permission> permissionList = new ArrayList<>();
         userIdSet.forEach(userId -> {
             Permission permission = new Permission();
             permission.setAuth(AuthType.OWNER.getId());
             permission.setType(type);
             permission.setRelateId(relateId);
             permission.setUserId(userId);
-            permissionMapper.insertSelective(permission);
+            permissionList.add(permission);
         });
+        batchInsertPermission(permissionList);
+    }
+
+    @Override
+    @Transactional
+    public void batchInsertPermission(List<Permission> permissionList) {
+        SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+        PermissionMapper permissionMapper1 = sqlSession.getMapper(PermissionMapper.class);
+        permissionList.forEach(permissionMapper1::insertSelective);
         sqlSession.commit();
         sqlSession.clearCache();
         sqlSession.close();
+        logBiz.saveLog(DataType.PERMISSION, LoginContext.getUserId(), OperationType.BATCH_INSERT_PERMISSION,
+                null, JSON.toJSONString(permissionList));
+    }
+
+    @Override
+    @Transactional
+    public void batchDeletePermission(List<Permission> permissionList) {
+        List<Integer> idList = permissionList.stream().map(Permission::getId).collect(Collectors.toList());
+        PermissionExample example = new PermissionExample();
+        example.createCriteria().andIdIn(idList);
+        permissionService.deleteByExample(example);
+        logBiz.saveLog(DataType.PERMISSION, LoginContext.getUserId(), OperationType.BATCH_DELETE_PERMISSION,
+                JSON.toJSONString(permissionList), null);
     }
 
     @Override
@@ -235,7 +279,10 @@ public class PermissionBizImpl implements PermissionBiz {
     public void deleteUserPermission(int userId) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andUserIdEqualTo(userId);
-        permissionService.deletePermissionByExample(example);
+        List<Permission> permissionList = permissionService.selectByExample(example);
+        permissionService.deleteByExample(example);
+        logBiz.saveLog(DataType.PERMISSION, LoginContext.getUserId(), OperationType.BATCH_DELETE_PERMISSION,
+                JSON.toJSONString(permissionList), null);
     }
 
     @Override
@@ -243,7 +290,10 @@ public class PermissionBizImpl implements PermissionBiz {
     public void deleteResource(int type, int relateId) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andAuthEqualTo(AuthType.OWNER.getId()).andTypeEqualTo(type).andRelateIdEqualTo(relateId);
-        permissionService.deletePermissionByExample(example);
+        List<Permission> permissionList = permissionService.selectByExample(example);
+        permissionService.deleteByExample(example);
+        logBiz.saveLog(DataType.PERMISSION, LoginContext.getUserId(), OperationType.BATCH_DELETE_PERMISSION,
+                JSON.toJSONString(permissionList), null);
     }
 
     @Override
@@ -251,7 +301,10 @@ public class PermissionBizImpl implements PermissionBiz {
     public void deleteResource(int type, List<Integer> relateIdList) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andAuthEqualTo(AuthType.OWNER.getId()).andTypeEqualTo(type).andRelateIdIn(relateIdList);
-        permissionService.deletePermissionByExample(example);
+        List<Permission> permissionList = permissionService.selectByExample(example);
+        permissionService.deleteByExample(example);
+        logBiz.saveLog(DataType.PERMISSION, LoginContext.getUserId(), OperationType.BATCH_DELETE_PERMISSION,
+                JSON.toJSONString(permissionList), null);
     }
 
     @Override
@@ -263,6 +316,12 @@ public class PermissionBizImpl implements PermissionBiz {
                 .andAuthEqualTo(AuthType.OWNER.getId())
                 .andTypeEqualTo(type)
                 .andRelateIdEqualTo(relateId);
-        permissionService.deletePermissionByExample(example);
+        List<Permission> permissionList = permissionService.selectByExample(example);
+        if (permissionList.size() == 0) {
+            return;
+        }
+        permissionService.deleteByExample(example);
+        logBiz.saveLog(DataType.PERMISSION, permissionList.get(0).getId(), OperationType.DELETE_PERMISSION,
+                JSON.toJSONString(permissionList.get(0)), null);
     }
 }

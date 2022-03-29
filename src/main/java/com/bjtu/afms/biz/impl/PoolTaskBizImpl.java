@@ -1,15 +1,17 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolTaskBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
-import com.bjtu.afms.mapper.PermissionMapper;
 import com.bjtu.afms.mapper.PoolTaskMapper;
 import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.model.PoolCycle;
@@ -33,7 +35,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Component
@@ -53,6 +54,9 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
 
     @Resource
     private SqlSessionTemplate sqlSessionTemplate;
+
+    @Resource
+    private LogBiz logBiz;
 
     @Override
     public Page<PoolTask> getPoolTaskList(PoolTaskQueryParam param, Integer page) {
@@ -75,6 +79,8 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
         if (poolTaskService.insertPoolTask(poolTask) == 1) {
             permissionBiz.initResourceOwner(DataType.POOL_TASK.getId(), poolTask.getId(), LoginContext.getUserId());
             permissionBiz.initResourceOwner(DataType.POOL_TASK.getId(), poolTask.getId(), poolTask.getUserId());
+            logBiz.saveLog(DataType.POOL_TASK, poolTask.getId(), OperationType.INSERT_POOL_TASK,
+                    null, JSON.toJSONString(poolTask));
             return true;
         } else {
             return false;
@@ -112,24 +118,26 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
         poolTaskList.forEach(poolTaskMapper::insertSelective);
         sqlSession.commit();
         sqlSession.clearCache();
-        PermissionMapper permissionMapper = sqlSession.getMapper(PermissionMapper.class);
+        sqlSession.close();
+        logBiz.saveLog(DataType.POOL_TASK, LoginContext.getUserId(), OperationType.BATCH_INSERT_POOL_TASK,
+                null, JSON.toJSONString(poolTaskList));
+
+        List<Permission> permissionList = new ArrayList<>();
         poolTaskList.forEach(poolTask -> {
             Permission permission1 = new Permission();
             permission1.setUserId(LoginContext.getUserId());
             permission1.setAuth(AuthType.OWNER.getId());
             permission1.setType(DataType.POOL_TASK.getId());
             permission1.setRelateId(poolTask.getId());
-            permissionMapper.insertSelective(permission1);
+            permissionList.add(permission1);
             Permission permission2 = new Permission();
             permission2.setUserId(poolTask.getUserId());
             permission2.setAuth(AuthType.OWNER.getId());
             permission2.setType(DataType.POOL_TASK.getId());
             permission2.setRelateId(poolTask.getId());
-            permissionMapper.insertSelective(permission2);
+            permissionList.add(permission2);
         });
-        sqlSession.commit();
-        sqlSession.clearCache();
-        sqlSession.close();
+        permissionBiz.batchInsertPermission(permissionList);
     }
 
     @Override
@@ -150,7 +158,13 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
                 record.setStartAct(new Date());
                 record.setStatus(status);
             }
-            return poolTaskService.updatePoolTask(record) == 1;
+            if (poolTaskService.updatePoolTask(record) == 1) {
+                logBiz.saveLog(DataType.POOL_TASK, id, OperationType.UPDATE_POOL_TASK_STATUS,
+                        JSON.toJSONString(poolTask), JSON.toJSONString(record));
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
         }
@@ -166,9 +180,11 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
         PoolTask record = new PoolTask();
         record.setId(id);
         record.setUserId(userId);
-        if (poolTaskService.updatePoolTask(poolTask) == 1) {
+        if (poolTaskService.updatePoolTask(record) == 1) {
             permissionBiz.initResourceOwner(DataType.POOL_TASK.getId(), id, userId);
             permissionBiz.deleteResourceOwner(DataType.POOL_TASK.getId(), id, poolTask.getUserId());
+            logBiz.saveLog(DataType.POOL_TASK, id, OperationType.UPDATE_POOL_TASK_USER,
+                    JSON.toJSONString(poolTask), JSON.toJSONString(record));
             return true;
         } else {
             return false;
@@ -178,7 +194,17 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     @Override
     @Transactional
     public boolean deletePoolTask(int poolTaskId) {
-        permissionBiz.deleteResource(DataType.POOL_TASK.getId(), poolTaskId);
-        return poolTaskService.deletePoolTask(poolTaskId) == 1;
+        PoolTask poolTask = poolTaskService.selectPoolTask(poolTaskId);
+        if (poolTask == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (poolTaskService.deletePoolTask(poolTaskId) == 1) {
+            permissionBiz.deleteResource(DataType.POOL_TASK.getId(), poolTaskId);
+            logBiz.saveLog(DataType.POOL_TASK, poolTaskId, OperationType.DELETE_POOL_TASK,
+                    JSON.toJSONString(poolTask), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

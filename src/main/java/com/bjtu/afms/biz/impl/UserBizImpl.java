@@ -1,8 +1,12 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.UserBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
@@ -37,6 +41,9 @@ public class UserBizImpl implements UserBiz {
 
     @Resource
     private PermissionBiz permissionBiz;
+
+    @Resource
+    private LogBiz logBiz;
 
     @Override
     public Page<User> getUserList(UserQueryParam param, Integer page) {
@@ -117,6 +124,8 @@ public class UserBizImpl implements UserBiz {
     public boolean insertUser(User user) {
         if (userService.insertUser(user) == 1) {
             permissionBiz.initUserPermission(user.getId());
+            logBiz.saveLog(DataType.USER, user.getId(), OperationType.INSERT_USER,
+                    null, JSON.toJSONString(user));
             return true;
         } else {
             return false;
@@ -136,16 +145,37 @@ public class UserBizImpl implements UserBiz {
     @Override
     @Transactional
     public boolean modifyUserStatus(int id, int status) {
+        User old = userService.selectUser(id);
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
         User user = new User();
         user.setId(id);
         user.setStatus(status);
-        return userService.updateUser(user) == 1;
+        if (userService.updateUser(user) == 1) {
+            logBiz.saveLog(DataType.USER, id, OperationType.UPDATE_USER_STATUS,
+                    JSON.toJSONString(old), JSON.toJSONString(user));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     @Transactional
     public boolean deleteUser(int userId) {
-        permissionBiz.deleteUserPermission(userId);
-        return userService.deleteUser(userId) == 1;
+        User old = userService.selectUser(userId);
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+
+        if (userService.deleteUser(userId) == 1) {
+            permissionBiz.deleteUserPermission(userId);
+            logBiz.saveLog(DataType.USER, userId, OperationType.DELETE_USER,
+                    JSON.toJSONString(old), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

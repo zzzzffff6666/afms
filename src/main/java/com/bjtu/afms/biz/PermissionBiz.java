@@ -27,6 +27,10 @@ public interface PermissionBiz {
 
     void initResourceOwner(int type, int relateId, Set<Integer> userIdSet);
 
+    void batchInsertPermission(List<Permission> permissionList);
+
+    void batchDeletePermission(List<Permission> permissionList);
+
     void deleteUserPermission(int userId);
 
     void deleteResource(int type, int relateId);

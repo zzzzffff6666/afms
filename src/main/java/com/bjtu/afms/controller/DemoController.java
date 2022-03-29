@@ -14,7 +14,6 @@ public class DemoController {
 
     @GetMapping("/test2")
     public Result test2() {
-        String str = null;
-        return Result.ok(str.equals("123"));
+        return Result.ok(123);
     }
 }

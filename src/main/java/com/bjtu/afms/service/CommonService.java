@@ -6,12 +6,16 @@ import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.mapper.*;
 import com.bjtu.afms.model.*;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommonService {
@@ -36,9 +40,6 @@ public class CommonService {
 
     @Resource
     private JobMapper jobMapper;
-
-    @Resource
-    private LogMapper logMapper;
 
     @Resource
     private PermissionMapper permissionMapper;
@@ -66,6 +67,9 @@ public class CommonService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private SqlSessionTemplate sqlSessionTemplate;
 
     public Object getResource(int type, int relateId) {
         switch (type) {
@@ -115,7 +119,7 @@ public class CommonService {
             case DELETE_USER:
                 User user = JSON.parseObject(log.getOldValue(), User.class);
                 return userMapper.insertSelective(user) >= 1;
-            case UPDATE_USER_INFO:
+            case UPDATE_USER_STATUS:
                 user = JSON.parseObject(log.getOldValue(), User.class);
                 user.setId(log.getRelateId());
                 return userMapper.updateByPrimaryKeySelective(user) >= 1;
@@ -125,6 +129,23 @@ public class CommonService {
             case DELETE_PERMISSION:
                 Permission permission = JSON.parseObject(log.getOldValue(), Permission.class);
                 return permissionMapper.insertSelective(permission) >= 1;
+            case BATCH_INSERT_PERMISSION:
+                List<Permission> permissionList = JSON.parseArray(log.getNewValue(), Permission.class);
+                PermissionExample permissionExample = new PermissionExample();
+                permissionExample.createCriteria().andIdIn(permissionList.stream().map(Permission::getId).collect(Collectors.toList()));
+                permissionMapper.deleteByExample(permissionExample);
+                return true;
+            case BATCH_DELETE_PERMISSION:
+                SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+                PermissionMapper permissionMapper1 = sqlSession.getMapper(PermissionMapper.class);
+                permissionList = JSON.parseArray(log.getOldValue(), Permission.class);
+                for (Permission record : permissionList) {
+                    permissionMapper1.insertSelective(record);
+                }
+                sqlSession.commit();
+                sqlSession.clearCache();
+                sqlSession.close();
+                return true;
             case INSERT_CLIENT:
                 clientMapper.deleteByPrimaryKey(log.getRelateId());
                 return true;
@@ -154,7 +175,6 @@ public class CommonService {
                 return itemMapper.insertSelective(item) >= 1;
             case UPDATE_ITEM_INFO:
             case UPDATE_ITEM_STATUS:
-            case UPDATE_ITEM_STORE:
                 item = JSON.parseObject(log.getOldValue(), Item.class);
                 item.setId(log.getRelateId());
                 return itemMapper.updateByPrimaryKeySelective(item) >= 1;
@@ -165,7 +185,6 @@ public class CommonService {
                 Pool pool = JSON.parseObject(log.getOldValue(), Pool.class);
                 return poolMapper.insertSelective(pool) >= 1;
             case UPDATE_POOL_INFO:
-            case UPDATE_POOL_DETAIL:
                 pool = JSON.parseObject(log.getOldValue(), Pool.class);
                 pool.setId(log.getRelateId());
                 return poolMapper.updateByPrimaryKeySelective(pool) >= 1;
@@ -188,7 +207,6 @@ public class CommonService {
                 Task task = JSON.parseObject(log.getOldValue(), Task.class);
                 return taskMapper.insertSelective(task) >= 1;
             case UPDATE_TASK_INFO:
-            case UPDATE_TASK_LEVEL:
                 task = JSON.parseObject(log.getOldValue(), Task.class);
                 task.setId(log.getRelateId());
                 return taskMapper.updateByPrimaryKeySelective(task) >= 1;
@@ -208,7 +226,6 @@ public class CommonService {
             case DELETE_POOL_PLAN:
                 PoolPlan poolPlan = JSON.parseObject(log.getOldValue(), PoolPlan.class);
                 return poolPlanMapper.insertSelective(poolPlan) >= 1;
-            case UPDATE_POOL_PLAN_ACT_TIME:
             case UPDATE_POOL_PLAN_FINISH:
                 poolPlan = JSON.parseObject(log.getOldValue(), PoolPlan.class);
                 poolPlan.setId(log.getRelateId());
@@ -219,7 +236,6 @@ public class CommonService {
             case DELETE_POOL_TASK:
                 PoolTask poolTask = JSON.parseObject(log.getOldValue(), PoolTask.class);
                 return poolTaskMapper.insertSelective(poolTask) >= 1;
-            case UPDATE_POOL_TASK_PRE_TIME:
             case UPDATE_POOL_TASK_STATUS:
             case UPDATE_POOL_TASK_USER:
                 poolTask = JSON.parseObject(log.getOldValue(), PoolTask.class);
@@ -227,15 +243,20 @@ public class CommonService {
                 return poolTaskMapper.updateByPrimaryKeySelective(poolTask) >= 1;
             case BATCH_INSERT_POOL_TASK:
                 List<PoolTask> poolTaskList = JSON.parseArray(log.getNewValue(), PoolTask.class);
-                for (PoolTask pt : poolTaskList) {
-                    poolTaskMapper.deleteByPrimaryKey(pt.getId());
-                }
+                PoolTaskExample poolTaskExample = new PoolTaskExample();
+                poolTaskExample.createCriteria().andIdIn(poolTaskList.stream().map(PoolTask::getId).collect(Collectors.toList()));
+                poolTaskMapper.deleteByExample(poolTaskExample);
                 return true;
             case BATCH_DELETE_POOL_TASK:
+                sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+                PoolTaskMapper poolTaskMapper1 = sqlSession.getMapper(PoolTaskMapper.class);
                 poolTaskList = JSON.parseArray(log.getOldValue(), PoolTask.class);
                 for (PoolTask pt : poolTaskList) {
-                    poolTaskMapper.insertSelective(pt);
+                    poolTaskMapper1.insertSelective(pt);
                 }
+                sqlSession.commit();
+                sqlSession.clearCache();
+                sqlSession.close();
                 return true;
             case INSERT_DAILY_TASK:
                 dailyTaskMapper.deleteByPrimaryKey(log.getRelateId());
@@ -243,7 +264,6 @@ public class CommonService {
             case DELETE_DAILY_TASK:
                 DailyTask dailyTask = JSON.parseObject(log.getOldValue(), DailyTask.class);
                 return dailyTaskMapper.insertSelective(dailyTask) >= 1;
-            case UPDATE_DAILY_TASK_PRE_TIME:
             case UPDATE_DAILY_TASK_STATUS:
             case UPDATE_DAILY_TASK_USER:
                 dailyTask = JSON.parseObject(log.getOldValue(), DailyTask.class);
@@ -251,15 +271,20 @@ public class CommonService {
                 return dailyTaskMapper.updateByPrimaryKeySelective(dailyTask) >= 1;
             case BATCH_INSERT_DAILY_TASK:
                 List<DailyTask> dailyTaskList = JSON.parseArray(log.getNewValue(), DailyTask.class);
-                for (DailyTask dt : dailyTaskList) {
-                    dailyTaskMapper.deleteByPrimaryKey(dt.getId());
-                }
+                DailyTaskExample dailyTaskExample = new DailyTaskExample();
+                dailyTaskExample.createCriteria().andIdIn(dailyTaskList.stream().map(DailyTask::getId).collect(Collectors.toList()));
+                dailyTaskMapper.deleteByExample(dailyTaskExample);
                 return true;
             case BATCH_DELETE_DAILY_TASK:
+                sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+                DailyTaskMapper dailyTaskMapper1 = sqlSession.getMapper(DailyTaskMapper.class);
                 dailyTaskList = JSON.parseArray(log.getOldValue(), DailyTask.class);
                 for (DailyTask dt : dailyTaskList) {
-                    dailyTaskMapper.insertSelective(dt);
+                    dailyTaskMapper1.insertSelective(dt);
                 }
+                sqlSession.commit();
+                sqlSession.clearCache();
+                sqlSession.close();
                 return true;
             case INSERT_JOB:
                 jobMapper.deleteByPrimaryKey(log.getRelateId());
@@ -267,23 +292,23 @@ public class CommonService {
             case DELETE_JOB:
                 Job job = JSON.parseObject(log.getOldValue(), Job.class);
                 return jobMapper.insertSelective(job) >= 1;
-            case UPDATE_JOB_DEADLINE:
             case UPDATE_JOB_STATUS:
-            case UPDATE_JOB_USER:
-                job = JSON.parseObject(log.getOldValue(), Job.class);
-                job.setId(log.getRelateId());
-                return jobMapper.updateByPrimaryKeySelective(job) >= 1;
             case BATCH_INSERT_JOB:
                 List<Job> jobList = JSON.parseArray(log.getNewValue(), Job.class);
-                for (Job j : jobList) {
-                    jobMapper.deleteByPrimaryKey(j.getId());
-                }
+                JobExample jobExample = new JobExample();
+                jobExample.createCriteria().andIdIn(jobList.stream().map(Job::getId).collect(Collectors.toList()));
+                jobMapper.deleteByExample(jobExample);
                 return true;
             case BATCH_DELETE_JOB:
+                sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+                JobMapper jobMapper1 = sqlSession.getMapper(JobMapper.class);
                 jobList = JSON.parseArray(log.getOldValue(), Job.class);
                 for (Job j : jobList) {
-                    jobMapper.insertSelective(j);
+                    jobMapper1.insertSelective(j);
                 }
+                sqlSession.commit();
+                sqlSession.clearCache();
+                sqlSession.close();
                 return true;
             case INSERT_ALERT:
                 alertMapper.deleteByPrimaryKey(log.getRelateId());
@@ -292,7 +317,6 @@ public class CommonService {
                 Alert alert = JSON.parseObject(log.getOldValue(), Alert.class);
                 return alertMapper.insertSelective(alert) >= 1;
             case UPDATE_ALERT_INFO:
-            case UPDATE_ALERT_LEVEL:
             case UPDATE_ALERT_STATUS:
             case UPDATE_ALERT_USER:
                 alert = JSON.parseObject(log.getOldValue(), Alert.class);

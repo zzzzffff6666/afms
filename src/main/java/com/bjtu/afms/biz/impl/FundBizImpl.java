@@ -1,10 +1,15 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.bjtu.afms.biz.FundBiz;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
+import com.bjtu.afms.exception.BizException;
+import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Fund;
 import com.bjtu.afms.model.Permission;
@@ -36,6 +41,9 @@ public class FundBizImpl implements FundBiz {
 
     @Resource
     private PermissionService permissionService;
+
+    @Resource
+    private LogBiz logBiz;
 
     @Override
     public Page<Fund> getFundList(FundQueryParam param, Integer page) {
@@ -71,6 +79,8 @@ public class FundBizImpl implements FundBiz {
         fund.setModUser(null);
         if (fundService.insertFund(fund) == 1) {
             permissionBiz.initResourceOwner(DataType.FUND.getId(), fund.getId(), LoginContext.getUserId());
+            logBiz.saveLog(DataType.FUND, fund.getId(), OperationType.INSERT_FUND,
+                    null, JSON.toJSONString(fund));
             return true;
         } else {
             return false;
@@ -80,15 +90,35 @@ public class FundBizImpl implements FundBiz {
     @Override
     @Transactional
     public boolean modifyFundInfo(Fund fund) {
+        Fund old = fundService.selectFund(fund.getId());
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
         fund.setAddTime(null);
         fund.setAddUser(null);
-        return fundService.updateFund(fund) == 1;
+        if (fundService.updateFund(fund) == 1) {
+            logBiz.saveLog(DataType.FUND, fund.getId(), OperationType.UPDATE_FUND_INFO,
+                    JSON.toJSONString(old), JSON.toJSONString(fund));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     @Transactional
     public boolean deleteFund(int fundId) {
-        permissionBiz.deleteResource(DataType.FUND.getId(), fundId);
-        return fundService.deleteFund(fundId) == 1;
+        Fund old = fundService.selectFund(fundId);
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (fundService.deleteFund(fundId) == 1) {
+            permissionBiz.deleteResource(DataType.FUND.getId(), fundId);
+            logBiz.saveLog(DataType.FUND, fundId, OperationType.DELETE_FUND,
+                    JSON.toJSONString(old), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -16,6 +16,15 @@
       <arg column="mod_user" javaType="java.lang.Integer" jdbcType="INTEGER" />
     </constructor>
   </resultMap>
+  <resultMap id="LoginResultMap" type="com.bjtu.afms.model.User">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="phone" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="salt" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -80,7 +89,7 @@
   <sql id="Login_Column_List">
     id, phone, password, salt, name
   </sql>
-  <select id="selectForLogin" parameterType="com.bjtu.afms.model.UserExample" resultMap="BaseResultMap">
+  <select id="selectForLogin" parameterType="com.bjtu.afms.model.UserExample" resultMap="LoginResultMap">
     select
     <if test="distinct">
       distinct

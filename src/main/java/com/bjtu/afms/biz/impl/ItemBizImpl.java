@@ -1,11 +1,14 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.bjtu.afms.biz.ItemBiz;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.ItemStatus;
 import com.bjtu.afms.enums.ItemType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
@@ -32,6 +35,9 @@ public class ItemBizImpl implements ItemBiz {
 
     @Resource
     private ConfigUtil configUtil;
+
+    @Resource
+    private LogBiz logBiz;
 
     @Override
     public Page<Item> getItemList(ItemQueryParam param, Integer page) {
@@ -62,7 +68,13 @@ public class ItemBizImpl implements ItemBiz {
                         configUtil.getDefaultMaintainInterval() : item.getMaintainInterval();
                 item.setMaintainTime(DateUtil.plusDays(maintainInterval));
             }
-            return itemService.updateItem(item) == 1;
+            if (itemService.updateItem(item) == 1) {
+                logBiz.saveLog(DataType.ITEM, itemId, OperationType.UPDATE_ITEM_STATUS,
+                        JSON.toJSONString(item), JSON.toJSONString(record));
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new BizException(APIError.ITEM_STATUS_CHANGE_ERROR);
         }
@@ -81,19 +93,23 @@ public class ItemBizImpl implements ItemBiz {
         if (item.getStatus() != ItemStatus.ACTIVE.getId()) {
             throw new BizException(APIError.ITEM_CANNOT_USE);
         }
+        Item record = new Item();
         if (item.getAmount() > amount) {
-            Item record = new Item();
             record.setId(itemId);
             record.setAmount(item.getAmount() - amount);
-            return itemService.updateItem(record) == 1;
         } else if (item.getAmount() == amount) {
-            Item record = new Item();
             record.setId(itemId);
             record.setAmount(0);
             record.setStatus(ItemStatus.DEPLETED.getId());
-            return itemService.updateItem(record) == 1;
         } else {
             throw new BizException(APIError.ITEM_AMOUNT_NOT_ENOUGH);
+        }
+        if (itemService.updateItem(record) == 1) {
+            logBiz.saveLog(DataType.ITEM, itemId, OperationType.UPDATE_ITEM_STATUS,
+                    JSON.toJSONString(item), JSON.toJSONString(record));
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -105,6 +121,8 @@ public class ItemBizImpl implements ItemBiz {
         item.setModUser(null);
         if (itemService.insertItem(item) == 1) {
             permissionBiz.initResourceOwner(DataType.ITEM.getId(), item.getId(), LoginContext.getUserId());
+            logBiz.saveLog(DataType.ITEM, item.getId(), OperationType.INSERT_ITEM,
+                    null, JSON.toJSONString(item));
             return true;
         } else {
             return false;
@@ -114,16 +132,36 @@ public class ItemBizImpl implements ItemBiz {
     @Override
     @Transactional
     public boolean modifyItemInfo(Item item) {
+        Item old = itemService.selectItem(item.getId());
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
         item.setAddTime(null);
         item.setAddUser(null);
         item.setStatus(null);
-        return itemService.updateItem(item) == 1;
+        if (itemService.updateItem(item) == 1) {
+            logBiz.saveLog(DataType.ITEM, item.getId(), OperationType.UPDATE_ITEM_INFO,
+                    JSON.toJSONString(old), JSON.toJSONString(item));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     @Transactional
     public boolean deleteItem(int itemId) {
-        permissionBiz.deleteResource(DataType.ITEM.getId(), itemId);
-        return itemService.deleteItem(itemId) == 1;
+        Item old = itemService.selectItem(itemId);
+        if (old == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (itemService.deleteItem(itemId) == 1) {
+            permissionBiz.deleteResource(DataType.ITEM.getId(), itemId);
+            logBiz.saveLog(DataType.ITEM, itemId, OperationType.DELETE_ITEM,
+                    JSON.toJSONString(old), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

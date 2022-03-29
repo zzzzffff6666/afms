@@ -1,9 +1,12 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolCycleBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
@@ -37,6 +40,9 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
 
     @Resource
     private PermissionBiz permissionBiz;
+
+    @Resource
+    private LogBiz logBiz;
 
     @Override
     public PoolCycle getPoolCurrentCycle(int poolId) {
@@ -72,8 +78,10 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
         record.setStartTime(new Date());
         record.setStatus(TaskStatus.CREATED.getId());
         if (poolCycleService.insertPoolCycle(record) == 1) {
-            Set<Integer> userIdSet = SetUtil.newHashSet(LoginContext.getUserId(), poolCycle.getUserId());
-            permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), poolCycle.getId(), userIdSet);
+            permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), poolCycle.getId(), LoginContext.getUserId());
+            permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), poolCycle.getId(), poolCycle.getUserId());
+            logBiz.saveLog(DataType.POOL_CYCLE, record.getId(), OperationType.INSERT_POOL_CYCLE,
+                    null, JSON.toJSONString(record));
             return true;
         } else {
             return false;
@@ -93,6 +101,8 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
         if (poolCycleService.updatePoolCycle(record) == 1) {
             permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), id, userId);
             permissionBiz.deleteResourceOwner(DataType.POOL_CYCLE.getId(), id, poolCycle.getUserId());
+            logBiz.saveLog(DataType.POOL_CYCLE, id, OperationType.UPDATE_POOL_CYCLE_USER,
+                    JSON.toJSONString(poolCycle), JSON.toJSONString(record));
             return true;
         } else {
             return false;
@@ -115,7 +125,13 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
             } else if (TaskStatus.isStart(status)) {
                 record.setStartTime(new Date());
             }
-            return poolCycleService.updatePoolCycle(record) == 1;
+            if (poolCycleService.updatePoolCycle(record) == 1) {
+                logBiz.saveLog(DataType.POOL_CYCLE, id, OperationType.UPDATE_POOL_CYCLE_STATUS,
+                        JSON.toJSONString(poolCycle), JSON.toJSONString(record));
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
         }
@@ -138,13 +154,29 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
             BigDecimal sum = poolCycle.getIncome() == null ? new BigDecimal(0) : poolCycle.getIncome();
             record.setIncome(param.getIncome().add(sum));
         }
-        return poolCycleService.updatePoolCycle(record) == 1;
+        if (poolCycleService.updatePoolCycle(record) == 1) {
+            logBiz.saveLog(DataType.POOL_CYCLE, param.getId(), OperationType.UPDATE_POOL_CYCLE_FUND,
+                    JSON.toJSONString(poolCycle), JSON.toJSONString(record));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     @Transactional
     public boolean deletePoolCycle(int poolCycleId) {
-        permissionBiz.deleteResource(DataType.POOL_CYCLE.getId(), poolCycleId);
-        return poolCycleService.deletePoolCycle(poolCycleId) == 1;
+        PoolCycle poolCycle = poolCycleService.selectPoolCycle(poolCycleId);
+        if (poolCycle == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (poolCycleService.deletePoolCycle(poolCycleId) == 1) {
+            permissionBiz.deleteResource(DataType.POOL_CYCLE.getId(), poolCycleId);
+            logBiz.saveLog(DataType.POOL_CYCLE, poolCycleId, OperationType.DELETE_POOL_CYCLE,
+                    JSON.toJSONString(poolCycle), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

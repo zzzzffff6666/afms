@@ -30,7 +30,7 @@ public class PermissionAspect {
     public void pointcut() {}
 
     @Around("pointcut() && @annotation(authCheck)")
-    public Object beforeExecute(ProceedingJoinPoint pjp, AuthCheck authCheck) throws Throwable {
+    public Object aroundExecute(ProceedingJoinPoint pjp, AuthCheck authCheck) throws Throwable {
         Object result;
         Object[] objs = pjp.getArgs();
         if (hasPermission(objs[0], authCheck)) {

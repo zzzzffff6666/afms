@@ -1,16 +1,18 @@
 package com.bjtu.afms.biz.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.bjtu.afms.biz.DailyTaskBiz;
+import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
+import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.mapper.DailyTaskMapper;
-import com.bjtu.afms.mapper.PermissionMapper;
 import com.bjtu.afms.model.DailyTask;
 import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.service.DailyTaskService;
@@ -46,6 +48,9 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
     @Resource
     private SqlSessionTemplate sqlSessionTemplate;
 
+    @Resource
+    private LogBiz logBiz;
+
 
     @Override
     public Page<DailyTask> getDailyTaskList(DailyTaskQueryParam param, Integer page) {
@@ -68,6 +73,8 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
         if (dailyTaskService.insertDailyTask(dailyTask) == 1) {
             permissionBiz.initResourceOwner(DataType.DAILY_TASK.getId(), dailyTask.getId(), LoginContext.getUserId());
             permissionBiz.initResourceOwner(DataType.DAILY_TASK.getId(), dailyTask.getId(), dailyTask.getUserId());
+            logBiz.saveLog(DataType.DAILY_TASK, dailyTask.getId(), OperationType.INSERT_DAILY_TASK,
+                    null, JSON.toJSONString(dailyTask));
             return true;
         } else {
             return false;
@@ -94,29 +101,31 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
     @Override
     @Transactional
     public void batchInsertDailyTask(List<DailyTask> dailyTaskList) {
+        List<Permission> permissionList = new ArrayList<>();
         SqlSession sqlSession = sqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
         DailyTaskMapper dailyTaskMapper = sqlSession.getMapper(DailyTaskMapper.class);
         dailyTaskList.forEach(dailyTaskMapper::insertSelective);
         sqlSession.commit();
         sqlSession.clearCache();
-        PermissionMapper permissionMapper = sqlSession.getMapper(PermissionMapper.class);
+        sqlSession.close();
+        logBiz.saveLog(DataType.DAILY_TASK, LoginContext.getUserId(), OperationType.BATCH_INSERT_DAILY_TASK,
+                null, JSON.toJSONString(dailyTaskList));
+
         dailyTaskList.forEach(dailyTask -> {
             Permission permission1 = new Permission();
             permission1.setUserId(LoginContext.getUserId());
             permission1.setAuth(AuthType.OWNER.getId());
             permission1.setType(DataType.DAILY_TASK.getId());
             permission1.setRelateId(dailyTask.getId());
-            permissionMapper.insertSelective(permission1);
+            permissionList.add(permission1);
             Permission permission2 = new Permission();
             permission2.setUserId(dailyTask.getUserId());
             permission2.setAuth(AuthType.OWNER.getId());
             permission2.setType(DataType.DAILY_TASK.getId());
             permission2.setRelateId(dailyTask.getId());
-            permissionMapper.insertSelective(permission2);
+            permissionList.add(permission2);
         });
-        sqlSession.commit();
-        sqlSession.clearCache();
-        sqlSession.close();
+        permissionBiz.batchInsertPermission(permissionList);
     }
 
     @Override
@@ -137,7 +146,13 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
                 record.setStartAct(new Date());
                 record.setStatus(status);
             }
-            return dailyTaskService.updateDailyTask(record) == 1;
+            if (dailyTaskService.updateDailyTask(record) == 1) {
+                logBiz.saveLog(DataType.DAILY_TASK, id, OperationType.UPDATE_DAILY_TASK_STATUS,
+                        JSON.toJSONString(dailyTask), JSON.toJSONString(record));
+                return true;
+            } else {
+                return false;
+            }
         } else {
             throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
         }
@@ -156,6 +171,8 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
         if (dailyTaskService.updateDailyTask(dailyTask) == 1) {
             permissionBiz.initResourceOwner(DataType.DAILY_TASK.getId(), id, userId);
             permissionBiz.deleteResourceOwner(DataType.DAILY_TASK.getId(), id, dailyTask.getUserId());
+            logBiz.saveLog(DataType.DAILY_TASK, id, OperationType.UPDATE_DAILY_TASK_USER,
+                    JSON.toJSONString(dailyTask), JSON.toJSONString(record));
             return true;
         } else {
             return false;
@@ -165,7 +182,17 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
     @Override
     @Transactional
     public boolean deleteDailyTask(int dailyTaskId) {
-        permissionBiz.deleteResource(DataType.DAILY_TASK.getId(), dailyTaskId);
-        return dailyTaskService.deleteDailyTask(dailyTaskId) == 1;
+        DailyTask dailyTask = dailyTaskService.selectDailyTask(dailyTaskId);
+        if (dailyTask == null) {
+            throw new BizException(APIError.NOT_FOUND);
+        }
+        if (dailyTaskService.deleteDailyTask(dailyTaskId) == 1) {
+            permissionBiz.deleteResource(DataType.DAILY_TASK.getId(), dailyTaskId);
+            logBiz.saveLog(DataType.DAILY_TASK, dailyTaskId, OperationType.DELETE_DAILY_TASK,
+                    JSON.toJSONString(dailyTask), null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
