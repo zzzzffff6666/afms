@@ -5,10 +5,10 @@ import com.bjtu.afms.biz.FundBiz;
 import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Fund;
@@ -91,9 +91,7 @@ public class FundBizImpl implements FundBiz {
     @Transactional
     public boolean modifyFundInfo(Fund fund) {
         Fund old = fundService.selectFund(fund.getId());
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         fund.setAddTime(null);
         fund.setAddUser(null);
         if (fundService.updateFund(fund) == 1) {
@@ -109,9 +107,7 @@ public class FundBizImpl implements FundBiz {
     @Transactional
     public boolean deleteFund(int fundId) {
         Fund old = fundService.selectFund(fundId);
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         if (fundService.deleteFund(fundId) == 1) {
             permissionBiz.deleteResource(DataType.FUND.getId(), fundId);
             logBiz.saveLog(DataType.FUND, fundId, OperationType.DELETE_FUND,

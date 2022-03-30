@@ -30,6 +30,8 @@ public enum OperationType {
     DELETE_ITEM(502, "delete:item", "删除物资"),
     UPDATE_ITEM_INFO(503, "update:item:info", "修改物资信息"),
     UPDATE_ITEM_STATUS(504, "update:item:status", "修改物资状态"),
+    TAKE_ITEM(505, "take:item", "取用消耗类物资"),
+    RETURN_ITEM(506, "return:item", "归还消耗类物资"),
 
     // 养殖池相关 6xx
     INSERT_POOL(601, "insert:pool", "养殖池登记"),

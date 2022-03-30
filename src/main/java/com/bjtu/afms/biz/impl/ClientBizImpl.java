@@ -5,9 +5,9 @@ import com.bjtu.afms.biz.ClientBiz;
 import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Client;
@@ -65,9 +65,7 @@ public class ClientBizImpl implements ClientBiz {
     @Transactional
     public boolean modifyClientInfo(Client client) {
         Client old = clientService.selectClient(client.getId());
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         client.setAddTime(null);
         client.setAddUser(null);
         if (clientService.updateClient(client) == 1) {
@@ -83,9 +81,7 @@ public class ClientBizImpl implements ClientBiz {
     @Transactional
     public boolean deleteClient(int clientId) {
         Client old = clientService.selectClient(clientId);
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         if (clientService.deleteClient(clientId) == 1) {
             permissionBiz.deleteResource(DataType.CLIENT.getId(), clientId);
             logBiz.saveLog(DataType.CLIENT, clientId, OperationType.DELETE_CLIENT,

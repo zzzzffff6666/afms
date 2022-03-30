@@ -1,6 +1,7 @@
 package com.bjtu.afms.controller;
 
 import com.bjtu.afms.config.annotation.AuthCheck;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.VerifyStatus;
@@ -66,9 +67,7 @@ public class PublicAPIController {
     @PostMapping("/operation/rollback/{logId}")
     public Result rollbackOperation(@PathVariable("logId") int id) throws BizException {
         Log log = logService.selectLog(id);
-        if (log == null) {
-            return Result.error(APIError.NOT_FOUND);
-        }
+        Assert.notNull(log, APIError.NOT_FOUND);
         if (commonService.rollbackOperation(log)) {
             return Result.ok();
         }

@@ -5,11 +5,11 @@ import com.bjtu.afms.biz.JobBiz;
 import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.mapper.JobMapper;
@@ -68,13 +68,10 @@ public class JobBizImpl implements JobBiz {
     @Override
     public JobDetailVO getJobDetail(int jobId) {
         Job job = jobService.selectJob(jobId);
-        if (job == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(job, APIError.NOT_FOUND);
         Task task = taskService.selectTask(job.getTaskId());
-        if (task == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(task, APIError.NOT_FOUND);
+
         JobQueryParam param = new JobQueryParam();
         param.setType(job.getType());
         param.setRelateId(job.getRelateId());
@@ -83,9 +80,7 @@ public class JobBizImpl implements JobBiz {
         List<User> userList = userService.selectUserByIdList(new ArrayList<>(userIdSet));
         if (job.getType() == DataType.POOL_TASK.getId()) {
             PoolTask poolTask = poolTaskService.selectPoolTask(job.getRelateId());
-            if (poolTask == null) {
-                throw new BizException(APIError.NOT_FOUND);
-            }
+            Assert.notNull(poolTask, APIError.NOT_FOUND);
             return new JobDetailVO(job, task, poolTask, userList);
         } else {
             return new JobDetailVO(job, task, userList);
@@ -148,26 +143,21 @@ public class JobBizImpl implements JobBiz {
     @Transactional
     public boolean modifyJobStatus(int id, int status) {
         Job job = jobService.selectJob(id);
-        if (job == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
-        if (TaskStatus.changeCheck(job.getStatus(), status)) {
-            Job record = new Job();
-            record.setId(id);
-            if (new Date().after(job.getDeadline()) && status == TaskStatus.FINISH.getId()) {
-                record.setStatus(TaskStatus.OVERDUE.getId());
-            } else {
-                record.setStatus(status);
-            }
-            if (jobService.updateJob(job) == 1) {
-                logBiz.saveLog(DataType.JOB, LoginContext.getUserId(), OperationType.UPDATE_JOB_STATUS,
-                        JSON.toJSONString(job), JSON.toJSONString(record));
-                return true;
-            } else {
-                return false;
-            }
+        Assert.notNull(job, APIError.NOT_FOUND);
+        Assert.isTrue(TaskStatus.changeCheck(job.getStatus(), status), APIError.TASK_STATUS_CHANGE_ERROR);
+        Job record = new Job();
+        record.setId(id);
+        if (new Date().after(job.getDeadline()) && status == TaskStatus.FINISH.getId()) {
+            record.setStatus(TaskStatus.OVERDUE.getId());
         } else {
-            throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
+            record.setStatus(status);
+        }
+        if (jobService.updateJob(job) == 1) {
+            logBiz.saveLog(DataType.JOB, LoginContext.getUserId(), OperationType.UPDATE_JOB_STATUS,
+                    JSON.toJSONString(job), JSON.toJSONString(record));
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -178,15 +168,11 @@ public class JobBizImpl implements JobBiz {
         param1.setType(param.getType());
         param1.setRelateId(param.getRelateId());
         List<Job> jobList = jobService.selectJobList(param1);
-        Set<Integer> addSet;
-        Set<Integer> removeSet;
-        if (!CollectionUtils.isEmpty(jobList)) {
-            Set<Integer> userIdSet = jobList.stream().map(Job::getUserId).collect(Collectors.toSet());
-            addSet = param.getUserSet().stream().filter(id -> !userIdSet.contains(id)).collect(Collectors.toSet());
-            removeSet = userIdSet.stream().filter(id -> !param.getUserSet().contains(id)).collect(Collectors.toSet());
-        } else {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notEmpty(jobList, APIError.NOT_FOUND);
+        Set<Integer> userIdSet = jobList.stream().map(Job::getUserId).collect(Collectors.toSet());
+        Set<Integer> addSet = param.getUserSet().stream().filter(id -> !userIdSet.contains(id)).collect(Collectors.toSet());
+        Set<Integer> removeSet = userIdSet.stream().filter(id -> !param.getUserSet().contains(id)).collect(Collectors.toSet());
+
         if (!CollectionUtils.isEmpty(addSet)) {
             AssignJobParam param2 = new AssignJobParam();
             param2.setType(param.getType());
@@ -217,9 +203,7 @@ public class JobBizImpl implements JobBiz {
     @Transactional
     public boolean deleteJob(int jobId) {
         Job old = jobService.selectJob(jobId);
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         if (jobService.deleteJob(jobId) == 1) {
             permissionBiz.deleteResource(DataType.JOB.getId(), jobId);
             logBiz.saveLog(DataType.JOB, jobId, OperationType.DELETE_JOB,

@@ -6,11 +6,11 @@ import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolPlanBiz;
 import com.bjtu.afms.biz.PoolTaskBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.PlanFinish;
 import com.bjtu.afms.enums.TaskStatus;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Plan;
@@ -79,14 +79,10 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
         param.setPoolId(poolPlan.getPoolId());
         param.setCycle(poolPlan.getCycle());
         List<PoolCycle> poolCycleList = poolCycleService.selectPoolCycleList(param);
-        if (CollectionUtils.isEmpty(poolCycleList)) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notEmpty(poolCycleList, APIError.NOT_FOUND);
         PoolCycle poolCycle = poolCycleList.get(0);
         Plan plan = planService.selectPlan(poolPlan.getPlanId());
-        if (plan == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(plan, APIError.NOT_FOUND);
         poolPlan.setStartAct(null);
         poolPlan.setEndAct(null);
         poolPlan.setFinish(PlanFinish.CREATED.getId());
@@ -127,29 +123,24 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
     @Transactional
     public boolean modifyPoolPlanTime(int id, int finish) {
         PoolPlan poolPlan = poolPlanService.selectPoolPlan(id);
-        if (poolPlan == null) {
-            throw new BizException(APIError.NOT_FOUND);
+        Assert.notNull(poolPlan, APIError.NOT_FOUND);
+        Assert.isTrue(PlanFinish.changeCheck(poolPlan.getFinish(), finish), APIError.PLAN_FINISH_CHANGE_ERROR);
+        PoolPlan record = new PoolPlan();
+        record.setId(id);
+        if (PlanFinish.isFinish(finish)) {
+            Date now = new Date();
+            record.setEndAct(now);
+            record.setFinish(PlanFinish.dateCompare(poolPlan.getEndPre(), now).getId());
+        } else if (PlanFinish.isStart(finish)) {
+            record.setStartAct(new Date());
+            record.setFinish(finish);
         }
-        if (PlanFinish.changeCheck(poolPlan.getFinish(), finish)) {
-            PoolPlan record = new PoolPlan();
-            record.setId(id);
-            if (PlanFinish.isFinish(finish)) {
-                Date now = new Date();
-                record.setEndAct(now);
-                record.setFinish(PlanFinish.dateCompare(poolPlan.getEndPre(), now).getId());
-            } else if (PlanFinish.isStart(finish)) {
-                record.setStartAct(new Date());
-                record.setFinish(finish);
-            }
-            if (poolPlanService.updatePoolPlan(record) == 1) {
-                logBiz.saveLog(DataType.POOL_PLAN, poolPlan.getId(), OperationType.UPDATE_POOL_PLAN_FINISH,
-                        JSON.toJSONString(poolPlan), JSON.toJSONString(record));
-                return true;
-            } else {
-                return false;
-            }
+        if (poolPlanService.updatePoolPlan(record) == 1) {
+            logBiz.saveLog(DataType.POOL_PLAN, poolPlan.getId(), OperationType.UPDATE_POOL_PLAN_FINISH,
+                    JSON.toJSONString(poolPlan), JSON.toJSONString(record));
+            return true;
         } else {
-            throw new BizException(APIError.PLAN_FINISH_CHANGE_ERROR);
+            return false;
         }
     }
 
@@ -157,9 +148,7 @@ public class PoolPlanBizImpl implements PoolPlanBiz {
     @Transactional
     public boolean deletePoolPlan(int poolPlanId) {
         PoolPlan poolPlan = poolPlanService.selectPoolPlan(poolPlanId);
-        if (poolPlan == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(poolPlan, APIError.NOT_FOUND);
         if (poolPlanService.deletePoolPlan(poolPlanId) == 1) {
             permissionBiz.deleteResource(DataType.POOL_PLAN.getId(), poolPlanId);
             logBiz.saveLog(DataType.POOL_PLAN, poolPlanId, OperationType.DELETE_POOL_PLAN,

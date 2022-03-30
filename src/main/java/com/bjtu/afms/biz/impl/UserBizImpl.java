@@ -5,9 +5,9 @@ import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.UserBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.User;
@@ -61,62 +61,46 @@ public class UserBizImpl implements UserBiz {
         User me = userService.selectUser(LoginContext.getUserId());
         if (me == null) {
             session.removeAttribute("user");
-            throw new BizException(APIError.USER_NOT_EXIST);
-        } else {
-            if (userService.exist(param.getPhoneNew())) {
-                throw new BizException(APIError.PHONE_ALREADY_EXIST);
-            } else {
-                if (verifyService.matchVerify(me.getPhone(), param.getCodeOld())
-                        && verifyService.matchVerify(param.getPhoneNew(), param.getCodeNew())) {
-                    User user = new User();
-                    user.setId(LoginContext.getUserId());
-                    user.setPhone(param.getPhoneNew());
-                    return userService.updateUser(user) == 1;
-                } else {
-                    throw new BizException(APIError.VERIFY_ERROR);
-                }
-            }
+            Assert.isTrue(false, APIError.USER_NOT_EXIST);
         }
+        Assert.isTrue(!userService.exist(param.getPhoneNew()), APIError.PHONE_ALREADY_EXIST);
+        Assert.isTrue(verifyService.matchVerify(me.getPhone(), param.getCodeOld())
+                        && verifyService.matchVerify(param.getPhoneNew(), param.getCodeNew()),
+                APIError.VERIFY_ERROR);
+        User user = new User();
+        user.setId(LoginContext.getUserId());
+        user.setPhone(param.getPhoneNew());
+        return userService.updateUser(user) == 1;
     }
 
     @Override
     @Transactional
-    public boolean modifyPassword(ModifyPasswordParam param, HttpSession session) throws BizException, NoSuchAlgorithmException {
+    public boolean modifyPassword(ModifyPasswordParam param, HttpSession session) throws NoSuchAlgorithmException {
         User me = userService.selectUserForLogin(LoginContext.getUser().getPhone());
         if (me == null) {
             session.removeAttribute("user");
-            throw new BizException(APIError.USER_NOT_EXIST);
+            Assert.isTrue(false, APIError.USER_NOT_EXIST);
         }
         if (param.getType() == 1) {
-            if (CommonUtil.matches(param.getCredential(), me.getSalt(), me.getPassword())) {
-                String salt = CommonUtil.generateSalt();
-                String password = CommonUtil.encode(param.getPasswordNew(), salt);
-                return userService.updatePassword(LoginContext.getUserId(), password, salt) == 1;
-            } else {
-                throw new BizException(APIError.PASSWORD_ERROR);
-            }
+            Assert.isTrue(CommonUtil.matches(param.getCredential(), me.getSalt(), me.getPassword()),
+                    APIError.PASSWORD_ERROR);
         } else {
-            if (verifyService.matchVerify(LoginContext.getUser().getPhone(), param.getCredential())) {
-                String salt = CommonUtil.generateSalt();
-                String password = CommonUtil.encode(param.getPasswordNew(), salt);
-                return userService.updatePassword(LoginContext.getUserId(), password, salt) == 1;
-            } else {
-                throw new BizException(APIError.VERIFY_ERROR);
-            }
+            Assert.isTrue(verifyService.matchVerify(LoginContext.getUser().getPhone(), param.getCredential()),
+                    APIError.VERIFY_ERROR);
         }
+        String salt = CommonUtil.generateSalt();
+        String password = CommonUtil.encode(param.getPasswordNew(), salt);
+        return userService.updatePassword(LoginContext.getUserId(), password, salt) == 1;
     }
 
     @Override
     @Transactional
     public boolean adminModifyPhone(ModifyPhoneParam param) {
-        if (verifyService.matchVerify(param.getPhoneNew(), param.getCodeNew())) {
-            User user = new User();
-            user.setId(param.getId());
-            user.setPhone(param.getPhoneNew());
-            return userService.updateUser(user) == 1;
-        } else {
-            throw new BizException(APIError.VERIFY_ERROR);
-        }
+        Assert.isTrue(verifyService.matchVerify(param.getPhoneNew(), param.getCodeNew()), APIError.VERIFY_ERROR);
+        User user = new User();
+        user.setId(param.getId());
+        user.setPhone(param.getPhoneNew());
+        return userService.updateUser(user) == 1;
     }
 
     @Override
@@ -146,9 +130,8 @@ public class UserBizImpl implements UserBiz {
     @Transactional
     public boolean modifyUserStatus(int id, int status) {
         User old = userService.selectUser(id);
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
+
         User user = new User();
         user.setId(id);
         user.setStatus(status);
@@ -165,9 +148,7 @@ public class UserBizImpl implements UserBiz {
     @Transactional
     public boolean deleteUser(int userId) {
         User old = userService.selectUser(userId);
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
 
         if (userService.deleteUser(userId) == 1) {
             permissionBiz.deleteUserPermission(userId);

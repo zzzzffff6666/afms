@@ -5,10 +5,10 @@ import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.PoolStatus;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Pool;
@@ -67,9 +67,7 @@ public class PoolBizImpl implements PoolBiz {
     @Transactional
     public boolean modifyPoolInfo(Pool pool) {
         Pool old = poolService.selectPool(pool.getId());
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         pool.setDetail(null);
         pool.setAddTime(null);
         pool.setAddUser(null);
@@ -95,9 +93,7 @@ public class PoolBizImpl implements PoolBiz {
     @Transactional
     public boolean deletePool(int poolId) {
         Pool old = poolService.selectPool(poolId);
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         if (poolService.deletePool(poolId) == 1) {
             permissionBiz.deleteResource(DataType.POOL.getId(), poolId);
             logBiz.saveLog(DataType.POOL, poolId, OperationType.DELETE_POOL,

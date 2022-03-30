@@ -5,11 +5,11 @@ import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolTaskBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.mapper.PoolTaskMapper;
@@ -91,9 +91,7 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     @Transactional
     public void batchInsertPoolTask(BatchInsertPoolTaskParam param) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(param.getPoolCycleId());
-        if (poolCycle == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(poolCycle, APIError.NOT_FOUND);
         int userId = param.getUserId() == null ? poolCycle.getUserId() : param.getUserId();
         List<PoolTask> poolTaskList = new ArrayList<>();
         for (SetTaskParam setParam : param.getTaskList()) {
@@ -144,29 +142,24 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     @Transactional
     public boolean modifyPoolTaskStatus(int id, int status) {
         PoolTask poolTask = poolTaskService.selectPoolTask(id);
-        if (poolTask == null) {
-            throw new BizException(APIError.NOT_FOUND);
+        Assert.notNull(poolTask, APIError.NOT_FOUND);
+        Assert.isTrue(TaskStatus.changeCheck(poolTask.getStatus(), status), APIError.TASK_STATUS_CHANGE_ERROR);
+        PoolTask record = new PoolTask();
+        record.setId(id);
+        if (TaskStatus.isFinish(status)) {
+            Date now = new Date();
+            record.setEndAct(now);
+            record.setStatus(TaskStatus.dateCompare(poolTask.getEndPre(), now).getId());
+        } else if (TaskStatus.isStart(status)) {
+            record.setStartAct(new Date());
+            record.setStatus(status);
         }
-        if (TaskStatus.changeCheck(poolTask.getStatus(), status)) {
-            PoolTask record = new PoolTask();
-            record.setId(id);
-            if (TaskStatus.isFinish(status)) {
-                Date now = new Date();
-                record.setEndAct(now);
-                record.setStatus(TaskStatus.dateCompare(poolTask.getEndPre(), now).getId());
-            } else if (TaskStatus.isStart(status)) {
-                record.setStartAct(new Date());
-                record.setStatus(status);
-            }
-            if (poolTaskService.updatePoolTask(record) == 1) {
-                logBiz.saveLog(DataType.POOL_TASK, id, OperationType.UPDATE_POOL_TASK_STATUS,
-                        JSON.toJSONString(poolTask), JSON.toJSONString(record));
-                return true;
-            } else {
-                return false;
-            }
+        if (poolTaskService.updatePoolTask(record) == 1) {
+            logBiz.saveLog(DataType.POOL_TASK, id, OperationType.UPDATE_POOL_TASK_STATUS,
+                    JSON.toJSONString(poolTask), JSON.toJSONString(record));
+            return true;
         } else {
-            throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
+            return false;
         }
     }
 
@@ -174,9 +167,7 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     @Transactional
     public boolean modifyPoolTaskUser(int id, int userId) {
         PoolTask poolTask = poolTaskService.selectPoolTask(id);
-        if (poolTask == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(poolTask, APIError.NOT_FOUND);
         PoolTask record = new PoolTask();
         record.setId(id);
         record.setUserId(userId);
@@ -195,9 +186,7 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     @Transactional
     public boolean deletePoolTask(int poolTaskId) {
         PoolTask poolTask = poolTaskService.selectPoolTask(poolTaskId);
-        if (poolTask == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(poolTask, APIError.NOT_FOUND);
         if (poolTaskService.deletePoolTask(poolTaskId) == 1) {
             permissionBiz.deleteResource(DataType.POOL_TASK.getId(), poolTaskId);
             logBiz.saveLog(DataType.POOL_TASK, poolTaskId, OperationType.DELETE_POOL_TASK,

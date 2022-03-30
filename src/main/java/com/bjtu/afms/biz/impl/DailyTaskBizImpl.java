@@ -5,11 +5,11 @@ import com.bjtu.afms.biz.DailyTaskBiz;
 import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.mapper.DailyTaskMapper;
@@ -132,29 +132,25 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
     @Transactional
     public boolean modifyDailyTaskStatus(int id, int status) {
         DailyTask dailyTask = dailyTaskService.selectDailyTask(id);
-        if (dailyTask == null) {
-            throw new BizException(APIError.NOT_FOUND);
+        Assert.notNull(dailyTask, APIError.NOT_FOUND);
+        Assert.isTrue(TaskStatus.changeCheck(dailyTask.getStatus(), status), APIError.TASK_STATUS_CHANGE_ERROR);
+
+        DailyTask record = new DailyTask();
+        record.setId(id);
+        if (TaskStatus.isFinish(status)) {
+            Date now = new Date();
+            record.setEndAct(now);
+            record.setStatus(TaskStatus.dateCompare(dailyTask.getEndPre(), now).getId());
+        } else if (TaskStatus.isStart(status)) {
+            record.setStartAct(new Date());
+            record.setStatus(status);
         }
-        if (TaskStatus.changeCheck(dailyTask.getStatus(), status)) {
-            DailyTask record = new DailyTask();
-            record.setId(id);
-            if (TaskStatus.isFinish(status)) {
-                Date now = new Date();
-                record.setEndAct(now);
-                record.setStatus(TaskStatus.dateCompare(dailyTask.getEndPre(), now).getId());
-            } else if (TaskStatus.isStart(status)) {
-                record.setStartAct(new Date());
-                record.setStatus(status);
-            }
-            if (dailyTaskService.updateDailyTask(record) == 1) {
-                logBiz.saveLog(DataType.DAILY_TASK, id, OperationType.UPDATE_DAILY_TASK_STATUS,
-                        JSON.toJSONString(dailyTask), JSON.toJSONString(record));
-                return true;
-            } else {
-                return false;
-            }
+        if (dailyTaskService.updateDailyTask(record) == 1) {
+            logBiz.saveLog(DataType.DAILY_TASK, id, OperationType.UPDATE_DAILY_TASK_STATUS,
+                    JSON.toJSONString(dailyTask), JSON.toJSONString(record));
+            return true;
         } else {
-            throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
+            return false;
         }
     }
 
@@ -162,9 +158,7 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
     @Transactional
     public boolean modifyDailyTaskUser(int id, int userId) {
         DailyTask dailyTask = dailyTaskService.selectDailyTask(id);
-        if (dailyTask == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(dailyTask, APIError.NOT_FOUND);
         DailyTask record = new DailyTask();
         record.setId(id);
         record.setUserId(userId);
@@ -183,9 +177,7 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
     @Transactional
     public boolean deleteDailyTask(int dailyTaskId) {
         DailyTask dailyTask = dailyTaskService.selectDailyTask(dailyTaskId);
-        if (dailyTask == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(dailyTask, APIError.NOT_FOUND);
         if (dailyTaskService.deleteDailyTask(dailyTaskId) == 1) {
             permissionBiz.deleteResource(DataType.DAILY_TASK.getId(), dailyTaskId);
             logBiz.saveLog(DataType.DAILY_TASK, dailyTaskId, OperationType.DELETE_DAILY_TASK,

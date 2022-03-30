@@ -5,29 +5,26 @@ import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolCycleBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.PoolCycle;
 import com.bjtu.afms.service.PoolCycleService;
 import com.bjtu.afms.utils.ConfigUtil;
-import com.bjtu.afms.utils.SetUtil;
 import com.bjtu.afms.web.param.ModifyCycleFundParam;
 import com.bjtu.afms.web.param.query.PoolCycleQueryParam;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class PoolCycleBizImpl implements PoolCycleBiz {
@@ -51,11 +48,8 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
         param.setPoolId(poolId);
         PageHelper.startPage(0, 1);
         List<PoolCycle> poolCycleList = poolCycleService.selectPoolCycleList(param);
-        if (CollectionUtils.isEmpty(poolCycleList)) {
-            throw new BizException(APIError.NOT_FOUND);
-        } else {
-            return poolCycleList.get(0);
-        }
+        Assert.notEmpty(poolCycleList, APIError.NOT_FOUND);
+        return poolCycleList.get(0);
     }
 
     @Override
@@ -92,9 +86,7 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     @Transactional
     public boolean modifyPoolCycleUser(int id, int userId) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(id);
-        if (poolCycle == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(poolCycle, APIError.NOT_FOUND);
         PoolCycle record = new PoolCycle();
         record.setId(id);
         record.setUserId(userId);
@@ -113,27 +105,24 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     @Transactional
     public boolean modifyPoolCycleStatus(int id, int status) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(id);
-        if (poolCycle == null) {
-            throw new BizException(APIError.NOT_FOUND);
+        Assert.notNull(poolCycle, APIError.NOT_FOUND);
+        Assert.isTrue(TaskStatus.changeCheck(poolCycle.getStatus(), status) && status != TaskStatus.OVERDUE.getId(),
+                APIError.TASK_STATUS_CHANGE_ERROR);
+
+        PoolCycle record = new PoolCycle();
+        record.setId(id);
+        record.setStatus(status);
+        if (TaskStatus.isFinish(status)) {
+            record.setEndTime(new Date());
+        } else if (TaskStatus.isStart(status)) {
+            record.setStartTime(new Date());
         }
-        if (TaskStatus.changeCheck(poolCycle.getStatus(), status) && status != TaskStatus.OVERDUE.getId()) {
-            PoolCycle record = new PoolCycle();
-            record.setId(id);
-            record.setStatus(status);
-            if (TaskStatus.isFinish(status)) {
-                record.setEndTime(new Date());
-            } else if (TaskStatus.isStart(status)) {
-                record.setStartTime(new Date());
-            }
-            if (poolCycleService.updatePoolCycle(record) == 1) {
-                logBiz.saveLog(DataType.POOL_CYCLE, id, OperationType.UPDATE_POOL_CYCLE_STATUS,
-                        JSON.toJSONString(poolCycle), JSON.toJSONString(record));
-                return true;
-            } else {
-                return false;
-            }
+        if (poolCycleService.updatePoolCycle(record) == 1) {
+            logBiz.saveLog(DataType.POOL_CYCLE, id, OperationType.UPDATE_POOL_CYCLE_STATUS,
+                    JSON.toJSONString(poolCycle), JSON.toJSONString(record));
+            return true;
         } else {
-            throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
+            return false;
         }
     }
 
@@ -141,9 +130,8 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     @Transactional
     public boolean modifyPoolCycleFund(ModifyCycleFundParam param) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(param.getId());
-        if (poolCycle == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(poolCycle, APIError.NOT_FOUND);
+
         PoolCycle record = new PoolCycle();
         record.setId(param.getId());
         if (param.getCost() != null) {
@@ -167,9 +155,8 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     @Transactional
     public boolean deletePoolCycle(int poolCycleId) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(poolCycleId);
-        if (poolCycle == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(poolCycle, APIError.NOT_FOUND);
+
         if (poolCycleService.deletePoolCycle(poolCycleId) == 1) {
             permissionBiz.deleteResource(DataType.POOL_CYCLE.getId(), poolCycleId);
             logBiz.saveLog(DataType.POOL_CYCLE, poolCycleId, OperationType.DELETE_POOL_CYCLE,

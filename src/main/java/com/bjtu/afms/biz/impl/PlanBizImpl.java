@@ -5,9 +5,9 @@ import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PlanBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Plan;
@@ -80,15 +80,9 @@ public class PlanBizImpl implements PlanBiz {
     @Override
     @Transactional
     public boolean importPlan(ImportPlanParam param) {
-        PoolCycle poolCycle;
-        if (param.getPoolCycleId() != null) {
-            poolCycle = poolCycleService.selectPoolCycle(param.getPoolCycleId());
-        } else {
-            throw new BizException(APIError.PARAMETER_ERROR);
-        }
-        if (poolCycle == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        PoolCycle poolCycle = poolCycleService.selectPoolCycle(param.getPoolCycleId());
+        Assert.notNull(poolCycle, APIError.NOT_FOUND);
+
         PoolTaskQueryParam param1 = new PoolTaskQueryParam();
         param1.setPoolId(param.getPoolId());
         param1.setCycle(param.getCycle());
@@ -120,9 +114,8 @@ public class PlanBizImpl implements PlanBiz {
     @Transactional
     public boolean modifyPlanInfo(Plan plan) {
         Plan old = planService.selectPlan(plan.getId());
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
+
         plan.setUseNum(null);
         plan.setAddTime(null);
         plan.setAddUser(null);
@@ -139,9 +132,7 @@ public class PlanBizImpl implements PlanBiz {
     @Transactional
     public boolean deletePlan(int planId) {
         Plan old = planService.selectPlan(planId);
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         if (planService.deletePlan(planId) == 1) {
             permissionBiz.deleteResource(DataType.PLAN.getId(), planId);
             logBiz.saveLog(DataType.PLAN, planId, OperationType.DELETE_PLAN,

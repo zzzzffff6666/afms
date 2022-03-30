@@ -45,6 +45,11 @@ public class ItemController {
         return Result.ok(itemBiz.getItemList(param, page));
     }
 
+    @GetMapping({"/my/take/log", "/my/take/log/{page}"})
+    public Result getMyTakeLog(@PathVariable(value = "page", required = false) Integer page) {
+        return Result.ok(itemBiz.getMyTakeLog(page));
+    }
+
     @PostMapping("/item/tool/lent/{itemId}")
     public Result toolLent(@PathVariable("itemId") int id) {
         if (itemBiz.statusChange(id, ItemType.TOOL, ItemStatus.LENT)) {
@@ -83,7 +88,7 @@ public class ItemController {
 
     @PostMapping("/item/feed/take/{itemId}")
     public Result feedTake(@PathVariable("itemId") int id, @RequestParam("amount") int amount) {
-        if (itemBiz.takeFeedOrMedicine(id, ItemType.FEED, amount)) {
+        if (itemBiz.takeItem(id, ItemType.FEED, amount)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);
@@ -110,7 +115,7 @@ public class ItemController {
 
     @PostMapping("/item/medicine/take/{itemId}")
     public Result medicineTake(@PathVariable("itemId") int id, @RequestParam("amount") int amount) {
-        if (itemBiz.takeFeedOrMedicine(id, ItemType.MEDICINE, amount)) {
+        if (itemBiz.takeItem(id, ItemType.MEDICINE, amount)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);
@@ -129,6 +134,42 @@ public class ItemController {
     @PostMapping("/item/medicine/deplete/{itemId}")
     public Result medicineDeplete(@PathVariable("itemId") int id) {
         if (itemBiz.statusChange(id, ItemType.MEDICINE, ItemStatus.DEPLETED)) {
+            return Result.ok();
+        } else {
+            return Result.error(APIError.UPDATE_ERROR);
+        }
+    }
+
+    @PostMapping("/item/consumable/take/{itemId}")
+    public Result consumableTake(@PathVariable("itemId") int id, @RequestParam("amount") int amount) {
+        if (itemBiz.takeItem(id, ItemType.CONSUMABLE, amount)) {
+            return Result.ok();
+        } else {
+            return Result.error(APIError.UPDATE_ERROR);
+        }
+    }
+
+    @PostMapping("/item/consumable/expire/{itemId}")
+    public Result consumableExpire(@PathVariable("itemId") int id) {
+        if (itemBiz.statusChange(id, ItemType.CONSUMABLE, ItemStatus.EXPIRED)) {
+            return Result.ok();
+        } else {
+            return Result.error(APIError.UPDATE_ERROR);
+        }
+    }
+
+    @PostMapping("/item/consumable/deplete/{itemId}")
+    public Result consumableDeplete(@PathVariable("itemId") int id) {
+        if (itemBiz.statusChange(id, ItemType.CONSUMABLE, ItemStatus.DEPLETED)) {
+            return Result.ok();
+        } else {
+            return Result.error(APIError.UPDATE_ERROR);
+        }
+    }
+
+    @PostMapping("/item/return")
+    public Result itemReturn(@RequestParam("itemId") int id, @RequestParam("amount") int amount) {
+        if (itemBiz.returnItem(id, amount)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);
@@ -174,4 +215,6 @@ public class ItemController {
             return Result.error(APIError.DELETE_ERROR);
         }
     }
+
+
 }

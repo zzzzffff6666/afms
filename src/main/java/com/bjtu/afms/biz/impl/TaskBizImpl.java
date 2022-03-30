@@ -5,10 +5,10 @@ import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.TaskBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.UrgentLevel;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.DailyTask;
@@ -23,7 +23,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -81,9 +80,7 @@ public class TaskBizImpl implements TaskBiz {
     @Transactional
     public boolean modifyTaskInfo(Task task) {
         Task old = taskService.selectTask(task.getId());
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         task.setAddTime(null);
         task.setAddUser(null);
         if (taskService.updateTask(task) == 1) {
@@ -99,17 +96,11 @@ public class TaskBizImpl implements TaskBiz {
     @Transactional
     public boolean deleteTask(int taskId) {
         List<DailyTask> dailyTaskList = dailyTaskService.selectUnfinishedTaskList(taskId);
-        if (!CollectionUtils.isEmpty(dailyTaskList)) {
-            throw new BizException(APIError.TASK_NOW_USED);
-        }
+        Assert.isEmpty(dailyTaskList, APIError.TASK_NOW_USED);
         List<PoolTask> poolTaskList = poolTaskService.selectUnfinishedTaskList(taskId);
-        if (!CollectionUtils.isEmpty(poolTaskList)) {
-            throw new BizException(APIError.TASK_NOW_USED);
-        }
+        Assert.isEmpty(poolTaskList, APIError.TASK_NOW_USED);
         Task task = taskService.selectTask(taskId);
-        if (task == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.isNull(task, APIError.NOT_FOUND);
         if (taskService.deleteTask(taskId) == 1) {
             permissionBiz.deleteResource(DataType.TASK.getId(), taskId);
             logBiz.saveLog(DataType.TASK, taskId, OperationType.DELETE_TASK,

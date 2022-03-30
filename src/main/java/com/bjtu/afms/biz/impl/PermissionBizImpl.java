@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.mapper.PermissionMapper;
@@ -26,7 +26,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -84,27 +83,23 @@ public class PermissionBizImpl implements PermissionBiz {
         param.setType(dataType.getId());
         param.setRelateId(relateId);
         List<Permission> permissionList = permissionService.selectPermissionList(param);
-        if (CollectionUtils.isEmpty(permissionList)) {
-            throw new BizException(APIError.NO_PERMISSION);
+        Assert.notEmpty(permissionList, APIError.NO_PERMISSION);
+
+        param.setUserId(userId);
+        List<Permission> permissionList1 = permissionService.selectPermissionList(param);
+        Assert.isEmpty(permissionList1, APIError.PERMISSION_ALREADY_EXIST);
+
+        Permission permission = new Permission();
+        permission.setAuth(AuthType.OWNER.getId());
+        permission.setType(dataType.getId());
+        permission.setRelateId(relateId);
+        permission.setUserId(userId);
+        if (permissionService.insertPermission(permission) == 1) {
+            logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
+                    null, JSON.toJSONString(permission));
+            return true;
         } else {
-            param.setUserId(userId);
-            permissionList = permissionService.selectPermissionList(param);
-            if (CollectionUtils.isEmpty(permissionList)) {
-                Permission permission = new Permission();
-                permission.setAuth(AuthType.OWNER.getId());
-                permission.setType(dataType.getId());
-                permission.setRelateId(relateId);
-                permission.setUserId(userId);
-                if (permissionService.insertPermission(permission) == 1) {
-                    logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
-                            null, JSON.toJSONString(permission));
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                throw new BizException(APIError.PERMISSION_ALREADY_EXIST);
-            }
+            return false;
         }
     }
 
@@ -115,29 +110,26 @@ public class PermissionBizImpl implements PermissionBiz {
         param.setUserId(permission.getUserId());
         param.setAuth(permission.getAuth());
         if (permission.getAuth() == AuthType.OWNER.getId()) {
-            Assert.isTrue(permission.getType() != null && permission.getRelateId() != null,
-                    APIError.PARAMETER_ERROR);
+            Assert.isTrue(permission.getType() != null && permission.getRelateId() != null, APIError.PARAMETER_ERROR);
             param.setType(permission.getType());
             param.setRelateId(permission.getRelateId());
         }
         List<Permission> permissionList = permissionService.selectPermissionList(param);
-        if (CollectionUtils.isEmpty(permissionList)) {
-            Permission record = new Permission();
-            record.setAuth(permission.getAuth());
-            record.setUserId(permission.getUserId());
-            if (permission.getAuth() == AuthType.OWNER.getId()) {
-                record.setType(permission.getType());
-                record.setRelateId(permission.getRelateId());
-            }
-            if (permissionService.insertPermission(record) == 1) {
-                logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
-                        null, JSON.toJSONString(record));
-                return true;
-            } else {
-                return false;
-            }
+        Assert.isEmpty(permissionList, APIError.PERMISSION_ALREADY_EXIST);
+
+        Permission record = new Permission();
+        record.setAuth(permission.getAuth());
+        record.setUserId(permission.getUserId());
+        if (permission.getAuth() == AuthType.OWNER.getId()) {
+            record.setType(permission.getType());
+            record.setRelateId(permission.getRelateId());
+        }
+        if (permissionService.insertPermission(record) == 1) {
+            logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
+                    null, JSON.toJSONString(record));
+            return true;
         } else {
-            throw new BizException(APIError.PERMISSION_ALREADY_EXIST);
+            return false;
         }
     }
 
@@ -194,12 +186,9 @@ public class PermissionBizImpl implements PermissionBiz {
             Permission permission = new Permission();
             permission.setAuth(AuthType.OWNER.getId());
             permission.setUserId(userId);
-            if (permissionService.insertPermission(permission) == 1) {
-                logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
-                        null, JSON.toJSONString(permission));
-            } else {
-                throw new BizException(APIError.INSERT_ERROR);
-            }
+            Assert.isTrue(permissionService.insertPermission(permission) == 1, APIError.INSERT_ERROR);
+            logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
+                    null, JSON.toJSONString(permission));
         }
     }
 
@@ -218,12 +207,9 @@ public class PermissionBizImpl implements PermissionBiz {
             permission.setType(type);
             permission.setRelateId(relateId);
             permission.setUserId(userId);
-            if (permissionService.insertPermission(permission) == 1) {
-                logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
-                        null, JSON.toJSONString(permission));
-            } else {
-                throw new BizException(APIError.INSERT_ERROR);
-            }
+            Assert.isTrue(permissionService.insertPermission(permission) == 1, APIError.INSERT_ERROR);
+            logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
+                    null, JSON.toJSONString(permission));
         }
     }
 

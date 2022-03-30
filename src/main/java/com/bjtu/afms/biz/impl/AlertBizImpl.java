@@ -5,11 +5,11 @@ import com.bjtu.afms.biz.AlertBiz;
 import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Alert;
@@ -113,9 +113,7 @@ public class AlertBizImpl implements AlertBiz {
     @Transactional
     public boolean modifyAlertInfo(Alert alert) {
         Alert old = alertService.selectAlert(alert.getId());
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         alert.setStartTime(null);
         alert.setHandleTime(null);
         alert.setEndTime(null);
@@ -135,9 +133,7 @@ public class AlertBizImpl implements AlertBiz {
     @Transactional
     public boolean modifyAlertUser(int id, int userId) {
         Alert alert = alertService.selectAlert(id);
-        if (alert == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(alert, APIError.NOT_FOUND);
         Alert record = new Alert();
         record.setId(id);
         record.setUserId(userId);
@@ -156,27 +152,23 @@ public class AlertBizImpl implements AlertBiz {
     @Transactional
     public boolean modifyAlertStatus(int id, int status) {
         Alert alert = alertService.selectAlert(id);
-        if (alert == null) {
-            throw new BizException(APIError.NOT_FOUND);
+        Assert.notNull(alert, APIError.NOT_FOUND);
+        Assert.isTrue(TaskStatus.changeCheck(alert.getStatus(), status) && status != TaskStatus.OVERDUE.getId(),
+                APIError.TASK_STATUS_CHANGE_ERROR);
+        Alert record = new Alert();
+        record.setId(id);
+        record.setStatus(status);
+        if (TaskStatus.isFinish(status)) {
+            record.setEndTime(new Date());
+        } else if (TaskStatus.isStart(status)) {
+            record.setHandleTime(new Date());
         }
-        if (TaskStatus.changeCheck(alert.getStatus(), status) && status != TaskStatus.OVERDUE.getId()) {
-            Alert record = new Alert();
-            record.setId(id);
-            record.setStatus(status);
-            if (TaskStatus.isFinish(status)) {
-                record.setEndTime(new Date());
-            } else if (TaskStatus.isStart(status)) {
-                record.setHandleTime(new Date());
-            }
-            if (alertService.updateAlert(record) == 1) {
-                logBiz.saveLog(DataType.ALERT, alert.getId(), OperationType.UPDATE_ALERT_STATUS,
-                        JSON.toJSONString(alert), JSON.toJSONString(record));
-                return true;
-            } else {
-                return false;
-            }
+        if (alertService.updateAlert(record) == 1) {
+            logBiz.saveLog(DataType.ALERT, alert.getId(), OperationType.UPDATE_ALERT_STATUS,
+                    JSON.toJSONString(alert), JSON.toJSONString(record));
+            return true;
         } else {
-            throw new BizException(APIError.TASK_STATUS_CHANGE_ERROR);
+            return false;
         }
     }
 
@@ -184,9 +176,7 @@ public class AlertBizImpl implements AlertBiz {
     @Transactional
     public boolean deleteAlert(int alertId) {
         Alert alert = alertService.selectAlert(alertId);
-        if (alert == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(alert, APIError.NOT_FOUND);
         if (alertService.deleteAlert(alertId) == 1) {
             permissionBiz.deleteResource(DataType.ALERT.getId(), alertId);
             logBiz.saveLog(DataType.ALERT, alertId, OperationType.DELETE_ALERT,

@@ -5,9 +5,9 @@ import com.bjtu.afms.biz.CommentBiz;
 import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
-import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Comment;
@@ -66,9 +66,7 @@ public class CommentBizImpl implements CommentBiz {
     @Transactional
     public boolean modifyComment(int id, int score, String content) {
         Comment old = commentService.selectComment(id);
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         Comment comment = new Comment();
         comment.setId(id);
         comment.setScore(score);
@@ -86,9 +84,7 @@ public class CommentBizImpl implements CommentBiz {
     @Transactional
     public boolean deleteComment(int commentId) {
         Comment old = commentService.selectComment(commentId);
-        if (old == null) {
-            throw new BizException(APIError.NOT_FOUND);
-        }
+        Assert.notNull(old, APIError.NOT_FOUND);
         if (commentService.deleteComment(commentId) == 1) {
             permissionBiz.deleteResource(DataType.COMMENT.getId(), commentId);
             logBiz.saveLog(DataType.COMMENT, commentId, OperationType.DELETE_COMMENT,
