@@ -38,7 +38,9 @@ public interface APIError {
     String TASK_NOW_USED = "该任务仍在被使用";
     String UNKNOWN_TASK_STATUS = "未知的任务状态";
     String TASK_STATUS_CHANGE_ERROR = "任务状态变更错误";
+    String CURRENT_CYCLE_NOT_FINISH = "当前养殖周期并未结束";
 
     String UNKNOWN_PLAN_FINISH = "未知的计划完成状态";
     String PLAN_FINISH_CHANGE_ERROR = "计划完成状态变更错误";
+    String PLAN_APPLY_FAILED = "计划应用失败";
 }

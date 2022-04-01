@@ -6,6 +6,7 @@ import com.bjtu.afms.model.PoolCycleExample;
 import com.bjtu.afms.web.param.query.PoolCycleQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -31,6 +32,17 @@ public class PoolCycleService {
 
     public PoolCycle selectPoolCycle(int poolCycleId) {
         return poolCycleMapper.selectByPrimaryKey(poolCycleId);
+    }
+
+    public PoolCycle selectPoolCycle(int poolId, int cycle) {
+        PoolCycleExample example = new PoolCycleExample();
+        example.createCriteria().andPoolIdEqualTo(poolId).andCycleEqualTo(cycle);
+        List<PoolCycle> poolCycleList = poolCycleMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(poolCycleList)) {
+            return null;
+        } else {
+            return poolCycleList.get(0);
+        }
     }
 
     public List<PoolCycle> selectPoolCycleList(PoolCycleQueryParam param) {

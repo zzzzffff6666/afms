@@ -726,6 +726,66 @@ public class PoolExample {
             return (Criteria) this;
         }
 
+        public Criteria andCurrentCycleIsNull() {
+            addCriterion("current_cycle is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleIsNotNull() {
+            addCriterion("current_cycle is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleEqualTo(Integer value) {
+            addCriterion("current_cycle =", value, "currentCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleNotEqualTo(Integer value) {
+            addCriterion("current_cycle <>", value, "currentCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleGreaterThan(Integer value) {
+            addCriterion("current_cycle >", value, "currentCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleGreaterThanOrEqualTo(Integer value) {
+            addCriterion("current_cycle >=", value, "currentCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleLessThan(Integer value) {
+            addCriterion("current_cycle <", value, "currentCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleLessThanOrEqualTo(Integer value) {
+            addCriterion("current_cycle <=", value, "currentCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleIn(List<Integer> values) {
+            addCriterion("current_cycle in", values, "currentCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleNotIn(List<Integer> values) {
+            addCriterion("current_cycle not in", values, "currentCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleBetween(Integer value1, Integer value2) {
+            addCriterion("current_cycle between", value1, value2, "currentCycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCycleNotBetween(Integer value1, Integer value2) {
+            addCriterion("current_cycle not between", value1, value2, "currentCycle");
+            return (Criteria) this;
+        }
+
         public Criteria andUrlIsNull() {
             addCriterion("url is null");
             return (Criteria) this;

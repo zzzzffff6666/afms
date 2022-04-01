@@ -6,6 +6,7 @@
       <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="pool_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="cycle" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="plan_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="task_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="start_pre" javaType="java.util.Date" jdbcType="TIMESTAMP" />
@@ -78,8 +79,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, pool_id, cycle, user_id, task_id, start_pre, end_pre, start_act, end_act, status, 
-    add_time, add_user, mod_time, mod_user
+    id, pool_id, cycle, plan_id, user_id, task_id, start_pre, end_pre, start_act, end_act, 
+    status, add_time, add_user, mod_time, mod_user
   </sql>
   <select id="selectByExample" parameterType="com.bjtu.afms.model.PoolTaskExample" resultMap="BaseResultMap">
     select
@@ -115,16 +116,16 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into pool_task (pool_id, cycle, user_id, 
-      task_id, start_pre, end_pre, 
-      start_act, end_act, status, 
-      add_time, add_user, mod_time, 
-      mod_user)
-    values (#{poolId,jdbcType=INTEGER}, #{cycle,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
-      #{taskId,jdbcType=INTEGER}, #{startPre,jdbcType=TIMESTAMP}, #{endPre,jdbcType=TIMESTAMP}, 
-      #{startAct,jdbcType=TIMESTAMP}, #{endAct,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, 
-      #{modUser,jdbcType=INTEGER})
+    insert into pool_task (pool_id, cycle, plan_id, 
+      user_id, task_id, start_pre, 
+      end_pre, start_act, end_act, 
+      status, add_time, add_user, 
+      mod_time, mod_user)
+    values (#{poolId,jdbcType=INTEGER}, #{cycle,jdbcType=INTEGER}, #{planId,jdbcType=INTEGER}, 
+      #{userId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, #{startPre,jdbcType=TIMESTAMP}, 
+      #{endPre,jdbcType=TIMESTAMP}, #{startAct,jdbcType=TIMESTAMP}, #{endAct,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, 
+      #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.PoolTask">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -137,6 +138,9 @@
       </if>
       <if test="cycle != null">
         cycle,
+      </if>
+      <if test="planId != null">
+        plan_id,
       </if>
       <if test="userId != null">
         user_id,
@@ -178,6 +182,9 @@
       </if>
       <if test="cycle != null">
         #{cycle,jdbcType=INTEGER},
+      </if>
+      <if test="planId != null">
+        #{planId,jdbcType=INTEGER},
       </if>
       <if test="userId != null">
         #{userId,jdbcType=INTEGER},
@@ -232,6 +239,9 @@
       <if test="record.cycle != null">
         cycle = #{record.cycle,jdbcType=INTEGER},
       </if>
+      <if test="record.planId != null">
+        plan_id = #{record.planId,jdbcType=INTEGER},
+      </if>
       <if test="record.userId != null">
         user_id = #{record.userId,jdbcType=INTEGER},
       </if>
@@ -275,6 +285,7 @@
     set id = #{record.id,jdbcType=INTEGER},
       pool_id = #{record.poolId,jdbcType=INTEGER},
       cycle = #{record.cycle,jdbcType=INTEGER},
+      plan_id = #{record.planId,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=INTEGER},
       task_id = #{record.taskId,jdbcType=INTEGER},
       start_pre = #{record.startPre,jdbcType=TIMESTAMP},
@@ -298,6 +309,9 @@
       </if>
       <if test="cycle != null">
         cycle = #{cycle,jdbcType=INTEGER},
+      </if>
+      <if test="planId != null">
+        plan_id = #{planId,jdbcType=INTEGER},
       </if>
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
@@ -339,6 +353,7 @@
     update pool_task
     set pool_id = #{poolId,jdbcType=INTEGER},
       cycle = #{cycle,jdbcType=INTEGER},
+      plan_id = #{planId,jdbcType=INTEGER},
       user_id = #{userId,jdbcType=INTEGER},
       task_id = #{taskId,jdbcType=INTEGER},
       start_pre = #{startPre,jdbcType=TIMESTAMP},

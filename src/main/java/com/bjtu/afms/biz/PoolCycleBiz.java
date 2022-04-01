@@ -2,7 +2,6 @@ package com.bjtu.afms.biz;
 
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.PoolCycle;
-import com.bjtu.afms.web.param.ModifyCycleFundParam;
 import com.bjtu.afms.web.param.query.PoolCycleQueryParam;
 
 public interface PoolCycleBiz {
@@ -16,8 +15,6 @@ public interface PoolCycleBiz {
     boolean modifyPoolCycleUser(int id, int userId);
 
     boolean modifyPoolCycleStatus(int id, int status);
-
-    boolean modifyPoolCycleFund(ModifyCycleFundParam param);
 
     boolean deletePoolCycle(int poolCycleId);
 }

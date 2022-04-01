@@ -10,6 +10,8 @@ public class PoolTask implements Serializable {
 
     private Integer cycle;
 
+    private Integer planId;
+
     private Integer userId;
 
     private Integer taskId;
@@ -34,10 +36,11 @@ public class PoolTask implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public PoolTask(Integer id, Integer poolId, Integer cycle, Integer userId, Integer taskId, Date startPre, Date endPre, Date startAct, Date endAct, Integer status, Date addTime, Integer addUser, Date modTime, Integer modUser) {
+    public PoolTask(Integer id, Integer poolId, Integer cycle, Integer planId, Integer userId, Integer taskId, Date startPre, Date endPre, Date startAct, Date endAct, Integer status, Date addTime, Integer addUser, Date modTime, Integer modUser) {
         this.id = id;
         this.poolId = poolId;
         this.cycle = cycle;
+        this.planId = planId;
         this.userId = userId;
         this.taskId = taskId;
         this.startPre = startPre;
@@ -77,6 +80,14 @@ public class PoolTask implements Serializable {
 
     public void setCycle(Integer cycle) {
         this.cycle = cycle;
+    }
+
+    public Integer getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Integer planId) {
+        this.planId = planId;
     }
 
     public Integer getUserId() {

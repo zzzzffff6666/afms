@@ -5,8 +5,10 @@
     <constructor>
       <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="use_num" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="task_list" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="apply_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="finish_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="finish" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="add_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="add_user" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="mod_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
@@ -72,7 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, use_num, task_list, add_time, add_user, mod_time, mod_user
+    id, name, task_list, apply_time, finish_time, finish, add_time, add_user, mod_time, 
+    mod_user
   </sql>
   <select id="selectByExample" parameterType="com.bjtu.afms.model.PlanExample" resultMap="BaseResultMap">
     select
@@ -108,12 +111,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into plan (name, use_num, task_list, 
-      add_time, add_user, mod_time, 
-      mod_user)
-    values (#{name,jdbcType=VARCHAR}, #{useNum,jdbcType=INTEGER}, #{taskList,jdbcType=VARCHAR}, 
-      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, 
-      #{modUser,jdbcType=INTEGER})
+    insert into plan (name, task_list, apply_time, 
+      finish_time, finish, add_time, 
+      add_user, mod_time, mod_user
+      )
+    values (#{name,jdbcType=VARCHAR}, #{taskList,jdbcType=VARCHAR}, #{applyTime,jdbcType=TIMESTAMP}, 
+      #{finishTime,jdbcType=TIMESTAMP}, #{finish,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Plan">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -124,11 +129,17 @@
       <if test="name != null">
         name,
       </if>
-      <if test="useNum != null">
-        use_num,
-      </if>
       <if test="taskList != null">
         task_list,
+      </if>
+      <if test="applyTime != null">
+        apply_time,
+      </if>
+      <if test="finishTime != null">
+        finish_time,
+      </if>
+      <if test="finish != null">
+        finish,
       </if>
       <if test="addTime != null">
         add_time,
@@ -147,11 +158,17 @@
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="useNum != null">
-        #{useNum,jdbcType=INTEGER},
-      </if>
       <if test="taskList != null">
         #{taskList,jdbcType=VARCHAR},
+      </if>
+      <if test="applyTime != null">
+        #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishTime != null">
+        #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finish != null">
+        #{finish,jdbcType=INTEGER},
       </if>
       <if test="addTime != null">
         #{addTime,jdbcType=TIMESTAMP},
@@ -182,11 +199,17 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=VARCHAR},
       </if>
-      <if test="record.useNum != null">
-        use_num = #{record.useNum,jdbcType=INTEGER},
-      </if>
       <if test="record.taskList != null">
         task_list = #{record.taskList,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyTime != null">
+        apply_time = #{record.applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.finishTime != null">
+        finish_time = #{record.finishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.finish != null">
+        finish = #{record.finish,jdbcType=INTEGER},
       </if>
       <if test="record.addTime != null">
         add_time = #{record.addTime,jdbcType=TIMESTAMP},
@@ -209,8 +232,10 @@
     update plan
     set id = #{record.id,jdbcType=INTEGER},
       name = #{record.name,jdbcType=VARCHAR},
-      use_num = #{record.useNum,jdbcType=INTEGER},
       task_list = #{record.taskList,jdbcType=VARCHAR},
+      apply_time = #{record.applyTime,jdbcType=TIMESTAMP},
+      finish_time = #{record.finishTime,jdbcType=TIMESTAMP},
+      finish = #{record.finish,jdbcType=INTEGER},
       add_time = #{record.addTime,jdbcType=TIMESTAMP},
       add_user = #{record.addUser,jdbcType=INTEGER},
       mod_time = #{record.modTime,jdbcType=TIMESTAMP},
@@ -225,11 +250,17 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="useNum != null">
-        use_num = #{useNum,jdbcType=INTEGER},
-      </if>
       <if test="taskList != null">
         task_list = #{taskList,jdbcType=VARCHAR},
+      </if>
+      <if test="applyTime != null">
+        apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishTime != null">
+        finish_time = #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finish != null">
+        finish = #{finish,jdbcType=INTEGER},
       </if>
       <if test="addTime != null">
         add_time = #{addTime,jdbcType=TIMESTAMP},
@@ -249,8 +280,10 @@
   <update id="updateByPrimaryKey" parameterType="com.bjtu.afms.model.Plan">
     update plan
     set name = #{name,jdbcType=VARCHAR},
-      use_num = #{useNum,jdbcType=INTEGER},
       task_list = #{taskList,jdbcType=VARCHAR},
+      apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      finish_time = #{finishTime,jdbcType=TIMESTAMP},
+      finish = #{finish,jdbcType=INTEGER},
       add_time = #{addTime,jdbcType=TIMESTAMP},
       add_user = #{addUser,jdbcType=INTEGER},
       mod_time = #{modTime,jdbcType=TIMESTAMP},

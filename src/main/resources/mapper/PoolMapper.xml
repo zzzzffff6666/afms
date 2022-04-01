@@ -13,6 +13,7 @@
       <arg column="usage" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="detail" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="current_cycle" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="url" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="add_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="add_user" javaType="java.lang.Integer" jdbcType="INTEGER" />
@@ -79,8 +80,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, place, ordinal, length, width, height, type, usage, status, detail, url, add_time, 
-    add_user, mod_time, mod_user
+    id, place, ordinal, length, width, height, type, usage, status, detail, current_cycle, 
+    url, add_time, add_user, mod_time, mod_user
   </sql>
   <select id="selectByExample" parameterType="com.bjtu.afms.model.PoolExample" resultMap="BaseResultMap">
     select
@@ -119,13 +120,15 @@
     insert into pool (place, ordinal, length, 
       width, height, type, 
       usage, status, detail, 
-      url, add_time, add_user, 
-      mod_time, mod_user)
+      current_cycle, url, add_time, 
+      add_user, mod_time, mod_user
+      )
     values (#{place,jdbcType=INTEGER}, #{ordinal,jdbcType=INTEGER}, #{length,jdbcType=DECIMAL}, 
       #{width,jdbcType=DECIMAL}, #{height,jdbcType=DECIMAL}, #{type,jdbcType=INTEGER}, 
       #{usage,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{detail,jdbcType=VARCHAR}, 
-      #{url,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, 
-      #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER})
+      #{currentCycle,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.Pool">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -159,6 +162,9 @@
       </if>
       <if test="detail != null">
         detail,
+      </if>
+      <if test="currentCycle != null">
+        current_cycle,
       </if>
       <if test="url != null">
         url,
@@ -203,6 +209,9 @@
       </if>
       <if test="detail != null">
         #{detail,jdbcType=VARCHAR},
+      </if>
+      <if test="currentCycle != null">
+        #{currentCycle,jdbcType=INTEGER},
       </if>
       <if test="url != null">
         #{url,jdbcType=VARCHAR},
@@ -260,6 +269,9 @@
       <if test="record.detail != null">
         detail = #{record.detail,jdbcType=VARCHAR},
       </if>
+      <if test="record.currentCycle != null">
+        current_cycle = #{record.currentCycle,jdbcType=INTEGER},
+      </if>
       <if test="record.url != null">
         url = #{record.url,jdbcType=VARCHAR},
       </if>
@@ -292,6 +304,7 @@
       usage = #{record.usage,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
       detail = #{record.detail,jdbcType=VARCHAR},
+      current_cycle = #{record.currentCycle,jdbcType=INTEGER},
       url = #{record.url,jdbcType=VARCHAR},
       add_time = #{record.addTime,jdbcType=TIMESTAMP},
       add_user = #{record.addUser,jdbcType=INTEGER},
@@ -331,6 +344,9 @@
       <if test="detail != null">
         detail = #{detail,jdbcType=VARCHAR},
       </if>
+      <if test="currentCycle != null">
+        current_cycle = #{currentCycle,jdbcType=INTEGER},
+      </if>
       <if test="url != null">
         url = #{url,jdbcType=VARCHAR},
       </if>
@@ -360,6 +376,7 @@
       usage = #{usage,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       detail = #{detail,jdbcType=VARCHAR},
+      current_cycle = #{currentCycle,jdbcType=INTEGER},
       url = #{url,jdbcType=VARCHAR},
       add_time = #{addTime,jdbcType=TIMESTAMP},
       add_user = #{addUser,jdbcType=INTEGER},

@@ -51,9 +51,6 @@ public class CommonService {
     private PoolCycleMapper poolCycleMapper;
 
     @Resource
-    private PoolPlanMapper poolPlanMapper;
-
-    @Resource
     private PoolMapper poolMapper;
 
     @Resource
@@ -92,18 +89,16 @@ public class CommonService {
             case 9:
                 return planMapper.selectByPrimaryKey(relateId);
             case 10:
-                return poolPlanMapper.selectByPrimaryKey(relateId);
-            case 11:
                 return poolTaskMapper.selectByPrimaryKey(relateId);
-            case 12:
+            case 11:
                 return dailyTaskMapper.selectByPrimaryKey(relateId);
-            case 13:
+            case 12:
                 return jobMapper.selectByPrimaryKey(relateId);
-            case 14:
+            case 13:
                 return alertMapper.selectByPrimaryKey(relateId);
-            case 15:
+            case 14:
                 return commentMapper.selectByPrimaryKey(relateId);
-            case 16:
+            case 15:
                 return fundMapper.selectByPrimaryKey(relateId);
             default:
                 return null;
@@ -185,6 +180,7 @@ public class CommonService {
                 Pool pool = JSON.parseObject(log.getOldValue(), Pool.class);
                 return poolMapper.insertSelective(pool) >= 1;
             case UPDATE_POOL_INFO:
+            case UPDATE_POOL_CURRENT_CYCLE:
                 pool = JSON.parseObject(log.getOldValue(), Pool.class);
                 pool.setId(log.getRelateId());
                 return poolMapper.updateByPrimaryKeySelective(pool) >= 1;
@@ -194,7 +190,6 @@ public class CommonService {
             case DELETE_POOL_CYCLE:
                 PoolCycle poolCycle = JSON.parseObject(log.getOldValue(), PoolCycle.class);
                 return poolCycleMapper.insertSelective(poolCycle) >= 1;
-            case UPDATE_POOL_CYCLE_FUND:
             case UPDATE_POOL_CYCLE_STATUS:
             case UPDATE_POOL_CYCLE_USER:
                 poolCycle = JSON.parseObject(log.getOldValue(), PoolCycle.class);
@@ -216,20 +211,10 @@ public class CommonService {
             case DELETE_PLAN:
                 Plan plan = JSON.parseObject(log.getOldValue(), Plan.class);
                 return planMapper.insertSelective(plan) >= 1;
-            case UPDATE_PLAN_INFO:
+            case UPDATE_PLAN_FINISH:
                 plan = JSON.parseObject(log.getOldValue(), Plan.class);
                 plan.setId(log.getRelateId());
                 return planMapper.updateByPrimaryKeySelective(plan) >= 1;
-            case INSERT_POOL_PLAN:
-                poolPlanMapper.deleteByPrimaryKey(log.getRelateId());
-                return true;
-            case DELETE_POOL_PLAN:
-                PoolPlan poolPlan = JSON.parseObject(log.getOldValue(), PoolPlan.class);
-                return poolPlanMapper.insertSelective(poolPlan) >= 1;
-            case UPDATE_POOL_PLAN_FINISH:
-                poolPlan = JSON.parseObject(log.getOldValue(), PoolPlan.class);
-                poolPlan.setId(log.getRelateId());
-                return poolPlanMapper.updateByPrimaryKeySelective(poolPlan) >= 1;
             case INSERT_POOL_TASK:
                 poolTaskMapper.deleteByPrimaryKey(log.getRelateId());
                 return true;

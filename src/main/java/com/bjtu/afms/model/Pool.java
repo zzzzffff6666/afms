@@ -25,6 +25,8 @@ public class Pool implements Serializable {
 
     private String detail;
 
+    private Integer currentCycle;
+
     private String url;
 
     private Date addTime;
@@ -37,7 +39,7 @@ public class Pool implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Pool(Integer id, Integer place, Integer ordinal, BigDecimal length, BigDecimal width, BigDecimal height, Integer type, String usage, Integer status, String detail, String url, Date addTime, Integer addUser, Date modTime, Integer modUser) {
+    public Pool(Integer id, Integer place, Integer ordinal, BigDecimal length, BigDecimal width, BigDecimal height, Integer type, String usage, Integer status, String detail, Integer currentCycle, String url, Date addTime, Integer addUser, Date modTime, Integer modUser) {
         this.id = id;
         this.place = place;
         this.ordinal = ordinal;
@@ -48,6 +50,7 @@ public class Pool implements Serializable {
         this.usage = usage;
         this.status = status;
         this.detail = detail;
+        this.currentCycle = currentCycle;
         this.url = url;
         this.addTime = addTime;
         this.addUser = addUser;
@@ -137,6 +140,14 @@ public class Pool implements Serializable {
 
     public void setDetail(String detail) {
         this.detail = detail == null ? null : detail.trim();
+    }
+
+    public Integer getCurrentCycle() {
+        return currentCycle;
+    }
+
+    public void setCurrentCycle(Integer currentCycle) {
+        this.currentCycle = currentCycle;
     }
 
     public String getUrl() {

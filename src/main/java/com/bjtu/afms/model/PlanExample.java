@@ -235,66 +235,6 @@ public class PlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andUseNumIsNull() {
-            addCriterion("use_num is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumIsNotNull() {
-            addCriterion("use_num is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumEqualTo(Integer value) {
-            addCriterion("use_num =", value, "useNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumNotEqualTo(Integer value) {
-            addCriterion("use_num <>", value, "useNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumGreaterThan(Integer value) {
-            addCriterion("use_num >", value, "useNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumGreaterThanOrEqualTo(Integer value) {
-            addCriterion("use_num >=", value, "useNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumLessThan(Integer value) {
-            addCriterion("use_num <", value, "useNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumLessThanOrEqualTo(Integer value) {
-            addCriterion("use_num <=", value, "useNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumIn(List<Integer> values) {
-            addCriterion("use_num in", values, "useNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumNotIn(List<Integer> values) {
-            addCriterion("use_num not in", values, "useNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumBetween(Integer value1, Integer value2) {
-            addCriterion("use_num between", value1, value2, "useNum");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseNumNotBetween(Integer value1, Integer value2) {
-            addCriterion("use_num not between", value1, value2, "useNum");
-            return (Criteria) this;
-        }
-
         public Criteria andTaskListIsNull() {
             addCriterion("task_list is null");
             return (Criteria) this;
@@ -362,6 +302,186 @@ public class PlanExample {
 
         public Criteria andTaskListNotBetween(String value1, String value2) {
             addCriterion("task_list not between", value1, value2, "taskList");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeIsNull() {
+            addCriterion("apply_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeIsNotNull() {
+            addCriterion("apply_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeEqualTo(Date value) {
+            addCriterion("apply_time =", value, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeNotEqualTo(Date value) {
+            addCriterion("apply_time <>", value, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeGreaterThan(Date value) {
+            addCriterion("apply_time >", value, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("apply_time >=", value, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeLessThan(Date value) {
+            addCriterion("apply_time <", value, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeLessThanOrEqualTo(Date value) {
+            addCriterion("apply_time <=", value, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeIn(List<Date> values) {
+            addCriterion("apply_time in", values, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeNotIn(List<Date> values) {
+            addCriterion("apply_time not in", values, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeBetween(Date value1, Date value2) {
+            addCriterion("apply_time between", value1, value2, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andApplyTimeNotBetween(Date value1, Date value2) {
+            addCriterion("apply_time not between", value1, value2, "applyTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeIsNull() {
+            addCriterion("finish_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeIsNotNull() {
+            addCriterion("finish_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeEqualTo(Date value) {
+            addCriterion("finish_time =", value, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeNotEqualTo(Date value) {
+            addCriterion("finish_time <>", value, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeGreaterThan(Date value) {
+            addCriterion("finish_time >", value, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("finish_time >=", value, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeLessThan(Date value) {
+            addCriterion("finish_time <", value, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeLessThanOrEqualTo(Date value) {
+            addCriterion("finish_time <=", value, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeIn(List<Date> values) {
+            addCriterion("finish_time in", values, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeNotIn(List<Date> values) {
+            addCriterion("finish_time not in", values, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeBetween(Date value1, Date value2) {
+            addCriterion("finish_time between", value1, value2, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishTimeNotBetween(Date value1, Date value2) {
+            addCriterion("finish_time not between", value1, value2, "finishTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishIsNull() {
+            addCriterion("finish is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishIsNotNull() {
+            addCriterion("finish is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishEqualTo(Integer value) {
+            addCriterion("finish =", value, "finish");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishNotEqualTo(Integer value) {
+            addCriterion("finish <>", value, "finish");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishGreaterThan(Integer value) {
+            addCriterion("finish >", value, "finish");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishGreaterThanOrEqualTo(Integer value) {
+            addCriterion("finish >=", value, "finish");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishLessThan(Integer value) {
+            addCriterion("finish <", value, "finish");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishLessThanOrEqualTo(Integer value) {
+            addCriterion("finish <=", value, "finish");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishIn(List<Integer> values) {
+            addCriterion("finish in", values, "finish");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishNotIn(List<Integer> values) {
+            addCriterion("finish not in", values, "finish");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishBetween(Integer value1, Integer value2) {
+            addCriterion("finish between", value1, value2, "finish");
+            return (Criteria) this;
+        }
+
+        public Criteria andFinishNotBetween(Integer value1, Integer value2) {
+            addCriterion("finish not between", value1, value2, "finish");
             return (Criteria) this;
         }
 

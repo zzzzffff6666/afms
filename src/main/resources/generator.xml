@@ -160,25 +160,22 @@
 <!--        <table tableName="item" domainObjectName="Item">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
-        <table tableName="job" domainObjectName="Job">
-            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>
-        </table>
+<!--        <table tableName="job" domainObjectName="Job">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
 <!--        <table tableName="log" domainObjectName="Log">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
 <!--        <table tableName="permission" domainObjectName="Permission">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
-<!--        <table tableName="plan" domainObjectName="Plan">-->
-<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
-<!--        </table>-->
+        <table tableName="plan" domainObjectName="Plan">
+            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>
+        </table>
 <!--        <table tableName="pool" domainObjectName="Pool">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
 <!--        <table tableName="pool_cycle" domainObjectName="PoolCycle">-->
-<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
-<!--        </table>-->
-<!--        <table tableName="pool_plan" domainObjectName="PoolPlan">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
 <!--        <table tableName="pool_task" domainObjectName="PoolTask">-->

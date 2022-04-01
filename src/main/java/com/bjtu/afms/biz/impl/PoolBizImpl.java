@@ -4,14 +4,18 @@ import com.alibaba.fastjson.JSON;
 import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PoolBiz;
+import com.bjtu.afms.biz.PoolCycleBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.PoolStatus;
+import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Pool;
+import com.bjtu.afms.model.PoolCycle;
+import com.bjtu.afms.service.PoolCycleService;
 import com.bjtu.afms.service.PoolService;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.web.param.query.PoolQueryParam;
@@ -21,12 +25,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 @Component
 public class PoolBizImpl implements PoolBiz {
 
     @Resource
     private PoolService poolService;
+
+    @Resource
+    private PoolCycleService poolCycleService;
+
+    @Resource
+    private PoolCycleBiz poolCycleBiz;
 
     @Resource
     private ConfigUtil configUtil;
@@ -68,7 +79,6 @@ public class PoolBizImpl implements PoolBiz {
     public boolean modifyPoolInfo(Pool pool) {
         Pool old = poolService.selectPool(pool.getId());
         Assert.notNull(old, APIError.NOT_FOUND);
-        pool.setDetail(null);
         pool.setAddTime(null);
         pool.setAddUser(null);
         if (poolService.updatePool(pool) == 1) {
@@ -82,11 +92,30 @@ public class PoolBizImpl implements PoolBiz {
 
     @Override
     @Transactional
-    public boolean modifyPoolDetail(int id, String detail) {
-        Pool pool = new Pool();
-        pool.setId(id);
-        pool.setDetail(detail);
-        return poolService.updatePool(pool) == 1;
+    public boolean startPoolNewCycle(int id, int userId) {
+        Pool old = poolService.selectPool(id);
+        Assert.notNull(old, APIError.NOT_FOUND);
+        PoolCycle poolCycle = poolCycleService.selectPoolCycle(id, old.getCurrentCycle());
+        Assert.notNull(old, APIError.NOT_FOUND);
+        Assert.isTrue(TaskStatus.isFinish(poolCycle.getStatus()), APIError.CURRENT_CYCLE_NOT_FINISH);
+        int currentCycle = old.getCurrentCycle() + 1;
+        Pool record = new Pool();
+        record.setId(id);
+        record.setCurrentCycle(currentCycle);
+        PoolCycle newCycle = new PoolCycle();
+        newCycle.setPoolId(id);
+        newCycle.setCycle(currentCycle);
+        newCycle.setUserId(userId);
+        newCycle.setStartTime(new Date());
+        newCycle.setStatus(TaskStatus.HANDLING.getId());
+        if (poolService.updatePool(record) == 1) {
+            logBiz.saveLog(DataType.POOL, id, OperationType.UPDATE_POOL_CURRENT_CYCLE,
+                    JSON.toJSONString(old), JSON.toJSONString(record));
+            Assert.isTrue(poolCycleBiz.insertPoolCycle(newCycle), APIError.INSERT_ERROR);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

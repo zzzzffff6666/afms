@@ -8,9 +8,7 @@ import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Result;
 import com.bjtu.afms.model.Plan;
 import com.bjtu.afms.service.PlanService;
-import com.bjtu.afms.web.param.ImportPlanParam;
 import com.bjtu.afms.web.param.query.PlanQueryParam;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -53,20 +51,16 @@ public class PlanController {
         }
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL})
-    @PostMapping("/plan/import")
-    public Result importPlan(@RequestBody @Validated ImportPlanParam param) {
-        if (planBiz.importPlan(param)) {
-            return Result.ok();
-        } else {
-            return Result.error(APIError.IMPORT_ERROR);
-        }
+    @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.PLAN)
+    @PostMapping("/plan/apply/{planId}")
+    public Result applyPlan(@PathVariable("planId") int id) {
+        return Result.ok(planBiz.applyPlan(id));
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL}, owner = true, data = DataType.PLAN)
-    @PostMapping("/plan/info/modify")
-    public Result modifyPlanInfo(@RequestBody Plan plan) {
-        if (planBiz.modifyPlanInfo(plan)) {
+    @PostMapping("/plan/finish/modify")
+    public Result modifyPlanFinish(@RequestParam("id") int id, @RequestParam("finish") int finish) {
+        if (planBiz.modifyPlanFinish(id, finish)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

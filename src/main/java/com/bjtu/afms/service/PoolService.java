@@ -49,4 +49,10 @@ public class PoolService {
         }
         return poolMapper.selectByExample(example);
     }
+
+    public List<Pool> selectPoolByIdList(List<Integer> idList) {
+        PoolExample example = new PoolExample();
+        example.createCriteria().andIdIn(idList);
+        return poolMapper.selectByExample(example);
+    }
 }

@@ -10,8 +10,6 @@
       <arg column="start_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="end_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="cost" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
-      <arg column="income" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
       <arg column="add_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="add_user" javaType="java.lang.Integer" jdbcType="INTEGER" />
       <arg column="mod_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
@@ -77,8 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, pool_id, cycle, user_id, start_time, end_time, status, cost, income, add_time, 
-    add_user, mod_time, mod_user
+    id, pool_id, cycle, user_id, start_time, end_time, status, add_time, add_user, mod_time, 
+    mod_user
   </sql>
   <select id="selectByExample" parameterType="com.bjtu.afms.model.PoolCycleExample" resultMap="BaseResultMap">
     select
@@ -116,14 +114,12 @@
     </selectKey>
     insert into pool_cycle (pool_id, cycle, user_id, 
       start_time, end_time, status, 
-      cost, income, add_time, 
-      add_user, mod_time, mod_user
-      )
+      add_time, add_user, mod_time, 
+      mod_user)
     values (#{poolId,jdbcType=INTEGER}, #{cycle,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
       #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{cost,jdbcType=DECIMAL}, #{income,jdbcType=DECIMAL}, #{addTime,jdbcType=TIMESTAMP}, 
-      #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, #{modUser,jdbcType=INTEGER}
-      )
+      #{addTime,jdbcType=TIMESTAMP}, #{addUser,jdbcType=INTEGER}, #{modTime,jdbcType=TIMESTAMP}, 
+      #{modUser,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.bjtu.afms.model.PoolCycle">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -148,12 +144,6 @@
       </if>
       <if test="status != null">
         status,
-      </if>
-      <if test="cost != null">
-        cost,
-      </if>
-      <if test="income != null">
-        income,
       </if>
       <if test="addTime != null">
         add_time,
@@ -186,12 +176,6 @@
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
-      </if>
-      <if test="cost != null">
-        #{cost,jdbcType=DECIMAL},
-      </if>
-      <if test="income != null">
-        #{income,jdbcType=DECIMAL},
       </if>
       <if test="addTime != null">
         #{addTime,jdbcType=TIMESTAMP},
@@ -237,12 +221,6 @@
       <if test="record.status != null">
         status = #{record.status,jdbcType=INTEGER},
       </if>
-      <if test="record.cost != null">
-        cost = #{record.cost,jdbcType=DECIMAL},
-      </if>
-      <if test="record.income != null">
-        income = #{record.income,jdbcType=DECIMAL},
-      </if>
       <if test="record.addTime != null">
         add_time = #{record.addTime,jdbcType=TIMESTAMP},
       </if>
@@ -269,8 +247,6 @@
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
       end_time = #{record.endTime,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
-      cost = #{record.cost,jdbcType=DECIMAL},
-      income = #{record.income,jdbcType=DECIMAL},
       add_time = #{record.addTime,jdbcType=TIMESTAMP},
       add_user = #{record.addUser,jdbcType=INTEGER},
       mod_time = #{record.modTime,jdbcType=TIMESTAMP},
@@ -300,12 +276,6 @@
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
-      <if test="cost != null">
-        cost = #{cost,jdbcType=DECIMAL},
-      </if>
-      <if test="income != null">
-        income = #{income,jdbcType=DECIMAL},
-      </if>
       <if test="addTime != null">
         add_time = #{addTime,jdbcType=TIMESTAMP},
       </if>
@@ -329,8 +299,6 @@
       start_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
-      cost = #{cost,jdbcType=DECIMAL},
-      income = #{income,jdbcType=DECIMAL},
       add_time = #{addTime,jdbcType=TIMESTAMP},
       add_user = #{addUser,jdbcType=INTEGER},
       mod_time = #{modTime,jdbcType=TIMESTAMP},

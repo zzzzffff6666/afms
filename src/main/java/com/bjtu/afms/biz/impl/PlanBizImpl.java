@@ -4,22 +4,24 @@ import com.alibaba.fastjson.JSON;
 import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.biz.PlanBiz;
+import com.bjtu.afms.biz.PoolTaskBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
+import com.bjtu.afms.enums.PlanFinish;
+import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Plan;
-import com.bjtu.afms.model.PoolCycle;
+import com.bjtu.afms.model.Pool;
 import com.bjtu.afms.model.PoolTask;
 import com.bjtu.afms.service.PlanService;
-import com.bjtu.afms.service.PoolCycleService;
-import com.bjtu.afms.service.PoolTaskService;
+import com.bjtu.afms.service.PoolService;
 import com.bjtu.afms.utils.ConfigUtil;
-import com.bjtu.afms.web.param.ImportPlanParam;
+import com.bjtu.afms.utils.DateUtil;
 import com.bjtu.afms.web.param.query.PlanQueryParam;
-import com.bjtu.afms.web.param.query.PoolTaskQueryParam;
+import com.bjtu.afms.web.pojo.ErrorInfo;
 import com.bjtu.afms.web.pojo.PlanTask;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -27,8 +29,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class PlanBizImpl implements PlanBiz {
@@ -37,10 +39,10 @@ public class PlanBizImpl implements PlanBiz {
     private PlanService planService;
 
     @Resource
-    private PoolCycleService poolCycleService;
+    private PoolTaskBiz poolTaskBiz;
 
     @Resource
-    private PoolTaskService poolTaskService;
+    private PoolService poolService;
 
     @Resource
     private ConfigUtil configUtil;
@@ -64,7 +66,7 @@ public class PlanBizImpl implements PlanBiz {
     @Override
     @Transactional
     public boolean insertPlan(Plan plan) {
-        plan.setUseNum(0);
+        plan.setFinish(PlanFinish.CREATED.getId());
         plan.setModTime(null);
         plan.setModUser(null);
         if (planService.insertPlan(plan) == 1) {
@@ -79,49 +81,70 @@ public class PlanBizImpl implements PlanBiz {
 
     @Override
     @Transactional
-    public boolean importPlan(ImportPlanParam param) {
-        PoolCycle poolCycle = poolCycleService.selectPoolCycle(param.getPoolCycleId());
-        Assert.notNull(poolCycle, APIError.NOT_FOUND);
+    public ErrorInfo applyPlan(int planId) {
+        Plan plan = planService.selectPlan(planId);
+        Assert.notNull(plan, APIError.NOT_FOUND);
 
-        PoolTaskQueryParam param1 = new PoolTaskQueryParam();
-        param1.setPoolId(param.getPoolId());
-        param1.setCycle(param.getCycle());
-        List<PoolTask> poolTaskList = poolTaskService.selectPoolTaskList(param1);
-        List<PlanTask> taskList = new ArrayList<>();
-        long start = poolCycle.getStartTime().getTime();
-        for (PoolTask poolTask : poolTaskList) {
-            PlanTask planTask = new PlanTask();
-            planTask.setTaskId(poolTask.getTaskId());
-            planTask.setStartOffset(poolTask.getStartAct().getTime() - start);
-            planTask.setEndOffset(poolTask.getEndAct().getTime() - start);
-            taskList.add(planTask);
+        Plan record = new Plan();
+        record.setId(planId);
+        record.setApplyTime(new Date());
+        record.setFinish(PlanFinish.APPLIED.getId());
+        Assert.isTrue(planService.updatePlan(record) == 1, APIError.PLAN_APPLY_FAILED);
+        logBiz.saveLog(DataType.PLAN, planId, OperationType.APPLY_PLAN,
+                JSON.toJSONString(plan), JSON.toJSONString(record));
+
+        List<PlanTask> taskList = JSON.parseArray(plan.getTaskList(), PlanTask.class);
+        Set<Integer> poolIdSet = taskList.stream()
+                .flatMap(task -> task.getPoolIdList().stream())
+                .collect(Collectors.toSet());
+        List<Pool> poolList = poolService.selectPoolByIdList(new ArrayList<>(poolIdSet));
+        Map<Integer, Integer> poolCycleMap = poolList.stream()
+                .collect(Collectors.toMap(Pool::getId, Pool::getCurrentCycle));
+
+        ErrorInfo errorInfo = new ErrorInfo();
+        List<PoolTask> poolTaskList = new ArrayList<>();
+        for (PlanTask planTask : taskList) {
+            for (int poolId : planTask.getPoolIdList()) {
+                if (!poolCycleMap.containsKey(poolId)) {
+                    errorInfo.failedAdd(String.format("任务创建失败：taskId=%d，poolId=%d", planTask.getTaskId(), poolId));
+                    continue;
+                }
+                PoolTask poolTask = new PoolTask();
+                poolTask.setPoolId(poolId);
+                poolTask.setCycle(poolCycleMap.get(poolId) + 1);
+                poolTask.setPlanId(planId);
+                poolTask.setUserId(planTask.getUserId());
+                poolTask.setTaskId(planTask.getTaskId());
+                poolTask.setStatus(TaskStatus.CREATED.getId());
+                poolTask.setStartPre(planTask.getStartTime());
+                poolTask.setEndPre(DateUtil.plusDays(planTask.getTaskDuration(), planTask.getStartTime()));
+                poolTaskList.add(poolTask);
+                errorInfo.successAdd();
+            }
         }
-        Plan plan = new Plan();
-        plan.setName(param.getName());
-        plan.setUseNum(0);
-        plan.setTaskList(JSON.toJSONString(taskList));
-        if (planService.insertPlan(plan) == 1) {
-            permissionBiz.initResourceOwner(DataType.PLAN.getId(), plan.getId(), LoginContext.getUserId());
-            logBiz.saveLog(DataType.PLAN, plan.getId(), OperationType.INSERT_PLAN,
-                    null, JSON.toJSONString(plan));
-            return true;
-        } else {
-            return false;
-        }
+        poolTaskBiz.batchInsertPoolTask(poolTaskList);
+        return errorInfo;
     }
 
     @Override
     @Transactional
-    public boolean modifyPlanInfo(Plan plan) {
-        Plan old = planService.selectPlan(plan.getId());
+    public boolean modifyPlanFinish(int id, int finish) {
+        Plan old = planService.selectPlan(id);
         Assert.notNull(old, APIError.NOT_FOUND);
+        Assert.isTrue(PlanFinish.changeCheck(old.getFinish(), finish), APIError.PLAN_FINISH_CHANGE_ERROR);
 
-        plan.setUseNum(null);
-        plan.setAddTime(null);
-        plan.setAddUser(null);
-        if (planService.updatePlan(plan) == 1) {
-            logBiz.saveLog(DataType.PLAN, plan.getId(), OperationType.UPDATE_PLAN_INFO,
-                    JSON.toJSONString(old), JSON.toJSONString(plan));
+        Plan record = new Plan();
+        record.setId(id);
+        record.setFinish(finish);
+        if (PlanFinish.isStart(finish)) {
+            record.setApplyTime(new Date());
+        }
+        if (PlanFinish.isFinish(finish)) {
+            record.setFinishTime(new Date());
+        }
+        if (planService.updatePlan(record) == 1) {
+            logBiz.saveLog(DataType.PLAN, id, OperationType.UPDATE_PLAN_FINISH,
+                    JSON.toJSONString(old), JSON.toJSONString(record));
             return true;
         } else {
             return false;

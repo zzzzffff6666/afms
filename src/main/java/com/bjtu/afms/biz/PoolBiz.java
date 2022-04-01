@@ -12,7 +12,7 @@ public interface PoolBiz {
 
     boolean modifyPoolInfo(Pool pool);
 
-    boolean modifyPoolDetail(int id, String detail);
+    boolean startPoolNewCycle(int id, int userId);
 
     boolean deletePool(int poolId);
 }

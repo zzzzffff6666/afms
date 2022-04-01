@@ -153,7 +153,7 @@ public class AlertBizImpl implements AlertBiz {
     public boolean modifyAlertStatus(int id, int status) {
         Alert alert = alertService.selectAlert(id);
         Assert.notNull(alert, APIError.NOT_FOUND);
-        Assert.isTrue(TaskStatus.changeCheck(alert.getStatus(), status) && status != TaskStatus.OVERDUE.getId(),
+        Assert.isTrue(status != TaskStatus.OVERDUE.getId() && TaskStatus.changeCheck(alert.getStatus(), status),
                 APIError.TASK_STATUS_CHANGE_ERROR);
         Alert record = new Alert();
         record.setId(id);

@@ -4,17 +4,14 @@ import com.bjtu.afms.biz.PoolCycleBiz;
 import com.bjtu.afms.config.annotation.AuthCheck;
 import com.bjtu.afms.enums.AuthType;
 import com.bjtu.afms.enums.DataType;
-import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Result;
 import com.bjtu.afms.model.PoolCycle;
 import com.bjtu.afms.service.PoolCycleService;
-import com.bjtu.afms.web.param.ModifyCycleFundParam;
 import com.bjtu.afms.web.param.query.PoolCycleQueryParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Date;
 
 @RestController
 public class PoolCycleController {
@@ -50,16 +47,6 @@ public class PoolCycleController {
         return Result.ok(poolCycleBiz.getPoolCycleList(param, page));
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER})
-    @PostMapping("/poolCycle/insert")
-    public Result addPoolCycle(@RequestBody PoolCycle poolCycle) {
-        if (poolCycleBiz.insertPoolCycle(poolCycle)) {
-            return Result.ok();
-        } else {
-            return Result.error(APIError.INSERT_ERROR);
-        }
-    }
-
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
     @PostMapping("/poolCycle/userId/modify")
     public Result modifyPoolCycleUser(@RequestParam("id") int id, @RequestParam("userId") int userId) {
@@ -74,16 +61,6 @@ public class PoolCycleController {
     @PostMapping("/poolCycle/status/modify")
     public Result modifyPoolCycleStatus(@RequestParam("id") int id, @RequestParam("status") int status) {
         if (poolCycleBiz.modifyPoolCycleStatus(id, status)) {
-            return Result.ok();
-        } else {
-            return Result.error(APIError.UPDATE_ERROR);
-        }
-    }
-
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL_CYCLE)
-    @PostMapping("/poolCycle/fund/modify")
-    public Result modifyPoolCycleFund(@RequestBody ModifyCycleFundParam param) {
-        if (poolCycleBiz.modifyPoolCycleFund(param)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

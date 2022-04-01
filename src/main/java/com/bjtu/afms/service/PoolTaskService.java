@@ -7,6 +7,7 @@ import com.bjtu.afms.model.PoolTaskExample;
 import com.bjtu.afms.web.param.query.PoolTaskQueryParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -35,6 +36,17 @@ public class PoolTaskService {
         return poolTaskMapper.selectByPrimaryKey(poolTaskId);
     }
 
+    public PoolTask selectPoolTask(int poolId, int cycle, int taskId) {
+        PoolTaskExample example = new PoolTaskExample();
+        example.createCriteria().andPoolIdEqualTo(poolId).andCycleEqualTo(cycle).andTaskIdEqualTo(taskId);
+        List<PoolTask> poolTaskList = poolTaskMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(poolTaskList)) {
+            return null;
+        } else {
+            return poolTaskList.get(0);
+        }
+    }
+
     public List<PoolTask> selectPoolTaskList(PoolTaskQueryParam param) {
         PoolTaskExample example = new PoolTaskExample();
         if (StringUtils.isNotBlank(param.getOrderBy())) {
@@ -46,6 +58,9 @@ public class PoolTaskService {
         }
         if (param.getCycle() != null) {
             criteria.andCycleEqualTo(param.getCycle());
+        }
+        if (param.getPlanId() != null) {
+            criteria.andPlanIdEqualTo(param.getPlanId());
         }
         if (param.getUserId() != null) {
             criteria.andUserIdEqualTo(param.getUserId());

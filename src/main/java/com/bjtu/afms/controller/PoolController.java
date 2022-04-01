@@ -63,9 +63,9 @@ public class PoolController {
     }
 
     @AuthCheck(auth = {AuthType.ADMIN, AuthType.POOL_MANAGER}, owner = true, data = DataType.POOL)
-    @PostMapping("/pool/detail/modify")
-    public Result modifyPoolDetail(@RequestParam("id") int id, @RequestParam("detail") String detail) {
-        if (poolBiz.modifyPoolDetail(id, detail)) {
+    @PostMapping("/pool/newCycle/start")
+    public Result startPoolNewCycle(@RequestParam("id") int id, @RequestParam("userId") int userId) {
+        if (poolBiz.startPoolNewCycle(id, userId)) {
             return Result.ok();
         } else {
             return Result.error(APIError.UPDATE_ERROR);

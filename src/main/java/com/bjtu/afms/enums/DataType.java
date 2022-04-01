@@ -15,15 +15,14 @@ public enum DataType {
     POOL_CYCLE(7, "pool_cycle", "养殖周期"),
     TASK(8, "task", "任务"),
     PLAN(9, "plan", "计划"),
-    POOL_PLAN(10, "pool_plan", "养殖计划"),
-    POOL_TASK(11, "pool_task", "养殖任务"),
-    DAILY_TASK(12, "daily_task", "日常任务"),
-    JOB(13, "job", "工作"),
-    ALERT(14, "alert", "告警"),
-    COMMENT(15, "comment", "评论"),
-    FUND(16, "fund", "收支"),
-    VERIFY(17, "verify", "验证码"),
-    LOG(18, "log", "日志")
+    POOL_TASK(10, "pool_task", "养殖任务"),
+    DAILY_TASK(11, "daily_task", "日常任务"),
+    JOB(12, "job", "工作"),
+    ALERT(13, "alert", "告警"),
+    COMMENT(14, "comment", "评论"),
+    FUND(15, "fund", "收支"),
+    VERIFY(16, "verify", "验证码"),
+    LOG(17, "log", "日志")
     ;
 
     private final int id;
@@ -50,7 +49,7 @@ public enum DataType {
 
     public static List<DataType> getAllDataType() {
         return ListUtil.newArrayList(USER, PERMISSION, CLIENT, STORE, ITEM, POOL, POOL_CYCLE, TASK,
-                PLAN, POOL_PLAN, POOL_TASK, DAILY_TASK, JOB, ALERT, COMMENT, FUND, VERIFY, LOG);
+                PLAN, POOL_TASK, DAILY_TASK, JOB, ALERT, COMMENT, FUND, VERIFY, LOG);
     }
 
     public static DataType findDataType(int id) {

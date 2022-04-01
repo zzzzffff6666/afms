@@ -11,10 +11,11 @@ import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.enums.TaskStatus;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
+import com.bjtu.afms.model.Pool;
 import com.bjtu.afms.model.PoolCycle;
 import com.bjtu.afms.service.PoolCycleService;
+import com.bjtu.afms.service.PoolService;
 import com.bjtu.afms.utils.ConfigUtil;
-import com.bjtu.afms.web.param.ModifyCycleFundParam;
 import com.bjtu.afms.web.param.query.PoolCycleQueryParam;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +31,9 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
 
     @Resource
     private PoolCycleService poolCycleService;
+
+    @Resource
+    private PoolService poolService;
 
     @Resource
     private ConfigUtil configUtil;
@@ -43,6 +46,9 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
 
     @Override
     public PoolCycle getPoolCurrentCycle(int poolId) {
+        Pool pool = poolService.selectPool(poolId);
+        Assert.notNull(pool, APIError.NOT_FOUND);
+
         PoolCycleQueryParam param = new PoolCycleQueryParam();
         param.setOrderBy("cycle desc");
         param.setPoolId(poolId);
@@ -65,17 +71,11 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     @Override
     @Transactional
     public boolean insertPoolCycle(PoolCycle poolCycle) {
-        PoolCycle record = new PoolCycle();
-        record.setPoolId(poolCycle.getPoolId());
-        record.setCycle(poolCycle.getCycle());
-        record.setUserId(poolCycle.getUserId());
-        record.setStartTime(new Date());
-        record.setStatus(TaskStatus.CREATED.getId());
-        if (poolCycleService.insertPoolCycle(record) == 1) {
+        if (poolCycleService.insertPoolCycle(poolCycle) == 1) {
             permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), poolCycle.getId(), LoginContext.getUserId());
             permissionBiz.initResourceOwner(DataType.POOL_CYCLE.getId(), poolCycle.getId(), poolCycle.getUserId());
-            logBiz.saveLog(DataType.POOL_CYCLE, record.getId(), OperationType.INSERT_POOL_CYCLE,
-                    null, JSON.toJSONString(record));
+            logBiz.saveLog(DataType.POOL_CYCLE, poolCycle.getId(), OperationType.INSERT_POOL_CYCLE,
+                    null, JSON.toJSONString(poolCycle));
             return true;
         } else {
             return false;
@@ -106,7 +106,7 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     public boolean modifyPoolCycleStatus(int id, int status) {
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(id);
         Assert.notNull(poolCycle, APIError.NOT_FOUND);
-        Assert.isTrue(TaskStatus.changeCheck(poolCycle.getStatus(), status) && status != TaskStatus.OVERDUE.getId(),
+        Assert.isTrue(status != TaskStatus.OVERDUE.getId() && TaskStatus.changeCheck(poolCycle.getStatus(), status),
                 APIError.TASK_STATUS_CHANGE_ERROR);
 
         PoolCycle record = new PoolCycle();
@@ -119,31 +119,6 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
         }
         if (poolCycleService.updatePoolCycle(record) == 1) {
             logBiz.saveLog(DataType.POOL_CYCLE, id, OperationType.UPDATE_POOL_CYCLE_STATUS,
-                    JSON.toJSONString(poolCycle), JSON.toJSONString(record));
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    @Transactional
-    public boolean modifyPoolCycleFund(ModifyCycleFundParam param) {
-        PoolCycle poolCycle = poolCycleService.selectPoolCycle(param.getId());
-        Assert.notNull(poolCycle, APIError.NOT_FOUND);
-
-        PoolCycle record = new PoolCycle();
-        record.setId(param.getId());
-        if (param.getCost() != null) {
-            BigDecimal sum = poolCycle.getCost() == null ? new BigDecimal(0)  : poolCycle.getCost();
-            record.setCost(param.getCost().add(sum));
-        }
-        if (param.getIncome() != null) {
-            BigDecimal sum = poolCycle.getIncome() == null ? new BigDecimal(0) : poolCycle.getIncome();
-            record.setIncome(param.getIncome().add(sum));
-        }
-        if (poolCycleService.updatePoolCycle(record) == 1) {
-            logBiz.saveLog(DataType.POOL_CYCLE, param.getId(), OperationType.UPDATE_POOL_CYCLE_FUND,
                     JSON.toJSONString(poolCycle), JSON.toJSONString(record));
             return true;
         } else {

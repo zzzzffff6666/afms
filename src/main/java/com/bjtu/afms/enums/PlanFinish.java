@@ -2,19 +2,13 @@ package com.bjtu.afms.enums;
 
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
-import com.bjtu.afms.utils.DateUtil;
-import com.bjtu.afms.utils.ListUtil;
 
 import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 public enum PlanFinish {
     CREATED(1, "created", "已创建"),
-    STARTED(2, "start", "已开始"),
-    PUNCTUAL(3, "punctual", "准时完成"),
-    ADVANCE(4, "advance", "提前完成"),
-    OVERDUE(5, "overdue", "逾期完成"),
+    APPLIED(2, "start", "已开始"),
+    FINISH(3, "finish", "准时完成"),
     CANCEL(6, "cancel", "取消"),
     ERROR(7, "error", "异常"),
     ;
@@ -49,12 +43,11 @@ public enum PlanFinish {
     }
 
     public static boolean isFinish(int finish) {
-        return finish == PUNCTUAL.getId() || finish == ADVANCE.getId()
-                || finish == OVERDUE.getId() || finish == CANCEL.getId();
+        return finish == FINISH.getId() || finish == CANCEL.getId();
     }
 
     public static boolean isStart(int finish) {
-        return finish == STARTED.getId();
+        return finish == APPLIED.getId();
     }
 
     public static boolean changeCheck(int originFinish, int newFinish) {
@@ -68,30 +61,15 @@ public enum PlanFinish {
         }
         switch (finish1) {
             case CREATED:
-                return finish2 == STARTED || finish2 == CANCEL;
-            case STARTED:
+                return finish2 == APPLIED || finish2 == CANCEL;
+            case APPLIED:
             case ERROR:
                 return finish2 != CREATED;
-            case PUNCTUAL:
-            case ADVANCE:
-            case OVERDUE:
+            case FINISH:
             case CANCEL:
                 return false;
             default:
                 throw new BizException(APIError.UNKNOWN_PLAN_FINISH);
-        }
-    }
-
-    public static PlanFinish dateCompare(Date pre, Date act) {
-        long preT = pre.getTime();
-        long actT = act.getTime();
-        long diff = Math.abs(preT - actT);
-        if (diff < 2 * DateUtil.DAY_LENGTH) {
-            return PUNCTUAL;
-        } else if (preT < actT) {
-            return OVERDUE;
-        } else {
-            return ADVANCE;
         }
     }
 }

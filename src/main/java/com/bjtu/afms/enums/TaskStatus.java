@@ -58,12 +58,16 @@ public enum TaskStatus {
         return ListUtil.newArrayList(CREATED, HANDLING, ERROR);
     }
 
+    public static List<Integer> getUnfinishedId() {
+        return ListUtil.newArrayList(CREATED.getId(), HANDLING.getId(), ERROR.getId());
+    }
+
     public static List<TaskStatus> getFinished() {
         return ListUtil.newArrayList(FINISH, OVERDUE, CANCEL);
     }
 
     public static List<TaskStatus> getCycleStatus() {
-        return ListUtil.newArrayList(CREATED, HANDLING, FINISH, CANCEL, ERROR);
+        return ListUtil.newArrayList(HANDLING, FINISH, CANCEL, ERROR);
     }
 
     public static boolean changeCheck(int originStatus, int newStatus) {

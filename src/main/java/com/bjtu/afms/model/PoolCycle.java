@@ -1,7 +1,6 @@
 package com.bjtu.afms.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class PoolCycle implements Serializable {
@@ -19,10 +18,6 @@ public class PoolCycle implements Serializable {
 
     private Integer status;
 
-    private BigDecimal cost;
-
-    private BigDecimal income;
-
     private Date addTime;
 
     private Integer addUser;
@@ -33,7 +28,7 @@ public class PoolCycle implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public PoolCycle(Integer id, Integer poolId, Integer cycle, Integer userId, Date startTime, Date endTime, Integer status, BigDecimal cost, BigDecimal income, Date addTime, Integer addUser, Date modTime, Integer modUser) {
+    public PoolCycle(Integer id, Integer poolId, Integer cycle, Integer userId, Date startTime, Date endTime, Integer status, Date addTime, Integer addUser, Date modTime, Integer modUser) {
         this.id = id;
         this.poolId = poolId;
         this.cycle = cycle;
@@ -41,8 +36,6 @@ public class PoolCycle implements Serializable {
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
-        this.cost = cost;
-        this.income = income;
         this.addTime = addTime;
         this.addUser = addUser;
         this.modTime = modTime;
@@ -107,22 +100,6 @@ public class PoolCycle implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
-    }
-
-    public BigDecimal getIncome() {
-        return income;
-    }
-
-    public void setIncome(BigDecimal income) {
-        this.income = income;
     }
 
     public Date getAddTime() {
