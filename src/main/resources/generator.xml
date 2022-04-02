@@ -169,9 +169,9 @@
 <!--        <table tableName="permission" domainObjectName="Permission">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
-        <table tableName="plan" domainObjectName="Plan">
-            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>
-        </table>
+<!--        <table tableName="plan" domainObjectName="Plan">-->
+<!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
+<!--        </table>-->
 <!--        <table tableName="pool" domainObjectName="Pool">-->
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
@@ -191,5 +191,8 @@
 <!--            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>-->
 <!--        </table>-->
 <!--        <table tableName="verify" domainObjectName="Verify"/>-->
+        <table tableName="workplace" domainObjectName="Workplace">
+            <generatedKey column="ID" sqlStatement="MySql" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>

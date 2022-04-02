@@ -1,9 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
-
-import java.util.Arrays;
 
 public enum PlanFinish {
     CREATED(1, "created", "已创建"),
@@ -36,10 +35,12 @@ public enum PlanFinish {
     }
 
     public static PlanFinish findPlanFinish(int id) {
-        return Arrays.stream(values())
-                .filter(planFinish -> planFinish.getId() == id)
-                .findFirst()
-                .orElse(null);
+        for (PlanFinish planFinish : values()) {
+            if (planFinish.getId() == id) {
+                return planFinish;
+            }
+        }
+        return null;
     }
 
     public static boolean isFinish(int finish) {
@@ -55,10 +56,9 @@ public enum PlanFinish {
             return false;
         }
         PlanFinish finish1 = findPlanFinish(originFinish);
+        Assert.notNull(finish1, APIError.UNKNOWN_PLAN_FINISH);
         PlanFinish finish2 = findPlanFinish(newFinish);
-        if (finish2 == null) {
-            throw new BizException(APIError.UNKNOWN_PLAN_FINISH);
-        }
+        Assert.notNull(finish2, APIError.UNKNOWN_PLAN_FINISH);
         switch (finish1) {
             case CREATED:
                 return finish2 == APPLIED || finish2 == CANCEL;

@@ -1,6 +1,8 @@
 package com.bjtu.afms.service;
 
 import com.alibaba.fastjson.JSON;
+import com.bjtu.afms.config.handler.Assert;
+import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
@@ -66,39 +68,44 @@ public class CommonService {
     private UserMapper userMapper;
 
     @Resource
+    private WorkplaceMapper workplaceMapper;
+
+    @Resource
     private SqlSessionTemplate sqlSessionTemplate;
 
     public Object getResource(int type, int relateId) {
-        switch (type) {
-            case 1:
+        DataType dataType = DataType.findDataType(type);
+        Assert.notNull(dataType, APIError.UNKNOWN_DATA_TYPE);
+        switch (dataType) {
+            case USER:
                 return userMapper.selectByPrimaryKey(relateId);
-            case 2:
+            case PERMISSION:
                 return permissionMapper.selectByPrimaryKey(relateId);
-            case 3:
+            case CLIENT:
                 return clientMapper.selectByPrimaryKey(relateId);
-            case 4:
+            case STORE:
                 return storeMapper.selectByPrimaryKey(relateId);
-            case 5:
+            case ITEM:
                 return itemMapper.selectByPrimaryKey(relateId);
-            case 6:
+            case POOL:
                 return poolMapper.selectByPrimaryKey(relateId);
-            case 7:
+            case POOL_CYCLE:
                 return poolCycleMapper.selectByPrimaryKey(relateId);
-            case 8:
+            case TASK:
                 return taskMapper.selectByPrimaryKey(relateId);
-            case 9:
+            case PLAN:
                 return planMapper.selectByPrimaryKey(relateId);
-            case 10:
+            case POOL_TASK:
                 return poolTaskMapper.selectByPrimaryKey(relateId);
-            case 11:
+            case DAILY_TASK:
                 return dailyTaskMapper.selectByPrimaryKey(relateId);
-            case 12:
+            case JOB:
                 return jobMapper.selectByPrimaryKey(relateId);
-            case 13:
+            case ALERT:
                 return alertMapper.selectByPrimaryKey(relateId);
-            case 14:
+            case COMMENT:
                 return commentMapper.selectByPrimaryKey(relateId);
-            case 15:
+            case FUND:
                 return fundMapper.selectByPrimaryKey(relateId);
             default:
                 return null;
@@ -107,7 +114,9 @@ public class CommonService {
 
     @Transactional(rollbackFor = SQLException.class)
     public boolean rollbackOperation(Log log) throws BizException {
-        switch (OperationType.findOperationType(log.getOperationId())) {
+        OperationType operationType = OperationType.findOperationType(log.getOperationId());
+        Assert.notNull(operationType, APIError.UNKNOWN_OPERATION_TYPE);
+        switch (operationType) {
             case INSERT_USER:
                 userMapper.deleteByPrimaryKey(log.getRelateId());
                 return true;
@@ -173,6 +182,16 @@ public class CommonService {
                 item = JSON.parseObject(log.getOldValue(), Item.class);
                 item.setId(log.getRelateId());
                 return itemMapper.updateByPrimaryKeySelective(item) >= 1;
+            case INSERT_WORKPLACE:
+                workplaceMapper.deleteByPrimaryKey(log.getRelateId());
+                return true;
+            case DELETE_WORKPLACE:
+                Workplace workplace = JSON.parseObject(log.getOldValue(), Workplace.class);
+                return workplaceMapper.insertSelective(workplace) >= 1;
+            case UPDATE_WORKPLACE_INFO:
+                workplace = JSON.parseObject(log.getOldValue(), Workplace.class);
+                workplace.setId(log.getRelateId());
+                return workplaceMapper.updateByPrimaryKeySelective(workplace) >= 1;
             case INSERT_POOL:
                 poolMapper.deleteByPrimaryKey(log.getRelateId());
                 return true;

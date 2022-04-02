@@ -1,7 +1,5 @@
 package com.bjtu.afms.enums;
 
-import java.util.Arrays;
-
 public enum OperationType {
     // 用户相关 1xx
     INSERT_USER(101, "insert:user", "用户登记"),
@@ -33,76 +31,81 @@ public enum OperationType {
     TAKE_ITEM(505, "take:item", "取用消耗类物资"),
     RETURN_ITEM(506, "return:item", "归还消耗类物资"),
 
-    // 养殖池相关 6xx
-    INSERT_POOL(601, "insert:pool", "养殖池登记"),
-    DELETE_POOL(602, "delete:pool", "删除养殖池"),
-    UPDATE_POOL_INFO(603, "update:pool:info", "修改养殖池信息"),
-    UPDATE_POOL_CURRENT_CYCLE(604, "update:pool:current_cycle", "修改养殖池当前周期"),
+    // 车间相关 6xx
+    INSERT_WORKPLACE(601, "insert:workplace", "车间登记"),
+    DELETE_WORKPLACE(602, "delete:workplace", "删除车间"),
+    UPDATE_WORKPLACE_INFO(603, "update:workplace:info", "修改车间信息"),
 
-    // 养殖周期相关 7xx
-    INSERT_POOL_CYCLE(701, "insert:pool_cycle", "新建养殖周期"),
-    DELETE_POOL_CYCLE(702, "delete:pool_cycle", "删除养殖周期"),
-    UPDATE_POOL_CYCLE_USER(703, "update:pool_cycle:user", "修改养殖周期负责人"),
-    UPDATE_POOL_CYCLE_STATUS(704, "update:pool_cycle:status", "修改养殖周期状态"),
+    // 养殖池相关 7xx
+    INSERT_POOL(701, "insert:pool", "养殖池登记"),
+    DELETE_POOL(702, "delete:pool", "删除养殖池"),
+    UPDATE_POOL_INFO(703, "update:pool:info", "修改养殖池信息"),
+    UPDATE_POOL_CURRENT_CYCLE(704, "update:pool:current_cycle", "修改养殖池当前周期"),
 
-    // 任务相关 8xx
-    INSERT_TASK(801, "insert:task", "新建任务"),
-    DELETE_TASK(802, "delete:task", "删除任务"),
-    UPDATE_TASK_INFO(803, "update:task:info", "修改任务信息"),
+    // 养殖周期相关 8xx
+    INSERT_POOL_CYCLE(801, "insert:pool_cycle", "新建养殖周期"),
+    DELETE_POOL_CYCLE(802, "delete:pool_cycle", "删除养殖周期"),
+    UPDATE_POOL_CYCLE_USER(803, "update:pool_cycle:user", "修改养殖周期负责人"),
+    UPDATE_POOL_CYCLE_STATUS(804, "update:pool_cycle:status", "修改养殖周期状态"),
 
-    // 计划相关 9xx
-    INSERT_PLAN(901, "insert:plan", "新建计划"),
-    DELETE_PLAN(902, "delete:plan", "删除计划"),
-    UPDATE_PLAN_FINISH(903, "update:plan:info", "修改计划信息"),
-    APPLY_PLAN(904, "apply:plan", "应用计划"),
+    // 任务相关 9xx
+    INSERT_TASK(901, "insert:task", "新建任务"),
+    DELETE_TASK(902, "delete:task", "删除任务"),
+    UPDATE_TASK_INFO(903, "update:task:info", "修改任务信息"),
 
-    // 养殖任务相关 10xx
-    INSERT_POOL_TASK(1001, "insert:pool_task", "新建养殖任务"),
-    DELETE_POOL_TASK(1002, "delete:pool_task", "删除养殖任务"),
-    UPDATE_POOL_TASK_USER(1003, "update:pool_task:user", "修改养殖任务负责人"),
-    UPDATE_POOL_TASK_STATUS(1004, "update:pool_task:status", "修改养殖任务状态"),
-    BATCH_INSERT_POOL_TASK(1005, "batch_insert:pool_task", "批量新建养殖任务"),
-    BATCH_DELETE_POOL_TASK(1006, "batch_delete:pool_task", "批量删除养殖任务"),
+    // 计划相关 10xx
+    INSERT_PLAN(1001, "insert:plan", "新建计划"),
+    DELETE_PLAN(1002, "delete:plan", "删除计划"),
+    UPDATE_PLAN_FINISH(1003, "update:plan:info", "修改计划信息"),
+    APPLY_PLAN(1004, "apply:plan", "应用计划"),
 
-    // 日常任务相关 11xx
-    INSERT_DAILY_TASK(1101, "insert:daily_task", "新建日常任务"),
-    DELETE_DAILY_TASK(1102, "delete:daily_task", "删除日常任务"),
-    UPDATE_DAILY_TASK_USER(1103, "update:daily_task:user", "修改日常任务负责人"),
-    UPDATE_DAILY_TASK_STATUS(1104, "update:daily_task:status", "修改日常任务状态"),
-    BATCH_INSERT_DAILY_TASK(1105, "batch_insert:daily_task", "批量新建日常任务"),
-    BATCH_DELETE_DAILY_TASK(1106, "batch_delete:daily_task", "批量删除日常任务"),
+    // 养殖任务相关 11xx
+    INSERT_POOL_TASK(1101, "insert:pool_task", "新建养殖任务"),
+    DELETE_POOL_TASK(1102, "delete:pool_task", "删除养殖任务"),
+    UPDATE_POOL_TASK_USER(1103, "update:pool_task:user", "修改养殖任务负责人"),
+    UPDATE_POOL_TASK_STATUS(1104, "update:pool_task:status", "修改养殖任务状态"),
+    BATCH_INSERT_POOL_TASK(1105, "batch_insert:pool_task", "批量新建养殖任务"),
+    BATCH_DELETE_POOL_TASK(1106, "batch_delete:pool_task", "批量删除养殖任务"),
 
-    // 工作相关 12xx
-    INSERT_JOB(1201, "insert:job", "新建工作"),
-    DELETE_JOB(1202, "delete:job", "删除工作"),
-    UPDATE_JOB_STATUS(1203, "update:job:status", "修改工作状态"),
-    BATCH_INSERT_JOB(1204, "batch_insert:job", "批量新建工作"),
-    BATCH_DELETE_JOB(1205, "batch_delete:job", "批量删除工作"),
+    // 日常任务相关 12xx
+    INSERT_DAILY_TASK(1201, "insert:daily_task", "新建日常任务"),
+    DELETE_DAILY_TASK(1202, "delete:daily_task", "删除日常任务"),
+    UPDATE_DAILY_TASK_USER(1203, "update:daily_task:user", "修改日常任务负责人"),
+    UPDATE_DAILY_TASK_STATUS(1204, "update:daily_task:status", "修改日常任务状态"),
+    BATCH_INSERT_DAILY_TASK(1205, "batch_insert:daily_task", "批量新建日常任务"),
+    BATCH_DELETE_DAILY_TASK(1206, "batch_delete:daily_task", "批量删除日常任务"),
 
-    // 告警相关 13xx
-    INSERT_ALERT(1301, "insert:alert", "新建告警"),
-    DELETE_ALERT(1302, "delete:alert", "删除告警"),
-    UPDATE_ALERT_INFO(1303, "update:alert:info", "修改告警信息"),
-    UPDATE_ALERT_USER(1304, "update:alert:user", "修改告警负责人"),
-    UPDATE_ALERT_STATUS(1305, "update:alert:status", "修改告警状态"),
+    // 工作相关 13xx
+    INSERT_JOB(1301, "insert:job", "新建工作"),
+    DELETE_JOB(1302, "delete:job", "删除工作"),
+    UPDATE_JOB_STATUS(1303, "update:job:status", "修改工作状态"),
+    BATCH_INSERT_JOB(1304, "batch_insert:job", "批量新建工作"),
+    BATCH_DELETE_JOB(1305, "batch_delete:job", "批量删除工作"),
 
-    // 评论相关 14xx
-    INSERT_COMMENT(1401, "insert:comment", "新建评论"),
-    DELETE_COMMENT(1402, "delete:comment", "删除评论"),
-    UPDATE_COMMENT(1403, "update:comment", "修改评论"),
+    // 告警相关 14xx
+    INSERT_ALERT(1401, "insert:alert", "新建告警"),
+    DELETE_ALERT(1402, "delete:alert", "删除告警"),
+    UPDATE_ALERT_INFO(1403, "update:alert:info", "修改告警信息"),
+    UPDATE_ALERT_USER(1404, "update:alert:user", "修改告警负责人"),
+    UPDATE_ALERT_STATUS(1405, "update:alert:status", "修改告警状态"),
 
-    // 收支相关 15xx
-    INSERT_FUND(1501, "insert:fund", "新建收支记录"),
-    DELETE_FUND(1502, "delete:fund", "删除收支记录"),
-    UPDATE_FUND_INFO(1503, "update:fund:info", "修改收支记录信息"),
+    // 评论相关 15xx
+    INSERT_COMMENT(1501, "insert:comment", "新建评论"),
+    DELETE_COMMENT(1502, "delete:comment", "删除评论"),
+    UPDATE_COMMENT(1503, "update:comment", "修改评论"),
 
-    // 验证码相关 16xx
-    INSERT_VERIFY(1601, "insert:verify", "生成验证码"),
-    UPDATE_VERIFY(1602, "update:verify", "修改验证码"),
+    // 收支相关 16xx
+    INSERT_FUND(1601, "insert:fund", "新建收支记录"),
+    DELETE_FUND(1602, "delete:fund", "删除收支记录"),
+    UPDATE_FUND_INFO(1603, "update:fund:info", "修改收支记录信息"),
 
-    // 日志相关 17xx
-    INSERT_LOG(1701, "insert:log", "添加日志"),
-    ROLLBACK_LOG(1702, "rollback:log", "从日志中回滚操作")
+    // 验证码相关 17xx
+    INSERT_VERIFY(1701, "insert:verify", "生成验证码"),
+    UPDATE_VERIFY(1702, "update:verify", "修改验证码"),
+
+    // 日志相关 18xx
+    INSERT_LOG(1801, "insert:log", "添加日志"),
+    ROLLBACK_LOG(1802, "rollback:log", "从日志中回滚操作")
     ;
 
     private final int id;
@@ -128,9 +131,11 @@ public enum OperationType {
     }
 
     public static OperationType findOperationType(int id) {
-        return Arrays.stream(OperationType.values())
-                .filter(operationType -> operationType.getId() == id)
-                .findFirst()
-                .orElse(null);
+        for (OperationType operationType : values()) {
+            if (operationType.getId() == id) {
+                return operationType;
+            }
+        }
+        return null;
     }
 }

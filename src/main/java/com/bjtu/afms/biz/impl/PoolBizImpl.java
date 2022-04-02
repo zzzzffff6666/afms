@@ -1,10 +1,7 @@
 package com.bjtu.afms.biz.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.bjtu.afms.biz.LogBiz;
-import com.bjtu.afms.biz.PermissionBiz;
-import com.bjtu.afms.biz.PoolBiz;
-import com.bjtu.afms.biz.PoolCycleBiz;
+import com.bjtu.afms.biz.*;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
@@ -40,6 +37,9 @@ public class PoolBizImpl implements PoolBiz {
     private PoolCycleBiz poolCycleBiz;
 
     @Resource
+    private WorkplaceBiz workplaceBiz;
+
+    @Resource
     private ConfigUtil configUtil;
 
     @Resource
@@ -65,6 +65,7 @@ public class PoolBizImpl implements PoolBiz {
         pool.setModTime(null);
         pool.setModUser(null);
         if (poolService.insertPool(pool) == 1) {
+            workplaceBiz.modifyWorkplacePoolNum(pool.getPlace(), 1);
             permissionBiz.initResourceOwner(DataType.POOL.getId(), pool.getId(), LoginContext.getUserId());
             logBiz.saveLog(DataType.POOL, pool.getId(), OperationType.INSERT_POOL,
                     null, JSON.toJSONString(pool));
@@ -81,6 +82,8 @@ public class PoolBizImpl implements PoolBiz {
         Assert.notNull(old, APIError.NOT_FOUND);
         pool.setAddTime(null);
         pool.setAddUser(null);
+        pool.setPlace(null);
+        pool.setOrdinal(null);
         if (poolService.updatePool(pool) == 1) {
             logBiz.saveLog(DataType.POOL, pool.getId(), OperationType.UPDATE_POOL_INFO,
                     JSON.toJSONString(old), JSON.toJSONString(pool));
@@ -124,6 +127,7 @@ public class PoolBizImpl implements PoolBiz {
         Pool old = poolService.selectPool(poolId);
         Assert.notNull(old, APIError.NOT_FOUND);
         if (poolService.deletePool(poolId) == 1) {
+            workplaceBiz.modifyWorkplacePoolNum(old.getPlace(), -1);
             permissionBiz.deleteResource(DataType.POOL.getId(), poolId);
             logBiz.saveLog(DataType.POOL, poolId, OperationType.DELETE_POOL,
                     JSON.toJSONString(old), null);

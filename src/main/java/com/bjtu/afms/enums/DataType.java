@@ -2,7 +2,6 @@ package com.bjtu.afms.enums;
 
 import com.bjtu.afms.utils.ListUtil;
 
-import java.util.Arrays;
 import java.util.List;
 
 public enum DataType {
@@ -11,18 +10,19 @@ public enum DataType {
     CLIENT(3, "client", "客户"),
     STORE(4, "store", "仓库"),
     ITEM(5, "item", "物资"),
-    POOL(6, "pool", "养殖池"),
-    POOL_CYCLE(7, "pool_cycle", "养殖周期"),
-    TASK(8, "task", "任务"),
-    PLAN(9, "plan", "计划"),
-    POOL_TASK(10, "pool_task", "养殖任务"),
-    DAILY_TASK(11, "daily_task", "日常任务"),
-    JOB(12, "job", "工作"),
-    ALERT(13, "alert", "告警"),
-    COMMENT(14, "comment", "评论"),
-    FUND(15, "fund", "收支"),
-    VERIFY(16, "verify", "验证码"),
-    LOG(17, "log", "日志")
+    WORKPLACE(6, "workplace", "车间"),
+    POOL(7, "pool", "养殖池"),
+    POOL_CYCLE(8, "pool_cycle", "养殖周期"),
+    TASK(9, "task", "任务"),
+    PLAN(10, "plan", "计划"),
+    POOL_TASK(11, "pool_task", "养殖任务"),
+    DAILY_TASK(12, "daily_task", "日常任务"),
+    JOB(13, "job", "工作"),
+    ALERT(14, "alert", "告警"),
+    COMMENT(15, "comment", "评论"),
+    FUND(16, "fund", "收支"),
+    VERIFY(17, "verify", "验证码"),
+    LOG(18, "log", "日志")
     ;
 
     private final int id;
@@ -48,21 +48,24 @@ public enum DataType {
     }
 
     public static List<DataType> getAllDataType() {
-        return ListUtil.newArrayList(USER, PERMISSION, CLIENT, STORE, ITEM, POOL, POOL_CYCLE, TASK,
-                PLAN, POOL_TASK, DAILY_TASK, JOB, ALERT, COMMENT, FUND, VERIFY, LOG);
+        return ListUtil.newArrayList(values());
     }
 
     public static DataType findDataType(int id) {
-        return Arrays.stream(DataType.values())
-                .filter(dataType -> dataType.getId() == id)
-                .findFirst()
-                .orElse(null);
+        for (DataType dataType : values()) {
+            if (dataType.getId() == id) {
+                return dataType;
+            }
+        }
+        return null;
     }
 
     public static DataType findDataType(String name) {
-        return Arrays.stream(DataType.values())
-                .filter(dataType -> dataType.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+        for (DataType dataType : values()) {
+            if (dataType.getName().equals(name)) {
+                return dataType;
+            }
+        }
+        return null;
     }
 }

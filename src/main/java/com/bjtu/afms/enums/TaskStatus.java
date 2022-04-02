@@ -1,10 +1,10 @@
 package com.bjtu.afms.enums;
 
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.utils.ListUtil;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -40,10 +40,12 @@ public enum TaskStatus {
     }
 
     public static TaskStatus findTaskStatus(int id) {
-        return Arrays.stream(values())
-                .filter(taskStatus -> taskStatus.getId() == id)
-                .findFirst()
-                .orElse(null);
+        for (TaskStatus taskStatus : values()) {
+            if (taskStatus.getId() == id) {
+                return taskStatus;
+            }
+        }
+        return null;
     }
 
     public static boolean isFinish(int status) {
@@ -56,10 +58,6 @@ public enum TaskStatus {
 
     public static List<TaskStatus> getUnfinished() {
         return ListUtil.newArrayList(CREATED, HANDLING, ERROR);
-    }
-
-    public static List<Integer> getUnfinishedId() {
-        return ListUtil.newArrayList(CREATED.getId(), HANDLING.getId(), ERROR.getId());
     }
 
     public static List<TaskStatus> getFinished() {
@@ -75,10 +73,9 @@ public enum TaskStatus {
             return false;
         }
         TaskStatus status1 = findTaskStatus(originStatus);
+        Assert.notNull(status1, APIError.UNKNOWN_TASK_STATUS);
         TaskStatus status2 = findTaskStatus(newStatus);
-        if (status2 == null) {
-            throw new BizException(APIError.UNKNOWN_TASK_STATUS);
-        }
+        Assert.notNull(status1, APIError.UNKNOWN_TASK_STATUS);
         switch (status1) {
             case CREATED:
                 return status2 == HANDLING || status2 == CANCEL;

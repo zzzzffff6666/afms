@@ -29,6 +29,9 @@ public interface APIError {
     String PERMISSION_ALREADY_EXIST = "用户已有该权限";
     String NO_PERMISSION = "无权限";
 
+    String UNKNOWN_DATA_TYPE = "未知的资源类型";
+    String UNKNOWN_OPERATION_TYPE = "未知的操作类型";
+
     String ITEM_TYPE_ERROR = "物品类型错误";
     String UNKNOWN_ITEM_STATUS = "未知的物品状态";
     String ITEM_STATUS_CHANGE_ERROR = "物品状态变更错误";

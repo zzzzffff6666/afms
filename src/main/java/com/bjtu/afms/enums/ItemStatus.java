@@ -1,9 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
-
-import java.util.Arrays;
 
 public enum ItemStatus {
     // 通用状态
@@ -43,36 +42,42 @@ public enum ItemStatus {
     }
 
     public static ItemStatus findItemStatus(int id) {
-        return Arrays.stream(values())
-                .filter(itemStatus -> itemStatus.getId() == id)
-                .findFirst()
-                .orElse(null);
+        for (ItemStatus itemStatus : values()) {
+            if (itemStatus.getId() == id) {
+                return itemStatus;
+            }
+        }
+        return null;
     }
 
     public static ItemStatus findItemStatus(String name) {
-        return Arrays.stream(values())
-                .filter(itemStatus -> itemStatus.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+        for (ItemStatus itemStatus : values()) {
+            if (itemStatus.getName().equals(name)) {
+                return itemStatus;
+            }
+        }
+        return null;
     }
 
-    public static boolean changeCheck(int originStatus, int newStatus) {
-        ItemStatus status = findItemStatus(newStatus);
-        if (status == null) {
-            throw new BizException(APIError.UNKNOWN_ITEM_STATUS);
-        }
-        return changeCheck(originStatus, status);
+    public static boolean changeCheck(int status1, int status2) {
+        ItemStatus originStatus = findItemStatus(status1);
+        Assert.notNull(originStatus, APIError.UNKNOWN_ITEM_STATUS);
+        ItemStatus newStatus = findItemStatus(status2);
+        Assert.notNull(newStatus, APIError.UNKNOWN_ITEM_STATUS);
+        return changeCheck(originStatus, newStatus);
     }
 
-    public static boolean changeCheck(int originStatus, ItemStatus newStatus) {
-        if (newStatus == null) {
-            throw new BizException(APIError.UNKNOWN_ITEM_STATUS);
-        }
-        if (originStatus == newStatus.getId()) {
+    public static boolean changeCheck(int status1, ItemStatus newStatus) {
+        ItemStatus originStatus = findItemStatus(status1);
+        Assert.notNull(originStatus, APIError.UNKNOWN_ITEM_STATUS);
+        if (status1 == newStatus.getId()) {
             return false;
         }
-        ItemStatus status1 = findItemStatus(originStatus);
-        switch (status1) {
+        return changeCheck(originStatus, newStatus);
+    }
+
+    public static boolean changeCheck(ItemStatus originStatus, ItemStatus newStatus) {
+        switch (originStatus) {
             case ACTIVE:
                 return true;
             case DISUSED:

@@ -40,7 +40,6 @@ public enum AuthType {
     }
 
     public static List<AuthType> getAllPermissionType() {
-        return ListUtil.newArrayList(NORMAL, CLIENT_CONTACT, TASK_PRINCIPAL, POOL_MANAGER,
-                STORE_MANAGER, FUND_REVIEWER, SPECIALIST, STUFF_MANAGER, ADMIN, OWNER);
+        return ListUtil.newArrayList(values());
     }
 }
