@@ -92,6 +92,10 @@ public class PoolTaskService {
         return poolTaskMapper.selectByExample(example);
     }
 
+    public List<PoolTask> selectPoolTaskList(PoolTaskExample example) {
+        return poolTaskMapper.selectByExample(example);
+    }
+
     public List<PoolTask> selectUnfinishedTaskList(int taskId) {
         PoolTaskExample example = new PoolTaskExample();
         example.createCriteria().andTaskIdEqualTo(taskId).andStatusIn(

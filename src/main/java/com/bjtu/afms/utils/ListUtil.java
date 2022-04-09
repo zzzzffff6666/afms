@@ -17,4 +17,12 @@ public class ListUtil {
         return result;
     }
 
+    public static <T> List<T> copyElement(T element, int times) {
+        List<T> result = new ArrayList<>();
+        for (int i = 0; i < times; ++i) {
+            result.add(element);
+        }
+        return result;
+    }
+
 }

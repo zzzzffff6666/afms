@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.*;
 import com.aliyun.teaopenapi.models.*;
+import com.bjtu.afms.model.User;
 import com.bjtu.afms.utils.ConfigUtil;
+import com.bjtu.afms.utils.ListUtil;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -17,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -25,6 +28,9 @@ public class ToolService {
 
     @Resource
     private ConfigUtil configUtil;
+
+    @Resource
+    private UserService userService;
 
     private Client client;
 
@@ -37,37 +43,95 @@ public class ToolService {
         client = new Client(config);
     }
 
-    public void sendVerify(String phone, Map<String, String> param) throws Exception {
-        log.info("send verify to {phone}, code:{}", param.get("code"));
-        SendSmsRequest request = new SendSmsRequest()
-                .setSignName(configUtil.getSignName())
-                .setTemplateCode(configUtil.getTemplateCodeVerify())
-                .setPhoneNumbers(phone)
-                .setTemplateParam(JSON.toJSONString(param));
-        SendSmsResponse response = client.sendSms(request);
-        log.info("send status:{}", response.body.getCode());
+    public void sendVerify(String phone, Map<String, String> param) {
+        try {
+            log.info("send verify to {}, code:{}", phone, param.get("code"));
+            SendSmsRequest request = new SendSmsRequest()
+                    .setSignName(configUtil.getSignName())
+                    .setTemplateCode(configUtil.getTemplateCodeVerify())
+                    .setPhoneNumbers(phone)
+                    .setTemplateParam(JSON.toJSONString(param));
+            SendSmsResponse response = client.sendSms(request);
+            if (response.body.getCode().equals("OK")) {
+                log.info("send success");
+            } else {
+                log.error("send failed: {}", response.body.getCode());
+            }
+        } catch (Exception e) {
+            log.error("send meet exception: " + e.getMessage());
+        }
     }
 
-    public void sendAlert(String phone, Map<String, String> param) throws Exception {
-        log.info("send verify to {phone}, alertName={}", param.get("alertName"));
-        SendSmsRequest request = new SendSmsRequest()
-                .setSignName(configUtil.getSignName())
-                .setTemplateCode(configUtil.getTemplateCodeAlert())
-                .setPhoneNumbers(phone)
-                .setTemplateParam(JSON.toJSONString(param));
-        SendSmsResponse response = client.sendSms(request);
-        log.info("send status:{}", response.body.getCode());
+    public void sendAlert(String phone, Map<String, String> param) {
+        try {
+            log.info("send alert to {}, alertName={}", phone, param.get("alertName"));
+            SendSmsRequest request = new SendSmsRequest()
+                    .setSignName(configUtil.getSignName())
+                    .setTemplateCode(configUtil.getTemplateCodeAlert())
+                    .setPhoneNumbers(phone)
+                    .setTemplateParam(JSON.toJSONString(param));
+            SendSmsResponse response = client.sendSms(request);
+            if (response.body.getCode().equals("OK")) {
+                log.info("send success");
+            } else {
+                log.error("send failed: {}", response.body.getCode());
+            }
+        } catch (Exception e) {
+            log.error("send meet exception: " + e.getMessage());
+        }
     }
 
-    public void sendRemind(String phone, Map<String, String> param) throws Exception {
-        log.info("send verify to {phone}, remindName={}", param.get("remindName"));
-        SendSmsRequest request = new SendSmsRequest()
-                .setSignName(configUtil.getSignName())
-                .setTemplateCode(configUtil.getTemplateCodeRemind())
-                .setPhoneNumbers(phone)
-                .setTemplateParam(JSON.toJSONString(param));
-        SendSmsResponse response = client.sendSms(request);
-        log.info("send status:{}", response.body.getCode());
+    public void sendAlert(int id, Map<String, String> param) {
+        User user = userService.selectUser(id);
+        if (user == null) {
+            return;
+        }
+        sendAlert(user.getPhone(), param);
+    }
+
+    public void sendAlert(List<String> phoneList, Map<String, String> param) {
+        try {
+            int size = phoneList.size();
+            log.info("batch send alert to {}, alertName={}", phoneList, param.get("alertName"));
+            SendBatchSmsRequest request = new SendBatchSmsRequest()
+                    .setSignNameJson(JSON.toJSONString(ListUtil.copyElement(configUtil.getSignName(), size)))
+                    .setTemplateCode(configUtil.getTemplateCodeAlert())
+                    .setPhoneNumberJson(JSON.toJSONString(phoneList))
+                    .setTemplateParamJson(JSON.toJSONString(ListUtil.copyElement(param, size)));
+            SendBatchSmsResponse response = client.sendBatchSms(request);
+            if (response.body.getCode().equals("OK")) {
+                log.info("send success");
+            } else {
+                log.error("send failed: {}", response.body.getCode());
+            }
+        } catch (Exception e) {
+            log.error("send meet exception: " + e.getMessage());
+        }
+    }
+
+    public void batchSendAlert(List<Integer> userIdList, Map<String, String> param) {
+        List<String> phoneList = userService.selectPhoneList(userIdList);
+        sendAlert(phoneList, param);
+    }
+
+
+    public void sendRemind(String phone, Map<String, String> param) {
+        try {
+            log.info("send remind to {}, remindName={}", phone, param.get("remindName"));
+            SendSmsRequest request = new SendSmsRequest()
+                    .setSignName(configUtil.getSignName())
+                    .setTemplateCode(configUtil.getTemplateCodeRemind())
+                    .setPhoneNumbers(phone)
+                    .setTemplateParam(JSON.toJSONString(param));
+            SendSmsResponse response = client.sendSms(request);
+            if (response.body.getCode().equals("OK")) {
+                log.info("send success");
+            } else {
+                log.error("send failed: {}", response.body.getCode());
+            }
+        } catch (Exception e) {
+            log.error("send meet exception: " + e.getMessage());
+        }
     }
 
     public byte[] getQRCodeImage(String text, int width, int height) throws WriterException, IOException {

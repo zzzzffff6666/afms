@@ -9,12 +9,12 @@ import java.util.Date;
 import java.util.List;
 
 public enum TaskStatus {
-    CREATED(1, "created", "已创建"),
-    HANDLING(2, "handling", "处理中"),
-    FINISH(3, "finish", "完成"),
-    OVERDUE(4, "overdue", "逾期"),
-    CANCEL(5, "cancel", "取消"),
-    ERROR(6, "error", "异常")
+    ERROR(1, "error", "异常"),
+    CREATED(2, "created", "已创建"),
+    HANDLING(3, "handling", "处理中"),
+    FINISH(4, "finish", "完成"),
+    OVERDUE(5, "overdue", "逾期"),
+    CANCEL(6, "cancel", "取消"),
     ;
 
     private final int id;

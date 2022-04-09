@@ -71,6 +71,10 @@ public class DailyTaskService {
         return dailyTaskMapper.selectByExample(example);
     }
 
+    public List<DailyTask> selectDailyTaskList(DailyTaskExample example) {
+        return dailyTaskMapper.selectByExample(example);
+    }
+
     public List<DailyTask> selectUnfinishedTaskList(int taskId) {
         DailyTaskExample example = new DailyTaskExample();
         example.createCriteria().andTaskIdEqualTo(taskId).andStatusIn(

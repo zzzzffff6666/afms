@@ -5,11 +5,11 @@ import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 
 public enum PlanFinish {
-    CREATED(1, "created", "已创建"),
-    APPLIED(2, "start", "已开始"),
-    FINISH(3, "finish", "准时完成"),
-    CANCEL(6, "cancel", "取消"),
-    ERROR(7, "error", "异常"),
+    ERROR(1, "error", "异常"),
+    CREATED(2, "created", "已创建"),
+    APPLIED(3, "start", "已开始"),
+    FINISH(4, "finish", "准时完成"),
+    CANCEL(5, "cancel", "取消"),
     ;
 
     private final int id;

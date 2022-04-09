@@ -15,6 +15,7 @@ import com.bjtu.afms.model.Pool;
 import com.bjtu.afms.model.PoolCycle;
 import com.bjtu.afms.service.PoolCycleService;
 import com.bjtu.afms.service.PoolService;
+import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.web.param.query.PoolCycleQueryParam;
 import com.github.pagehelper.PageHelper;
@@ -31,6 +32,9 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
 
     @Resource
     private PoolCycleService poolCycleService;
+
+    @Resource
+    private UserService userService;
 
     @Resource
     private PoolService poolService;
@@ -85,6 +89,7 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     @Override
     @Transactional
     public boolean modifyPoolCycleUser(int id, int userId) {
+        Assert.isTrue(userService.exist(userId), APIError.USER_NOT_EXIST);
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(id);
         Assert.notNull(poolCycle, APIError.NOT_FOUND);
         PoolCycle record = new PoolCycle();

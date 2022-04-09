@@ -81,6 +81,10 @@ public class JobService {
         return jobMapper.selectByExample(example);
     }
 
+    public List<Job> selectJobList(JobExample example) {
+        return jobMapper.selectByExample(example);
+    }
+
     public List<Job> selectJobList(int type, int relateId, List<Integer> userIdList) {
         JobExample example = new JobExample();
         example.createCriteria().andTypeEqualTo(type).andRelateIdEqualTo(relateId).andUserIdIn(userIdList);

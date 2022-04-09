@@ -101,6 +101,14 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectPhoneList" parameterType="com.bjtu.afms.model.UserExample" resultType="java.lang.String">
+    select
+    phone
+    from user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
   <select id="selectByExample" parameterType="com.bjtu.afms.model.UserExample" resultMap="BaseResultMap">
     select
     <if test="distinct">

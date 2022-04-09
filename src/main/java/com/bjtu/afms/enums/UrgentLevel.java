@@ -29,4 +29,13 @@ public enum UrgentLevel {
     public String getComment() {
         return comment;
     }
+
+    public static String getInfo(int id) {
+        for (UrgentLevel urgentLevel : values()) {
+            if (id == urgentLevel.getId()) {
+                return urgentLevel.getComment();
+            }
+        }
+        return null;
+    }
 }

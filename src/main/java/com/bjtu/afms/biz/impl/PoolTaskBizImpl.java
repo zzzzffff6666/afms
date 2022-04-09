@@ -18,6 +18,7 @@ import com.bjtu.afms.model.PoolCycle;
 import com.bjtu.afms.model.PoolTask;
 import com.bjtu.afms.service.PoolCycleService;
 import com.bjtu.afms.service.PoolTaskService;
+import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.web.param.BatchInsertPoolTaskParam;
 import com.bjtu.afms.web.param.SetTaskParam;
@@ -42,6 +43,9 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
 
     @Resource
     private PoolTaskService poolTaskService;
+
+    @Resource
+    private UserService userService;
 
     @Resource
     private PoolCycleService poolCycleService;
@@ -166,6 +170,7 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     @Override
     @Transactional
     public boolean modifyPoolTaskUser(int id, int userId) {
+        Assert.isTrue(userService.exist(userId), APIError.USER_NOT_EXIST);
         PoolTask poolTask = poolTaskService.selectPoolTask(id);
         Assert.notNull(poolTask, APIError.NOT_FOUND);
         PoolTask record = new PoolTask();

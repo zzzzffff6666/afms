@@ -1,7 +1,12 @@
 package com.bjtu.afms.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Slf4j
 public class DateUtil {
     public static final long SECOND_LENGTH = 1000;
     public static final long MINUTE_LENGTH = 60000;
@@ -71,5 +76,17 @@ public class DateUtil {
         long time = date.getTime();
         time += millis;
         return new Date(time);
+    }
+
+    public static int getDayDiffer(Date date1, Date date2) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            long startDateTime = dateFormat.parse(dateFormat.format(date1)).getTime();
+            long endDateTime = dateFormat.parse(dateFormat.format(date2)).getTime();
+            return (int) ((endDateTime - startDateTime) / DAY_LENGTH);
+        } catch (ParseException e) {
+            log.error(e.getMessage());
+            return -1;
+        }
     }
 }

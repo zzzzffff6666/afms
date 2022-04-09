@@ -6,16 +6,15 @@ import com.bjtu.afms.biz.LogBiz;
 import com.bjtu.afms.biz.PermissionBiz;
 import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.config.handler.Assert;
-import com.bjtu.afms.enums.AuthType;
-import com.bjtu.afms.enums.DataType;
-import com.bjtu.afms.enums.OperationType;
-import com.bjtu.afms.enums.TaskStatus;
+import com.bjtu.afms.enums.*;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Alert;
 import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.service.AlertService;
 import com.bjtu.afms.service.PermissionService;
+import com.bjtu.afms.service.ToolService;
+import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.utils.SetUtil;
 import com.bjtu.afms.web.param.query.AlertQueryParam;
@@ -26,9 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -36,6 +33,12 @@ public class AlertBizImpl implements AlertBiz {
 
     @Resource
     private AlertService alertService;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private ToolService toolService;
 
     @Resource
     private ConfigUtil configUtil;
@@ -79,17 +82,12 @@ public class AlertBizImpl implements AlertBiz {
     @Override
     @Transactional
     public boolean insertAlert(Alert alert) {
-        Alert record = new Alert();
-        record.setName(alert.getName());
-        record.setType(alert.getType());
-        record.setRelateId(alert.getRelateId());
-        record.setUserId(alert.getUserId());
-        record.setContent(alert.getContent());
-        record.setLevel(alert.getLevel());
-        record.setStatus(TaskStatus.CREATED.getId());
-        record.setStartTime(new Date());
-        if (alertService.insertAlert(record) == 1) {
-            Set<Integer> userIdSet = SetUtil.newHashSet(LoginContext.getUserId(), record.getUserId());
+        alert.setStatus(TaskStatus.CREATED.getId());
+        alert.setStartTime(new Date());
+        alert.setModTime(null);
+        alert.setModUser(null);
+        if (alertService.insertAlert(alert) == 1) {
+            Set<Integer> userIdSet = SetUtil.newHashSet(LoginContext.getUserId(), alert.getUserId());
             if (alert.getType() != null && alert.getRelateId() != null) {
                 PermissionQueryParam param = new PermissionQueryParam();
                 param.setAuth(AuthType.OWNER.getId());
@@ -100,9 +98,13 @@ public class AlertBizImpl implements AlertBiz {
                         .collect(Collectors.toList());
                 userIdSet.addAll(userIdList);
             }
-            permissionBiz.initResourceOwner(DataType.ALERT.getId(), record.getId(), userIdSet);
-            logBiz.saveLog(DataType.ALERT, record.getId(), OperationType.INSERT_ALERT,
-                    null, JSON.toJSONString(record));
+            permissionBiz.initResourceOwner(DataType.ALERT.getId(), alert.getId(), userIdSet);
+            logBiz.saveLog(DataType.ALERT, alert.getId(), OperationType.INSERT_ALERT,
+                    null, JSON.toJSONString(alert));
+            Map<String, String> param = new HashMap<>();
+            param.put("alertName", alert.getName());
+            param.put("alertLevel", UrgentLevel.getInfo(alert.getLevel()));
+            toolService.batchSendAlert(new ArrayList<>(userIdSet), param);
             return true;
         } else {
             return false;
@@ -132,6 +134,7 @@ public class AlertBizImpl implements AlertBiz {
     @Override
     @Transactional
     public boolean modifyAlertUser(int id, int userId) {
+        Assert.isTrue(userService.exist(userId), APIError.USER_NOT_EXIST);
         Alert alert = alertService.selectAlert(id);
         Assert.notNull(alert, APIError.NOT_FOUND);
         Alert record = new Alert();
@@ -142,6 +145,10 @@ public class AlertBizImpl implements AlertBiz {
             permissionBiz.deleteResourceOwner(DataType.ALERT.getId(), record.getId(), alert.getUserId());
             logBiz.saveLog(DataType.ALERT, alert.getId(), OperationType.UPDATE_ALERT_USER,
                     JSON.toJSONString(alert), JSON.toJSONString(record));
+            Map<String, String> param = new HashMap<>();
+            param.put("alertName", alert.getName());
+            param.put("alertLevel", UrgentLevel.getInfo(alert.getLevel()));
+            toolService.sendAlert(userId, param);
             return true;
         } else {
             return false;

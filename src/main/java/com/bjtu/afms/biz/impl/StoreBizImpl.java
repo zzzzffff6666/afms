@@ -12,6 +12,7 @@ import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.Store;
 import com.bjtu.afms.service.StoreService;
+import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.web.param.query.StoreQueryParam;
 import com.github.pagehelper.PageHelper;
@@ -26,6 +27,9 @@ public class StoreBizImpl implements StoreBiz {
 
     @Resource
     private StoreService storeService;
+
+    @Resource
+    private UserService userService;
 
     @Resource
     private ConfigUtil configUtil;
@@ -65,6 +69,7 @@ public class StoreBizImpl implements StoreBiz {
     @Override
     @Transactional
     public boolean modifyStoreManager(int id, int manager) {
+        Assert.isTrue(userService.exist(manager), APIError.USER_NOT_EXIST);
         Store store = storeService.selectStore(id);
         Assert.notNull(store, APIError.NOT_FOUND);
         Store record = new Store();

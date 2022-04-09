@@ -65,4 +65,8 @@ public class PlanService {
         }
         return planMapper.selectByExample(example);
     }
+
+    public List<Plan> selectPlanList(PlanExample example) {
+        return planMapper.selectByExample(example);
+    }
 }

@@ -16,6 +16,7 @@ import com.bjtu.afms.mapper.DailyTaskMapper;
 import com.bjtu.afms.model.DailyTask;
 import com.bjtu.afms.model.Permission;
 import com.bjtu.afms.service.DailyTaskService;
+import com.bjtu.afms.service.UserService;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.web.param.BatchInsertDailyTaskParam;
 import com.bjtu.afms.web.param.SetTaskParam;
@@ -38,6 +39,9 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
 
     @Resource
     private DailyTaskService dailyTaskService;
+
+    @Resource
+    private UserService userService;
 
     @Resource
     private ConfigUtil configUtil;
@@ -157,6 +161,7 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
     @Override
     @Transactional
     public boolean modifyDailyTaskUser(int id, int userId) {
+        Assert.isTrue(userService.exist(userId), APIError.USER_NOT_EXIST);
         DailyTask dailyTask = dailyTaskService.selectDailyTask(id);
         Assert.notNull(dailyTask, APIError.NOT_FOUND);
         DailyTask record = new DailyTask();

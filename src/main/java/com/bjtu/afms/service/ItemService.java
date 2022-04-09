@@ -29,6 +29,13 @@ public class ItemService {
         return itemMapper.updateByPrimaryKeySelective(item);
     }
 
+    public int updateItemStatus(int id, int status) {
+        Item item = new Item();
+        item.setId(id);
+        item.setStatus(status);
+        return itemMapper.updateByPrimaryKeySelective(item);
+    }
+
     public Item selectItem(int itemId) {
         return itemMapper.selectByPrimaryKey(itemId);
     }
@@ -69,6 +76,10 @@ public class ItemService {
             }
             criteria.andExpireTimeBetween(param.getMaintainBegin(), param.getMaintainLast());
         }
+        return itemMapper.selectByExample(example);
+    }
+
+    public List<Item> selectItemList(ItemExample example) {
         return itemMapper.selectByExample(example);
     }
 }
