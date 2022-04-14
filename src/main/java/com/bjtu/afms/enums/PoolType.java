@@ -1,5 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum PoolType {
     ROOM_INSULATION(1, "room_insulation", "室内保温"),
     OUTDOOR_INSULATION(2, "outdoor_insulation", "室外保温"),

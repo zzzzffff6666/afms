@@ -3,7 +3,9 @@ package com.bjtu.afms.enums;
 import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum PlanFinish {
     ERROR(1, "error", "异常"),
     CREATED(2, "created", "已创建"),

@@ -1,9 +1,11 @@
 package com.bjtu.afms.enums;
 
 import com.bjtu.afms.utils.ListUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.List;
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AuthType {
     NORMAL(1, "normal", "普通员工"),
     CLIENT_CONTACT(2, "client_contact", "客户联络人"),

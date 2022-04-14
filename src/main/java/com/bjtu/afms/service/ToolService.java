@@ -2,23 +2,34 @@ package com.bjtu.afms.service;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyun.dysmsapi20170525.Client;
-import com.aliyun.dysmsapi20170525.models.*;
-import com.aliyun.teaopenapi.models.*;
+import com.aliyun.dysmsapi20170525.models.SendBatchSmsRequest;
+import com.aliyun.dysmsapi20170525.models.SendBatchSmsResponse;
+import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
+import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
+import com.aliyun.teaopenapi.models.Config;
 import com.bjtu.afms.model.User;
 import com.bjtu.afms.utils.ConfigUtil;
 import com.bjtu.afms.utils.ListUtil;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import sun.misc.BASE64Encoder;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -134,11 +145,43 @@ public class ToolService {
         }
     }
 
+    // 本地使用
     public byte[] getQRCodeImage(String text, int width, int height) throws WriterException, IOException {
+        String format = "jpg";
+        Map<EncodeHintType, Object> hints = new HashMap<>();
+        hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+        hints.put(EncodeHintType.MARGIN, 2);
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height, hints);
         ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
-        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream);
+        MatrixToImageWriter.writeToStream(bitMatrix, format, pngOutputStream);
         return pngOutputStream.toByteArray();
+    }
+
+    // 发送给前台
+    public String getQRCode(String text, int width, int height) throws WriterException, IOException {
+        // 图片的格式
+        String format = "jpg";
+        // 定义二维码的参数
+        Map<EncodeHintType, Object> hints = new HashMap<>();
+        // 定义字符集编码格式
+        hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+        // 纠错的等级 L > M > Q > H 纠错的能力越高可存储的越少，一般使用M
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+        // 设置图片边距
+        hints.put(EncodeHintType.MARGIN, 2);
+
+        BitMatrix bitMatrix = new MultiFormatWriter().encode(text, BarcodeFormat.QR_CODE, width, height, hints);
+        MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig();
+        BufferedImage image = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+        //新建流。
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        //利用ImageIO类提供的write方法，将bi以png图片的数据模式写入流。
+        ImageIO.write(image, format, os);
+        //从流中获取数据数组。
+        byte[] b = os.toByteArray();
+        String str = new BASE64Encoder().encode(b);
+        return "data:image/jpg;base64," + str;
     }
 }

@@ -1,5 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum OperationType {
     // 用户相关 1xx
     INSERT_USER(101, "insert:user", "用户登记"),

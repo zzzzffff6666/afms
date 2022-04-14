@@ -1,9 +1,11 @@
 package com.bjtu.afms.enums;
 
 import com.bjtu.afms.utils.ListUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.List;
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DataType {
     USER(1, "user", "用户"),
     PERMISSION(2, "permission", "权限"),

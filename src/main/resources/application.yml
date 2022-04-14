@@ -4,6 +4,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: farmer
     username: farm-system
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    
 
 mybatis:
   check-config-location: true

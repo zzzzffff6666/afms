@@ -4,10 +4,12 @@ import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.utils.ListUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 import java.util.List;
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum TaskStatus {
     ERROR(1, "error", "异常"),
     CREATED(2, "created", "已创建"),

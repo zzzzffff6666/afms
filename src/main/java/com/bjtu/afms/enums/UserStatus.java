@@ -1,5 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum UserStatus {
     VISIT(1, "visit", "游客"),
     WORK(2, "work", "在职"),

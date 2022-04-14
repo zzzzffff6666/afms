@@ -1,5 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum PoolStatus {
     EMPTY(1, "empty", "空的"),
     FARMING(2, "farming", "养殖中"),

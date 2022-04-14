@@ -3,7 +3,9 @@ package com.bjtu.afms.enums;
 import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.exception.BizException;
 import com.bjtu.afms.http.APIError;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ItemStatus {
     // 通用状态
     ACTIVE(1, "active", "可使用"),

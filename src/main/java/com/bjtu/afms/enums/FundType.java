@@ -1,5 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum FundType {
     EXPENSE(1, "expense", "支出"),
     INCOME(2, "income", "收入")

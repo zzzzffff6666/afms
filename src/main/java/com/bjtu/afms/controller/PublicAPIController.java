@@ -45,7 +45,7 @@ public class PublicAPIController {
     private ConfigUtil configUtil;
 
     @GetMapping("/verify/get")
-    public Result sendVerify(@RequestParam("phone") String phone) throws Exception {
+    public Result sendVerify(@RequestParam("phone") String phone) {
         if (CommonUtil.checkPhone(phone)) {
             String code = CommonUtil.generateVerifyCode();
             Map<String, String> param = new HashMap<>();
@@ -77,9 +77,8 @@ public class PublicAPIController {
     @GetMapping("/QRCode/get")
     public Result getQRCode(@RequestParam("type") String type, @RequestParam("id") int id) {
         String url = "/" + type + "/info/" + id;
-        byte[] qrCode;
         try {
-            qrCode = toolService.getQRCodeImage(url, configUtil.getQrCodeWidth(), configUtil.getQrCodeHeight());
+            String qrCode = toolService.getQRCode(url, configUtil.getQrCodeWidth(), configUtil.getQrCodeHeight());
             return Result.ok(qrCode);
         } catch (IOException | WriterException e) {
             return Result.error(e.getMessage());

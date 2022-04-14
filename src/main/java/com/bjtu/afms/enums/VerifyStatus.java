@@ -1,5 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum VerifyStatus {
     VALID(1, "valid", "有效"),
     VERIFIED(2, "verified", "已验证")

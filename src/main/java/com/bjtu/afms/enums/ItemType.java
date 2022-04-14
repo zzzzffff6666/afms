@@ -1,5 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ItemType {
     TOOL(1, "tool", "工具"),
     FEED(2, "feed", "饲料"),

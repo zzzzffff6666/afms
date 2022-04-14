@@ -1,5 +1,8 @@
 package com.bjtu.afms.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum UrgentLevel {
     U1(1, "u1", "不紧急"),
     U2(2, "u2", "有点紧急"),
