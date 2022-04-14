@@ -73,13 +73,19 @@ public class UserService {
         return userMapper.selectByExample(example);
     }
 
-    public boolean exist(String phone) {
+    public boolean existPhone(String phone) {
         UserExample example = new UserExample();
         example.createCriteria().andPhoneEqualTo(phone);
         return userMapper.countByExample(example) > 0;
     }
 
-    public boolean exist(int id) {
+    public boolean existCardId(String cardId) {
+        UserExample example = new UserExample();
+        example.createCriteria().andCardIdEqualTo(cardId);
+        return userMapper.countByExample(example) > 0;
+    }
+
+    public boolean existId(int id) {
         UserExample example = new UserExample();
         example.createCriteria().andIdEqualTo(id);
         return userMapper.countByExample(example) > 0;

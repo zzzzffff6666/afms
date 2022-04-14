@@ -8,6 +8,7 @@ import com.bjtu.afms.config.context.LoginContext;
 import com.bjtu.afms.config.handler.Assert;
 import com.bjtu.afms.enums.DataType;
 import com.bjtu.afms.enums.OperationType;
+import com.bjtu.afms.enums.UserStatus;
 import com.bjtu.afms.http.APIError;
 import com.bjtu.afms.http.Page;
 import com.bjtu.afms.model.User;
@@ -63,7 +64,7 @@ public class UserBizImpl implements UserBiz {
             session.removeAttribute("user");
             Assert.isTrue(false, APIError.USER_NOT_EXIST);
         }
-        Assert.isTrue(!userService.exist(param.getPhoneNew()), APIError.PHONE_ALREADY_EXIST);
+        Assert.isTrue(!userService.existPhone(param.getPhoneNew()), APIError.PHONE_ALREADY_EXIST);
         Assert.isTrue(verifyService.matchVerify(me.getPhone(), param.getCodeOld())
                         && verifyService.matchVerify(param.getPhoneNew(), param.getCodeNew()),
                 APIError.VERIFY_ERROR);
@@ -106,6 +107,9 @@ public class UserBizImpl implements UserBiz {
     @Override
     @Transactional
     public boolean insertUser(User user) {
+        user.setStatus(UserStatus.WORK.getId());
+        Assert.isTrue(!userService.existPhone(user.getPhone()), APIError.PHONE_ALREADY_EXIST);
+        Assert.isTrue(!userService.existCardId(user.getCardId()), APIError.CARD_ID_ALREADY_EXIST);
         if (userService.insertUser(user) == 1) {
             permissionBiz.initUserPermission(user.getId());
             logBiz.saveLog(DataType.USER, user.getId(), OperationType.INSERT_USER,

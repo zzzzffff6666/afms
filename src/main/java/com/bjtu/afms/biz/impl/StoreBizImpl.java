@@ -69,7 +69,7 @@ public class StoreBizImpl implements StoreBiz {
     @Override
     @Transactional
     public boolean modifyStoreManager(int id, int manager) {
-        Assert.isTrue(userService.exist(manager), APIError.USER_NOT_EXIST);
+        Assert.isTrue(userService.existId(manager), APIError.USER_NOT_EXIST);
         Store store = storeService.selectStore(id);
         Assert.notNull(store, APIError.NOT_FOUND);
         Store record = new Store();

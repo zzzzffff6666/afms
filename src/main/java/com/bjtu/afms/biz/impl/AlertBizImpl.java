@@ -134,7 +134,7 @@ public class AlertBizImpl implements AlertBiz {
     @Override
     @Transactional
     public boolean modifyAlertUser(int id, int userId) {
-        Assert.isTrue(userService.exist(userId), APIError.USER_NOT_EXIST);
+        Assert.isTrue(userService.existId(userId), APIError.USER_NOT_EXIST);
         Alert alert = alertService.selectAlert(id);
         Assert.notNull(alert, APIError.NOT_FOUND);
         Alert record = new Alert();

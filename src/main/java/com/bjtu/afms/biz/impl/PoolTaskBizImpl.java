@@ -170,7 +170,7 @@ public class PoolTaskBizImpl implements PoolTaskBiz {
     @Override
     @Transactional
     public boolean modifyPoolTaskUser(int id, int userId) {
-        Assert.isTrue(userService.exist(userId), APIError.USER_NOT_EXIST);
+        Assert.isTrue(userService.existId(userId), APIError.USER_NOT_EXIST);
         PoolTask poolTask = poolTaskService.selectPoolTask(id);
         Assert.notNull(poolTask, APIError.NOT_FOUND);
         PoolTask record = new PoolTask();

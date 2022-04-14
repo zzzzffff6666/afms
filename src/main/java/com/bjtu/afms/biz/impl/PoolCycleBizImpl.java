@@ -89,7 +89,7 @@ public class PoolCycleBizImpl implements PoolCycleBiz {
     @Override
     @Transactional
     public boolean modifyPoolCycleUser(int id, int userId) {
-        Assert.isTrue(userService.exist(userId), APIError.USER_NOT_EXIST);
+        Assert.isTrue(userService.existId(userId), APIError.USER_NOT_EXIST);
         PoolCycle poolCycle = poolCycleService.selectPoolCycle(id);
         Assert.notNull(poolCycle, APIError.NOT_FOUND);
         PoolCycle record = new PoolCycle();

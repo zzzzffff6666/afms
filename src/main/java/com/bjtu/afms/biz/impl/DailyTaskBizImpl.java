@@ -161,7 +161,7 @@ public class DailyTaskBizImpl implements DailyTaskBiz {
     @Override
     @Transactional
     public boolean modifyDailyTaskUser(int id, int userId) {
-        Assert.isTrue(userService.exist(userId), APIError.USER_NOT_EXIST);
+        Assert.isTrue(userService.existId(userId), APIError.USER_NOT_EXIST);
         DailyTask dailyTask = dailyTaskService.selectDailyTask(id);
         Assert.notNull(dailyTask, APIError.NOT_FOUND);
         DailyTask record = new DailyTask();

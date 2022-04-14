@@ -125,7 +125,7 @@ public class PermissionBizImpl implements PermissionBiz {
             record.setRelateId(permission.getRelateId());
         }
         if (permissionService.insertPermission(record) == 1) {
-            logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,
+            logBiz.saveLog(DataType.PERMISSION, record.getId(), OperationType.INSERT_PERMISSION,
                     null, JSON.toJSONString(record));
             return true;
         } else {
@@ -184,7 +184,7 @@ public class PermissionBizImpl implements PermissionBiz {
         List<Permission> permissionList = permissionService.selectPermissionList(param);
         if (CollectionUtils.isEmpty(permissionList)) {
             Permission permission = new Permission();
-            permission.setAuth(AuthType.OWNER.getId());
+            permission.setAuth(AuthType.NORMAL.getId());
             permission.setUserId(userId);
             Assert.isTrue(permissionService.insertPermission(permission) == 1, APIError.INSERT_ERROR);
             logBiz.saveLog(DataType.PERMISSION, permission.getId(), OperationType.INSERT_PERMISSION,

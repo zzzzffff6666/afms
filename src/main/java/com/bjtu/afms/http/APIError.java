@@ -18,6 +18,7 @@ public interface APIError {
     String USER_NOT_REGISTER = "用户未注册，请联系管理员注册";
     String USER_NOT_EXIST = "用户不存在";
     String PHONE_ALREADY_EXIST = "手机号已存在";
+    String CARD_ID_ALREADY_EXIST = "身份证号已存在";
     String PASSWORD_ERROR = "密码错误";
     String PHONE_ERROR = "手机号码格式不正确";
     String LOGIN_ERROR = "手机号或密码错误";
