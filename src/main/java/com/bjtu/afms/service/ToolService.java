@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,7 +182,7 @@ public class ToolService {
         ImageIO.write(image, format, os);
         //从流中获取数据数组。
         byte[] b = os.toByteArray();
-        String str = new BASE64Encoder().encode(b);
+        String str = Base64.getEncoder().encodeToString(b);
         return "data:image/jpg;base64," + str;
     }
 }
