@@ -1,7 +1,6 @@
 package com.bjtu.afms.utils;
 
-import com.sun.istack.internal.NotNull;
-
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
