@@ -124,7 +124,7 @@ public class ItemStatusCron {
                     Item::getStoreId,
                     Collectors.counting()));
             Map<String, String> param = new HashMap<>();
-            param.put("remindName", "你负责仓库的部分工具需要维护");
+            param.put("remindName", "您负责仓库的部分工具需要维护");
             for (Map.Entry<Integer, Long> entry : managerMap.entrySet()) {
                 int storeId = entry.getKey();
                 Store store = storeService.selectStore(storeId);

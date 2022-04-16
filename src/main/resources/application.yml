@@ -22,14 +22,14 @@ pagehelper:
   default-count: false
 
 sms:
-  access-key-id: xxx
-  access-key-secret: xxx
+  access-key-id: LTAI5t6i5b17GPSWXLuZQTPS
+  access-key-secret: xIRGezu0qjRdskCA4271MaiX53bkJs
   domain: dysmsapi.aliyuncs.com
-  sign-name: 养殖管理系统
+  sign-name: 阿里云短信测试
   template-code:
-    verify: SMS_
-    alert: SMS_
-    remind: SMS_
+    verify: SMS_238981117
+    alert: SMS_238946254
+    remind: SMS_238976140
 
 afms:
   page-size: 20
