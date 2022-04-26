@@ -102,13 +102,13 @@ public enum OperationType {
     DELETE_FUND(1602, "delete:fund", "删除收支记录"),
     UPDATE_FUND_INFO(1603, "update:fund:info", "修改收支记录信息"),
 
-    // 验证码相关 17xx
-    INSERT_VERIFY(1701, "insert:verify", "生成验证码"),
-    UPDATE_VERIFY(1702, "update:verify", "修改验证码"),
+    // 日志相关 17xx
+    INSERT_LOG(1701, "insert:log", "添加日志"),
+    ROLLBACK_LOG(1702, "rollback:log", "从日志中回滚操作"),
 
-    // 日志相关 18xx
-    INSERT_LOG(1801, "insert:log", "添加日志"),
-    ROLLBACK_LOG(1802, "rollback:log", "从日志中回滚操作")
+    // 验证码相关 18xx
+    INSERT_VERIFY(1801, "insert:verify", "生成验证码"),
+    UPDATE_VERIFY(1802, "update:verify", "修改验证码"),
     ;
 
     private final int id;

@@ -23,8 +23,8 @@ public enum DataType {
     ALERT(14, "alert", "告警"),
     COMMENT(15, "comment", "评论"),
     FUND(16, "fund", "收支"),
-    VERIFY(17, "verify", "验证码"),
-    LOG(18, "log", "日志")
+    LOG(17, "log", "日志"),
+    VERIFY(18, "verify", "验证码"),
     ;
 
     private final int id;

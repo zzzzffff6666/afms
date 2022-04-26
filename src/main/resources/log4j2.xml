@@ -10,7 +10,7 @@
         <property name="file-format" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level %class{1} %L %M - %msg%xEx%n"/>
         <!--windows路径：C:/Users/zhang/Desktop-->
         <!--linux路径：/opt-->
-        <property name="base-path" value="C:/Users/zhang/Desktop"/>
+        <property name="base-path" value="/opt/afms/log"/>
     </Properties>
 
     <!--先定义所有的appender-->
