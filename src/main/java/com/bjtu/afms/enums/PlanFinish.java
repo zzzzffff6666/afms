@@ -9,8 +9,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public enum PlanFinish {
     ERROR(1, "error", "异常"),
     CREATED(2, "created", "已创建"),
-    APPLIED(3, "start", "已开始"),
-    FINISH(4, "finish", "准时完成"),
+    APPLIED(3, "applied", "已发布"),
+    FINISH(4, "finish", "完成"),
     CANCEL(5, "cancel", "取消"),
     ;
 

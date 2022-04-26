@@ -8,7 +8,7 @@ public enum UrgentLevel {
     U2(2, "u2", "有点紧急"),
     U3(3, "u3", "紧急"),
     U4(4, "u4", "非常紧急"),
-    ACCIDENT(5, "ACCIDENT", "重大事故")
+    ACCIDENT(5, "accident", "重大事故")
     ;
 
     private final int id;
