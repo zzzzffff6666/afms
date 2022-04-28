@@ -50,7 +50,6 @@ public class AlertController {
         return Result.ok(alertBiz.getAlertList(param, page));
     }
 
-    @AuthCheck(auth = {AuthType.ADMIN, AuthType.TASK_PRINCIPAL})
     @PostMapping("/alert/insert")
     public Result addAlert(@RequestBody Alert alert) {
         if (alertBiz.insertAlert(alert)) {
