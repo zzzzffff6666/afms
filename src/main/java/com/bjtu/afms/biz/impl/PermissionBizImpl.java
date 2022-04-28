@@ -30,6 +30,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,6 +59,7 @@ public class PermissionBizImpl implements PermissionBiz {
             page = 0;
         }
         DataType dataType = DataType.findDataType(type);
+        Assert.notNull(dataType, APIError.UNKNOWN_DATA_TYPE);
         PermissionQueryParam param = new PermissionQueryParam();
         param.setType(dataType.getId());
         param.setRelateId(relateId);
@@ -77,6 +79,7 @@ public class PermissionBizImpl implements PermissionBiz {
     @Transactional
     public boolean addResourceOwner(String type, int relateId, int userId) {
         DataType dataType = DataType.findDataType(type);
+        Assert.notNull(dataType, APIError.UNKNOWN_DATA_TYPE);
         PermissionQueryParam param = new PermissionQueryParam();
         param.setAuth(AuthType.OWNER.getId());
         param.setUserId(LoginContext.getUserId());
@@ -225,12 +228,15 @@ public class PermissionBizImpl implements PermissionBiz {
                 .collect(Collectors.toList());
         userIdSet.removeAll(existUserIdList);
         List<Permission> permissionList = new ArrayList<>();
+        Date date = new Date();
         userIdSet.forEach(userId -> {
             Permission permission = new Permission();
             permission.setAuth(AuthType.OWNER.getId());
             permission.setType(type);
             permission.setRelateId(relateId);
             permission.setUserId(userId);
+            permission.setAddTime(date);
+            permission.setAddUser(LoginContext.getUserId());
             permissionList.add(permission);
         });
         batchInsertPermission(permissionList);

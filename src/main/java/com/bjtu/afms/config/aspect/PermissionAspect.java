@@ -47,10 +47,18 @@ public class PermissionAspect {
     }
 
     public boolean hasPermission(Object object, AuthCheck authCheck) {
-        boolean result;
-        Integer relateId;
-        int type;
+        boolean result = false;
+        if (authCheck.auth().length > 0) {
+            result = permissionService.hasPermission(LoginContext.getUserId(),
+                    Arrays.stream(authCheck.auth()).map(AuthType::getId).collect(Collectors.toList()));
+        }
+        if (result) {
+            return result;
+        }
+
         if (authCheck.owner()) {
+            Integer relateId;
+            int type;
             if (authCheck.relate()) {
                 relateId = ((JSONObject) object).getInteger("relateId");
                 type = ((JSONObject) object).getInteger("type");
@@ -69,12 +77,7 @@ public class PermissionAspect {
                 type = authCheck.data().getId();
             }
             result = permissionService.isOwner(LoginContext.getUserId(), type, relateId);
-            if (authCheck.auth().length == 0 || result) {
-                return result;
-            }
         }
-        result = permissionService.hasPermission(LoginContext.getUserId(),
-                Arrays.stream(authCheck.auth()).map(AuthType::getId).collect(Collectors.toList()));
         return result;
     }
 }
